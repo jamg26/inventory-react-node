@@ -85,7 +85,7 @@ module.exports = (app) => {
           res.send({ token: "", user: [], message: "Login Denied.." });
         }
       } else {
-        // Passwords don't matchasdasdS
+        // Passwords don't match
         res.send({
           token: "",
           user: [],
