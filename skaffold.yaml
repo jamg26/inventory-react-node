@@ -1,0 +1,38 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/* # folder of all deployment yaml files
+build:
+  # local:
+  #   push: false
+  googleCloudBuild:
+    projectId: stately-bulwark-277102
+  artifacts: # list of images to manage
+    # one whole image config
+    - image: us.gcr.io/stately-bulwark-277102/orders #image tag
+      context: orders #folder of the images files
+      docker:
+        dockerfile: Dockerfile #dockerfile of the image
+      sync:
+        manual:
+          - src: "**/**/**" # file patterns to watch
+            dest: .
+    # one whole image config end
+    - image: us.gcr.io/stately-bulwark-277102/customers
+      context: customers
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/**/**"
+            dest: .
+    - image: us.gcr.io/stately-bulwark-277102/shop
+      context: shop
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/**/**"
+            dest: .

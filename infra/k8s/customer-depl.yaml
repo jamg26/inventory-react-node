@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers
+  template:
+    metadata:
+      labels:
+        app: customers
+    spec:
+      containers:
+        - name: customers
+          image: us.gcr.io/stately-bulwark-277102/customers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-srv
+spec:
+  selector:
+    app: customers
+  ports:
+    - name: customers
+      protocol: TCP
+      port: 5001
+      targetPort: 5001

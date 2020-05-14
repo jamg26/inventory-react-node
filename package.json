@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "customer": "cd customers && npm start",
+    "event-bus": "cd event-bus && npm start",
+    "orders": "cd orders && npm start",
+    "payments": "cd payments && npm start",
+    "products": "cd products && npm start",
+    "shop": "cd shop && npm start",
+    "start": "concurrently \"npm run customer\" \"npm run orders\"  \"npm run shop\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^5.2.0"
+  }
+}

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shop
+  template:
+    metadata:
+      labels:
+        app: shop
+    spec:
+      containers:
+        - name: shop
+          image: us.gcr.io/stately-bulwark-277102/shop
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-srv
+spec:
+  selector:
+    app: shop
+  ports:
+    - name: shop
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
