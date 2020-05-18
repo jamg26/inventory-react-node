@@ -6,6 +6,7 @@ const line_items = new Schema({
   product: Array,
   variant_id: String,
   quantity: String,
+  quantity_max: String,
   order_date: Date,
   price: String,
   original_price: String,

@@ -63,7 +63,10 @@ module.exports = (app) => {
       if (bcrypt.compareSync(request.password, user[0].password)) {
         // Passwords match
         if (user[0].approved_status == "1") {
-          let token = bcrypt.hashSync(user[0].username, 10);
+          let token = bcrypt.hashSync(
+            user[0].username + " " + user[0].password,
+            10
+          );
           user[0].login_token = token;
           await user[0].save();
           // user[0].password = "";
@@ -107,6 +110,26 @@ module.exports = (app) => {
       res.send("0");
     } else {
       res.send("1");
+    }
+  });
+  app.post(keys.sub + "/user/check_auth", async (req, res) => {
+    const request = req.body;
+    const user = await User.findOne({ _id: request._id });
+    console.log(user);
+    if (user != null) {
+      console.log(user.username);
+      if (
+        bcrypt.compareSync(
+          user.username + " " + user.password,
+          request.login_token
+        )
+      ) {
+        res.send({ data: user, status: "OK" });
+      } else {
+        res.send({ data: [], status: "FAILED" });
+      }
+    } else {
+      res.send({ data: [], status: "FAILED" });
     }
   });
 };

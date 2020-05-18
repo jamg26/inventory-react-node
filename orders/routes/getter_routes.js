@@ -18,7 +18,7 @@ module.exports = (app) => {
   app.get(keys.sub + "/", async (req, res) => {
     res.send("order server");
   });
-  app.get(keys.sub + "/customer_cart/:id", checkAuth, async (req, res) => {
+  app.get(keys.sub + "/customer_cart/:id", async (req, res) => {
     const request = req.params;
     const cart = await orders.findOne({ customer: request.id, active: false });
     res.send({ cart });
@@ -26,7 +26,7 @@ module.exports = (app) => {
 
   app.get(
     keys.sub + "/customer_order_history/:id",
-    checkAuth,
+
     async (req, res) => {
       const request = req.params;
       const cart = await orders

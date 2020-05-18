@@ -7,7 +7,7 @@ const orders = mongoose.model("orders");
 const products = mongoose.model("products");
 function checkAuth(req, res, next) {
   const { login_token } = req.body;
-  if (login_token != "") {
+  if (login_token != "" && login_token != undefined) {
     next();
   } else {
     res.status(401).send({ status: "unautorized" });
@@ -40,6 +40,7 @@ module.exports = (app) => {
               {
                 product: index,
                 quantity: data.initial_quantity,
+                quantity_max: data.quantity,
                 price: data.price_raw,
                 original_price: data.price_raw,
                 variant_id: data.product_variant_id,
@@ -81,6 +82,7 @@ module.exports = (app) => {
               product: index,
               quantity: data.initial_quantity,
               price: data.price_raw,
+              quantity_max: data.quantity,
               original_price: data.price_raw,
               variant_id: data.product_variant_id,
               total:
@@ -95,6 +97,25 @@ module.exports = (app) => {
         }
         res.status(201).send(data);
       });
+  });
+  app.post(keys.sub + "/cancel_order", checkAuth, async (req, res) => {
+    const { id } = req.body;
+    await orders.findOne({ _id: id }).then(async (result) => {
+      if (result == null) {
+        res.status(401).send({ status: "Not Found" });
+      } else {
+        if (result.order_status != "Pending") {
+          res.status(401).send({ status: "Invalid Operation" });
+        } else {
+          result.order_status = "Cancelled";
+          await result.save();
+          res.status(200).send({
+            status: "success",
+            message: "Successfully cancelled Order",
+          });
+        }
+      }
+    });
   });
   app.post(keys.sub + "/update_cart", checkAuth, async (req, res) => {
     const {
@@ -130,15 +151,38 @@ module.exports = (app) => {
             await result.save();
             res.send({ cart: result, status: "removed" });
           } else {
+            let message = "";
             let variants = result.line_item;
             for (let x = 0; x < variants.length; x++) {
               if (item_id == variants[x]._id) {
-                variants[x].quantity = quantity;
+                const prod = await products.findOne({
+                  _id: variants[x].product[0]._id,
+                });
+                let max = 0;
+                if (prod != null) {
+                  for (let zx = 0; zx < prod.variants.length; zx++) {
+                    console.log(prod.variants[zx]);
+                    if (prod.variants[zx]._id == variants[x].variant_id) {
+                      max = parseFloat(prod.variants[zx].quantity);
+                      break;
+                    }
+                  }
+                }
+                console.log("max quantity", max);
+                if (quantity <= max) {
+                  variants[x].quantity = quantity;
+                  variants[x].quantity_max = max;
+
+                  message = "updated";
+                } else {
+                  variants[x].quantity_max = max;
+                  message = "don't have enough stock.";
+                }
                 break;
               }
             }
             await result.save();
-            res.send({ cart: result, status: "updated" });
+            res.send({ cart: result, status: message });
           }
         }
       });
@@ -251,7 +295,7 @@ module.exports = (app) => {
       });
     //update product quantity
   });
-  app.post(keys.sub + "/update_staffs", checkAuth, async (req, res) => {
+  app.post(keys.sub + "/update_staffs", async (req, res) => {
     const request = req.body;
     await orders.findOne({ _id: request.order_id }).then(async (result) => {
       if (result == null) {
@@ -276,7 +320,7 @@ module.exports = (app) => {
     });
     // const result = await companies.find();
   });
-  app.post(keys.sub + "/update_staffs_note", checkAuth, async (req, res) => {
+  app.post(keys.sub + "/update_staffs_note", async (req, res) => {
     const request = req.body;
     await orders.findOne({ _id: request.order_id }).then(async (result) => {
       if (result == null) {
