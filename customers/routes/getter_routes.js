@@ -2,18 +2,17 @@ const keys = require("../config/keys");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-//models
+//models{ customer_timeline: { log_text: "Customer Account Created" } }
 const customers = mongoose.model("customers");
 module.exports = (app) => {
   app.get(keys.sub + "/", async (req, res) => {
     res.send("customers server");
   });
-  app.get(keys.sub + "/:id", async (req, res) => {
-    const id = req.params.id;
-    const custo = await customers.findOne({ _id: id });
-    res.send(custo);
+  app.get(keys.sub + "/customers", async (req, res) => {
+    const request = req.query;
+    const result = await customers.find({ active: true });
+    res.send(result);
   });
-
   app.post(keys.sub + "/login", async (req, res) => {
     const request = req.body;
     const user = await customers.find({ username: request.username });
@@ -155,5 +154,10 @@ module.exports = (app) => {
         }
       }
     });
+  });
+  app.get(keys.sub + "/:id", async (req, res) => {
+    const id = req.params.id;
+    const custo = await customers.findOne({ _id: id });
+    res.send(custo);
   });
 };
