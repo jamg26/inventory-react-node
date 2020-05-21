@@ -59,7 +59,7 @@ function Head() {
 
   return [
     <Header
-      className="site-layout-background"
+      className="site-layout-background-store-front"
       style={{ paddingRight: "10px", paddingLeft: "10px" }}
       key="0"
     >

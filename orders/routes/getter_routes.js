@@ -5,6 +5,7 @@ const axios = require("axios");
 //models
 const orders = mongoose.model("orders");
 const products = mongoose.model("products");
+const product_types = mongoose.model("product_types");
 function checkAuth(req, res, next) {
   const { login_token } = req.body;
   console.log(login_token);
@@ -23,7 +24,12 @@ module.exports = (app) => {
     const cart = await orders.findOne({ customer: request.id, active: false });
     res.send({ cart });
   });
-
+  app.get(keys.sub + "/get_categories", async (req, res) => {
+    const product_types_list = await product_types.find({
+      product_type_active: true,
+    });
+    res.send({ product_types_list });
+  });
   app.get(
     keys.sub + "/customer_order_history/:id",
 

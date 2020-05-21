@@ -1,6 +1,12 @@
 .site-layout-background {
   background-color: white !important;
 }
+.site-layout-background-store-front {
+  background-color: #1890ff !important;
+}
+.site-layout-background-store-front * {
+  color: white !important;
+}
 .logo {
   height: 32px;
   background-color: rgba(225, 225, 225, 0.2);
@@ -15,8 +21,7 @@
   width: 100%;
   line-height: 100%;
   height: 100%;
-  max-height: 90vh;
-  max-width: 90vw;
+
   padding: 24px;
   overflow-y: auto;
   overflow-x: auto;
@@ -48,7 +53,7 @@
 }
 /* make antd table scrollable */
 .custom-table .ant-table-content {
-  width: 150%;
+  width: 120%;
 }
 .custom-table .ant-table-container {
   width: 100%;
@@ -81,4 +86,73 @@
 .site-collapse-custom-collapse {
   background-color: transparent !important;
   border-bottom: transparent !important;
+}
+.borderless-radio label {
+  border: 0px solid transparent !important;
+  background-color: white !important;
+}
+.borderless-radio label:not(:first-child)::before {
+  background-color: transparent !important;
+}
+.category-radio label {
+  margin-right: 5px;
+}
+.disabled_quantity_component input,
+.disabled_quantity_component button {
+  cursor: not-allowed;
+}
+.quantity-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 3px;
+}
+.quantity-input:focus {
+  background: red;
+}
+.quantity-input__modifier,
+.quantity-input__screen {
+  user-select: none;
+  outline: none;
+}
+
+.quantity-input__modifier {
+  width: 3rem;
+
+  background: #f3f3f3;
+  color: #888;
+  border: 0 solid #dbdbdb;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(#fff, 0.6);
+
+  cursor: pointer;
+}
+.quantity-input__modifier:hover {
+  background: darken(#f3f3f3, 10%);
+  color: darken(#888, 20%);
+}
+
+.quantity-input__modifier--left {
+  background-color: #8ec661;
+  border-radius: 3px 0 0 3px;
+  color: white;
+}
+.quantity-input__modifier--right {
+  background-color: #8ec661;
+  color: white;
+  border-radius: 0 3px 3px 0;
+}
+.quantity-input__screen {
+  width: 100%;
+  color: white;
+  background-color: #76aa4c;
+  border: 0;
+  border-top: 0 solid #dbdbdb;
+  border-bottom: 0 solid #dbdbdb;
+  text-align: center;
+}
+.catalogue_close_button .ant-modal-close {
+  display: none;
 }

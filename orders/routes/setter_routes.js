@@ -68,8 +68,7 @@ module.exports = (app) => {
           let concat = false;
           for (let c = 0; c < ord.length; c++) {
             if (ord[c].variant_id === data.product_variant_id) {
-              ord[c].quantity =
-                parseFloat(ord[c].quantity) + parseFloat(data.initial_quantity);
+              ord[c].quantity = parseFloat(data.initial_quantity);
               ord[c].total =
                 parseFloat(ord[c].total) +
                 parseFloat(data.price_raw) * parseFloat(data.initial_quantity);

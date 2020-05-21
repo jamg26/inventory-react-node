@@ -25,11 +25,10 @@ import { api_base_url_orders } from "../../../keys/index";
 const { Search } = Input;
 const { Text } = Typography;
 const { TextArea } = Input;
-const Cart = ({ refreshCart, show }) => {
+const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
   const [visible, setVisible] = useState(false);
   const [imgSrc, setImgSrc] = useState("");
   const [productTitle, setProductTitle] = useState("");
-  const [cart, setCart] = useState(null);
   const [cartrow, setCartrow] = useState([]);
   const [deliveryMethod, setDeliveryMethod] = useState("Standard Delivery");
   const [excl, setExcl] = useState(false);
@@ -58,19 +57,7 @@ const Cart = ({ refreshCart, show }) => {
       setDeliveryMethod("Standard Delivery");
     }
   }, [excl]);
-  const get_cart = async () => {
-    console.log("refreshing cart");
-    let customer_id = localStorage.getItem("landing_customer_id");
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_orders + "/customer_cart/" + customer_id,
-      {},
-      { headers: headers }
-    );
-    setCart(response.data.cart);
-  };
+
   useEffect(() => {
     if (cart != null) {
       setProceed(true);
@@ -130,11 +117,7 @@ const Cart = ({ refreshCart, show }) => {
               {node.product.length != 0 &&
               node.product[0].product_tags != undefined
                 ? node.product[0].product_tags.map((d) => {
-                    return [
-                      <Tag color="gold" style={{ marginBottom: "8px" }}>
-                        {d.tag_label}
-                      </Tag>,
-                    ];
+                    return [d.tag_label + " "];
                   })
                 : null}
             </>
@@ -164,12 +147,13 @@ const Cart = ({ refreshCart, show }) => {
             node.product.length != 0 && node.product[0].variants.length != 0
               ? node.product[0].variants[0].weight
               : "No Weight",
+          stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
           image:
             image != null ? (
               <img
                 onClick={() => imageModal(image, node.product[0].product_name)}
                 style={{
-                  width: "25%",
+                  width: "100%",
                   cursor: "pointer",
                   margin: "0 auto",
                 }}
@@ -197,9 +181,9 @@ const Cart = ({ refreshCart, show }) => {
       setProceed(false);
     }
   }, [cart]);
-  useEffect(() => {
-    get_cart();
-  }, [refreshCart]);
+  // useEffect(() => {
+  //   get_cart();
+  // }, [refreshCart]);
   const setInput = async (value, index, column) => {
     let tempdata = [...cartrow];
     let pastvalue = tempdata[index]["initial_quantity"];
@@ -227,12 +211,11 @@ const Cart = ({ refreshCart, show }) => {
         },
         { headers: headers }
       );
-
-      setCart(response.data.cart);
+      get_cart();
+      // setCart(response.data.cart);
     }
   };
   const saveNote = async () => {
-    console.log(cart);
     const headers = {
       "Content-Type": "application/json",
     };
@@ -256,14 +239,14 @@ const Cart = ({ refreshCart, show }) => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      width: "9%",
+      width: "7.08%",
       align: "center",
     },
     {
       title: "Name",
       dataIndex: "product_name",
       key: "product_name",
-      width: "7%",
+      width: "14.54%",
       render: (result, row, index) => {
         return [
           <>
@@ -279,55 +262,62 @@ const Cart = ({ refreshCart, show }) => {
       title: "Category",
       dataIndex: "product_type",
       key: "product_type",
-      width: "7%",
+      width: "11.12%",
     },
     {
       title: "Tags",
       dataIndex: "tags",
       key: "tags",
-      width: "7%",
+      width: "10.96%",
     },
     {
       title: "Brands",
       dataIndex: "brand",
       key: "brand",
-      width: "7%",
+      width: "8.48%",
     },
     {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
-      width: "7%",
-    },
-    {
-      title: "Weight",
+      title: "Variant",
       dataIndex: "weight",
       key: "weight",
-      width: "7%",
+      width: "6.61%",
+      render: (value, result) => {
+        return [
+          <>
+            <Text>{result.size}</Text>
+            <br />
+            <Text>{result.weight}</Text>
+            <br />
+            <Text>{result.color}</Text>
+          </>,
+        ];
+      },
     },
     {
-      title: "Color",
-      dataIndex: "color",
-      key: "color",
-      width: "7%",
+      title: "Stock",
+      dataIndex: "stock",
+      key: "stock",
+      width: "8.55%",
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      width: "7%",
+      width: "7.23%",
+      render: (value) => {
+        return ["\u20B1 " + value];
+      },
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
 
-      width: "7%",
+      width: "6.69%",
       render: (value, result) => {
         return [
           <InputNumber
             key={result.key}
-            disabled={result.quantity > 0 ? false : true}
             value={result.initial_quantity}
             min={0}
             max={parseFloat(value)}
@@ -342,13 +332,17 @@ const Cart = ({ refreshCart, show }) => {
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "7%",
+      width: "7.23%",
+      align: "right",
+      render: (value) => {
+        return [value];
+      },
     },
     {
       title: "Action",
       dataIndex: "actionData",
       key: "actionData",
-      width: "7%",
+      width: "11.51%",
       align: "center",
       render: (value, result) => {
         return [
@@ -356,7 +350,6 @@ const Cart = ({ refreshCart, show }) => {
             <Button
               key="0"
               type="danger"
-              disabled={result.quantity > 0 ? false : true}
               onClick={() => {
                 setInput(0, result.key, "initial_quantity");
               }}
@@ -376,7 +369,7 @@ const Cart = ({ refreshCart, show }) => {
           <Col span="24" key="0">
             <Table
               key="0"
-              className="custom-table"
+              //className="custom-table"
               dataSource={cartrow}
               columns={columns}
               pagination={false}

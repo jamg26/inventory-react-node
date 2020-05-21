@@ -1,13 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
+const compression = require("compression");
 const keys = require("./config/keys");
 
 const bodyParser = require("body-parser");
 
 const app = express();
+app.use(compression());
 var cors = require("cors");
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 //require models
 require("./model");
 //apply CORS middleware
