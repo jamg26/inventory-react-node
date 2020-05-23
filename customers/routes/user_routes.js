@@ -60,40 +60,45 @@ module.exports = (app) => {
     const request = req.body;
     const user = await User.find({ username: request.username });
     if (user.length > 0) {
-      if (bcrypt.compareSync(request.password, user[0].password)) {
-        // Passwords match
-        if (user[0].approved_status == "1") {
-          let token = bcrypt.hashSync(
-            user[0].username + " " + user[0].password,
-            10
-          );
-          user[0].login_token = token;
-          await user[0].save();
-          // user[0].password = "";
-          let check_initial_setup = false;
-          if (user[0].position == "Admin") {
-            if (user[0].company_id.length == 0) {
-              check_initial_setup = true;
-            } else {
-              check_initial_setup = false;
-            }
-          }
-          res.send({
-            token: token,
-            user: user[0],
-            message: "Login Successful",
-            check_initial_setup,
-          });
-        } else {
-          res.send({ token: "", user: [], message: "Login Denied.." });
-        }
+      console.log(user[0].status);
+      if (user[0].status == false) {
+        res.send({ token: "", user: [], message: "Account has been disabled" });
       } else {
-        // Passwords don't match
-        res.send({
-          token: "",
-          user: [],
-          message: "username and password does not match.",
-        });
+        if (bcrypt.compareSync(request.password, user[0].password)) {
+          // Passwords match
+          if (user[0].approved_status == "1") {
+            let token = bcrypt.hashSync(
+              user[0].username + " " + user[0].password,
+              10
+            );
+            user[0].login_token = token;
+            await user[0].save();
+            // user[0].password = "";
+            let check_initial_setup = false;
+            if (user[0].position == "Admin") {
+              if (user[0].company_id.length == 0) {
+                check_initial_setup = true;
+              } else {
+                check_initial_setup = false;
+              }
+            }
+            res.send({
+              token: token,
+              user: user[0],
+              message: "Login Successful",
+              check_initial_setup,
+            });
+          } else {
+            res.send({ token: "", user: [], message: "Login Denied.." });
+          }
+        } else {
+          // Passwords don't match
+          res.send({
+            token: "",
+            user: [],
+            message: "username and password does not match.",
+          });
+        }
       }
     } else {
       res.send({ token: "", user: [], message: "Username does not exist" });
@@ -117,16 +122,20 @@ module.exports = (app) => {
     const user = await User.findOne({ _id: request._id });
     console.log(user);
     if (user != null) {
-      console.log(user.username);
-      if (
-        bcrypt.compareSync(
-          user.username + " " + user.password,
-          request.login_token
-        )
-      ) {
-        res.send({ data: user, status: "OK" });
+      if (user.status == true) {
+        console.log(user.username);
+        if (
+          bcrypt.compareSync(
+            user.username + " " + user.password,
+            request.login_token
+          )
+        ) {
+          res.send({ data: user, status: "OK" });
+        } else {
+          res.send({ data: [], status: "FAILED" });
+        }
       } else {
-        res.send({ data: [], status: "FAILED" });
+        res.send({ data: [], status: "INACTIVE ACCOUNT" });
       }
     } else {
       res.send({ data: [], status: "FAILED" });

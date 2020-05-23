@@ -13,6 +13,7 @@ import PendingOrders from "../components/PendingOrders";
 import CancelledOrders from "../components/CancelledOrders";
 import OrderDetails from "../components/order_details";
 import { api_base_url_orders } from "../../../keys/index";
+import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 function Orders(props) {
@@ -157,7 +158,7 @@ function Orders(props) {
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

@@ -15,6 +15,7 @@ require("./model");
 app.use(cors());
 //require Routes
 require("./routes/getter_routes")(app);
+require("./routes/stock_control_routes")(app);
 require("./routes/setter_routes")(app);
 require("./routes/event_routes")(app);
 require("./routes/product_routes")(app);

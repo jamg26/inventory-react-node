@@ -25,13 +25,13 @@ const POSchema = new Schema({
   received_by: [{ type: Schema.Types.ObjectId, ref: "users" }],
   due_date: Date,
   received: {
-    Type: Boolean,
+    type: Boolean,
     default: false,
   },
   type: String,
   po_items: [po_items],
   status: {
-    Type: String,
+    type: String,
     default: "Open",
   },
   created_at: Date,

@@ -14,6 +14,8 @@ require("./model");
 app.use(cors());
 //require Routes
 require("./routes/user_routes")(app);
+require("./routes/staff_routes")(app);
+
 require("./routes/getter_routes")(app);
 
 //connecting to MongoDB Database

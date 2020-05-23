@@ -8,6 +8,7 @@ import AccountDetails from "../components/accountDetails";
 import AccountCredentials from "../components/accountCredentials";
 import { checkAuth } from "../../helper/authCheck";
 import { withRouter, Link } from "react-router-dom";
+import LoadingPage from "../../global-components/loading";
 import axios from "axios";
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -55,7 +56,7 @@ function Dashboard(props) {
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

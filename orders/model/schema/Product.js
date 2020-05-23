@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 
 const variants = new Schema({
   option_title: String,
-  supplier: [{ type: Schema.Types.ObjectId, ref: "suppliers" }],
+  // supplier: [{ type: Schema.Types.ObjectId, ref: "suppliers" }],
+  supplier: Object,
   supplier_price: String,
   price_with_tax: String,
   price_without_tax: String,
@@ -23,7 +24,7 @@ const variants = new Schema({
   size: String,
   active: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   created_at: Date,
   updated_at: Date,
@@ -40,7 +41,7 @@ const ProductSchema = new Schema({
   product_tags: [product_tags],
   active: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   variants: [variants], //should always have atleast one variant
   created_at: Date,

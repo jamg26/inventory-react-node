@@ -22,7 +22,8 @@ import AdminAnalytics from "../components/admin/pages/analytics";
 import AdminCustomers from "../components/admin/pages/customers";
 import AdminOrders from "../components/admin/pages/orders";
 import AdminProducts from "../components/admin/pages/products";
-
+import AdminUsers from "../components/admin/pages/users";
+import AdminStockControl from "../components/admin/pages/stock_control";
 import axios from "axios";
 import { Button, Result } from "antd";
 import { api_base_url, api_base_url_orders } from "../keys";
@@ -70,17 +71,24 @@ const RouteController = ({ setNav, orders, users, get_orders, ABorders }) => (
                 <Route key={1} exact path="/web-admin/home">
                   <AdminHome no={1} />
                 </Route>
-                <Route key={2} exact path="/web-admin/orders">
-                  <AdminOrders no={2} />
+                <Route key={2} exact path="/web-admin/stock_control">
+                  <AdminStockControl no={2} />
                 </Route>
-                <Route key={3} exact path="/web-admin/products">
-                  <AdminProducts no={3} />
+
+                <Route key={3} exact path="/web-admin/orders">
+                  <AdminOrders no={3} />
                 </Route>
-                <Route key={4} exact path="/web-admin/customers">
-                  <AdminCustomers no={4} />
+                <Route key={4} exact path="/web-admin/products">
+                  <AdminProducts no={4} />
                 </Route>
-                <Route key={5} exact path="/web-admin/analytics">
-                  <AdminAnalytics no={5} />
+                <Route key={5} exact path="/web-admin/customers">
+                  <AdminCustomers no={5} />
+                </Route>
+                <Route key={6} exact path="/web-admin/analytics">
+                  <AdminAnalytics no={6} />
+                </Route>
+                <Route key={7} exact path="/web-admin/users">
+                  <AdminUsers no={7} />
                 </Route>
                 <Route key={6}>
                   <Result

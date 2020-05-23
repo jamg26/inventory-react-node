@@ -6,6 +6,7 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import Side from "../inc/side";
 import Header from "../inc/header";
 import { withRouter } from "react-router-dom";
+import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
 function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
@@ -57,7 +58,7 @@ function Dashboard(props) {
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

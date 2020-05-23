@@ -24,6 +24,7 @@ import Fulfillments from "../components/orders/fulfillments";
 import Customer from "../components/orders/customer";
 import AbandonedCart from "../components/orders/abandoned_cart";
 import OrderDetails from "../components/orders/order_details";
+import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -123,7 +124,7 @@ function Dashboard(props) {
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

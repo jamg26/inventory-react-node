@@ -7,6 +7,7 @@ import { checkAuth } from "../../helper/authCheck";
 import SamplePayPal from "../components/SamplePaypal";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
+import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 function Orders(props) {
@@ -35,14 +36,14 @@ function Orders(props) {
                 className="site-page-header"
                 title={"Accumulated Points"}
               />
-              <SamplePayPal />
+              {/* <SamplePayPal /> */}
             </div>
           </Content>
         </Layout>
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

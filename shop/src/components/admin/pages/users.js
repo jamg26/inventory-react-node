@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../routes/routes";
 import { Button, Layout, Menu, PageHeader } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import { checkAuth } from "../../helper/authCheckAdmin";
+import { ArrowRightOutlined, UserAddOutlined } from "@ant-design/icons";
 import Side from "../inc/side";
 import Header from "../inc/header";
+import { checkAuth } from "../../helper/authCheckAdmin";
 import { withRouter } from "react-router-dom";
-import LoadingPage from "../../global-components/loading";
+import Add from "./functions/addStaff";
+import Table from "./functions/staffTable";
+
 const { Content } = Layout;
 function Dashboard(props) {
-  const [collaped, setCollaped] = useState(false);
   const [showComponent, setShowComponent] = useState(false);
   useEffect(() => {
     checkAuth(props, setShowComponent);
   }, []);
+  const [collaped, setCollaped] = useState(false);
   const toggle = () => {
     setCollaped(!collaped);
   };
-  if (showComponent) {
-    return [
-      <Layout key="0">
+
+  return [
+    <>
+      <Layout>
         <Side no={props.no} />
         <Layout style={{ height: "100vh" }}>
           <Header />
@@ -33,13 +36,11 @@ function Dashboard(props) {
             <div className="site-layout-background dyn-height">
               <PageHeader
                 className="site-page-header"
-                title="Customers"
+                title="Staff"
                 onBack={() => props.history.goBack()}
                 extra={[
                   <Button
-                    key="0"
                     onClick={() => {
-                      console.log(props.history);
                       props.history.go(+1);
                     }}
                     type="link"
@@ -50,16 +51,15 @@ function Dashboard(props) {
                   </Button>,
                   ,
                 ]}
-                // subTitle="This is a subtitle"asdas
+                // subTitle="This is a subtitle"
               />
+              <Table />
             </div>
           </Content>
         </Layout>
-      </Layout>,
-    ];
-  } else {
-    return [<LoadingPage tip="loading page..." />];
-  }
+      </Layout>
+    </>,
+  ];
 }
 
 export default withRouter(Dashboard);

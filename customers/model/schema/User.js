@@ -9,6 +9,21 @@ const UserSchema = new Schema({
   position: String,
   email_verified_at: Date,
   password: String,
+  birthday: String,
+  address: String,
+  action_log: Array,
+  //notes
+  note: [
+    {
+      info: String,
+      status: Boolean,
+    },
+  ],
+  //status for active or disabled
+  status: {
+    type: Boolean,
+    default: true,
+  },
   company_id: [{ type: Schema.Types.ObjectId, ref: "companies" }],
   approved_status: {
     type: Boolean,

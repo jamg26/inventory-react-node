@@ -31,6 +31,7 @@ import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import { api_base_url } from "../../../keys";
 import { checkAuth } from "../../helper/authCheck";
+import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
 function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
@@ -167,7 +168,7 @@ function Dashboard(props) {
       </div>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 

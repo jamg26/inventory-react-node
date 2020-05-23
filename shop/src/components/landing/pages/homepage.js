@@ -10,6 +10,7 @@ import {
   Radio,
   Typography,
   Space,
+  Spin,
 } from "antd";
 import Side from "../inc/side";
 import Header from "../inc/header";
@@ -19,6 +20,7 @@ import ProductList from "../components/ProductList";
 import { checkAuth } from "../../helper/authCheck";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
+import LoadingPage from "../../global-components/loading";
 import { api_base_url_orders } from "../../../keys/index";
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -182,7 +184,7 @@ function Dashboard(props) {
       </Layout>,
     ];
   } else {
-    return null;
+    return [<LoadingPage tip="loading page..." />];
   }
 }
 
