@@ -20,12 +20,11 @@ function FileUpload(props) {
   const changeBackColor = () => {
     setColorBorder(originColor);
   };
-  console.log(imageFile);
   return (
-    <div style={{ padding: "40px 40px 0px 70px" }}>
+    <div>
       <label style={{ fontWeight: "bold", color: "black" }}>Upload image</label>
       <div style={{ textAlign: "center", padding: "10px" }}>
-        {imageFile == "" ? (
+        {imageFile == undefined || imageFile == "" ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <img alt="preview" style={{ width: "50%" }} src={imageFile} />

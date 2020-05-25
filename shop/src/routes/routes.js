@@ -23,6 +23,7 @@ import AdminCustomers from "../components/admin/pages/customers";
 import AdminOrders from "../components/admin/pages/orders";
 import AdminProducts from "../components/admin/pages/products";
 import AdminUsers from "../components/admin/pages/users";
+import AdminSupplier from "../components/admin/pages/suppliers";
 import AdminStockControl from "../components/admin/pages/stock_control";
 import axios from "axios";
 import { Button, Result } from "antd";
@@ -89,6 +90,9 @@ const RouteController = ({ setNav, orders, users, get_orders, ABorders }) => (
                 </Route>
                 <Route key={7} exact path="/web-admin/users">
                   <AdminUsers no={7} />
+                </Route>
+                <Route key={8} exact path="/web-admin/suppliers">
+                  <AdminSupplier no={8} />
                 </Route>
                 <Route key={6}>
                   <Result

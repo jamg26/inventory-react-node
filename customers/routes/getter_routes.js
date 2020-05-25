@@ -13,6 +13,10 @@ module.exports = (app) => {
     const result = await customers.find({ active: true });
     res.send(result);
   });
+  app.get(keys.sub + "/get_customer_list_count", async (req, res) => {
+    const result = await customers.countDocuments({ active: true });
+    res.status(200).send({ count: result, status: "OK" });
+  });
   app.post(keys.sub + "/login", async (req, res) => {
     const request = req.body;
     const user = await customers.find({ username: request.username });

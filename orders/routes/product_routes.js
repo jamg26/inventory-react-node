@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 //models
 const products = mongoose.model("products");
 const productTags = mongoose.model("product_tags");
+const product_type = mongoose.model("product_types");
 module.exports = (app) => {
   app.get(keys.sub + "/products", async (req, res) => {
     const reponse = await products
@@ -78,6 +79,31 @@ module.exports = (app) => {
       }
     });
   });
+  app.post(keys.sub + "/add_new_product_type", async (req, res) => {
+    const { newProductType } = req.body;
+    const productpp = new product_type({
+      product_type_name: newProductType,
+    });
+    productpp
+      .save()
+      .then((pp) => {
+        res.send({
+          status: "OK",
+          message: "Successfully Added new Product Type",
+        });
+      })
+      .catch((err) => {
+        res
+          .status(400)
+          .send({ status: "ERROR", message: "something went wrong" });
+      });
+  });
+  app.get(keys.sub + "/product_type_list", async (req, res) => {
+    const product_types = await product_type.find({
+      product_type_active: true,
+    });
+    res.send(product_types);
+  });
   // Create a new Product
   app.post(keys.sub + "/products/add", async (req, res) => {
     let product = new products(req.body);
@@ -104,7 +130,40 @@ module.exports = (app) => {
       }
     });
   });
+  app.post(keys.sub + "/products/update_variant", async (req, res) => {
+    const request = req.body;
+    products.findById(request.product_id, function (err, product) {
+      if (!product) {
+        res.status(400).send("data not found");
+      } else {
+        var variant_id = req.body.variant_id;
+        product.variants.forEach((element, index, variants) => {
+          if (element._id == variant_id) {
+            variants[index].option_title = request.variant_name;
+            variants[index].sku = request.sku;
+            variants[index].brand = request.brand;
+            variants[index].color = request.color;
+            variants[index].size = request.size;
+            variants[index].supplier_price = request.supplier_price;
+            variants[index].markup = request.variant_markup;
+            variants[index].price_without_tax = request.price_wo_tax;
+            variants[index].price_with_tax = request.price_w_tax;
+            variants[index].price = request.final_price;
+            variants[index].images = request.imageFile;
+          }
+        });
 
+        product
+          .save()
+          .then((prod) => {
+            res.json("Successfully Updated Variant Details");
+          })
+          .catch((err) => {
+            res.status(400).send("something went wrong!!");
+          });
+      }
+    });
+  });
   // Update a Product Status with id
   app.post(keys.sub + "/products/update_status/:id", async (req, res) => {
     products.findById(req.params.id, function (err, product) {

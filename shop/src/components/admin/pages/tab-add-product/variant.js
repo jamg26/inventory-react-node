@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -7,12 +7,14 @@ import {
   Input,
   Typography,
   Popconfirm,
+  InputNumber,
 } from "antd";
 import {
   CloseOutlined,
   CheckOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
+import numeral from "numeral";
 import { api_base_url, api_base_url_orders } from "../../../../keys/index";
 
 function Pricing(props) {
@@ -27,10 +29,14 @@ function Pricing(props) {
     setVariants,
     variantToTable,
     markupData,
+    showDiv,
+    setshowDiv,
   } = props;
-
+  useEffect(() => {
+    variantToTable();
+  }, [colors, sizes]);
   const [elementDisabled, setElementDisabled] = useState(true);
-  const [showDiv, setShowDiv] = useState(false);
+  // const [showDiv, setshowDiv] = useState(false);
   const [editingIndex, setEditingIndex] = useState(undefined);
   const [editable, setEditable] = useState(true);
   const handleChangeColor = (value) => {
@@ -41,7 +47,7 @@ function Pricing(props) {
   };
   const showOrEnable = () => {
     setElementDisabled(!elementDisabled);
-    setShowDiv(!showDiv);
+    setshowDiv(!showDiv);
     setColors([]);
     setSizes([]);
   };
@@ -60,8 +66,25 @@ function Pricing(props) {
     let tempdata = [...variants];
     let indexKey = tempdata.findIndex((item) => index === item.key);
     if (index > -1) {
-      const item = tempdata[index];
-      tempdata.splice(indexKey, 1, { ...item });
+      let item = tempdata[index];
+      let supplier_price = item.supplier_price;
+      let supplier_markup = parseFloat(markupData) / parseFloat(100);
+      item.price_without_tax =
+        parseFloat(supplier_price) +
+        parseFloat(supplier_price) * parseFloat(supplier_markup);
+      item.price_with_tax =
+        parseFloat(supplier_price) +
+        parseFloat(supplier_price) * parseFloat(supplier_markup) +
+        parseFloat(supplier_price) * parseFloat(0.12);
+      item.price =
+        parseFloat(supplier_price) +
+        parseFloat(supplier_price) * parseFloat(supplier_markup) +
+        parseFloat(supplier_price) * parseFloat(0.12);
+
+      console.log("item", tempdata);
+      console.log("indexKey", indexKey);
+      tempdata.splice(index, 1, { ...item });
+      console.log("item 2", tempdata);
       setVariants(tempdata);
       setEditingIndex(undefined);
     }
@@ -100,13 +123,16 @@ function Pricing(props) {
       render: (value, row, index) => {
         if (index === editingIndex) {
           return [
-            <Input
+            <InputNumber
               key={index}
+              style={{ width: "100%" }}
               disabled={editable}
               value={value}
-              onChange={(event) =>
-                setInput(event.target.value, index, "quantity")
+              onChange={(event) => setInput(event, index, "quantity")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
             />,
           ];
         } else {
@@ -117,6 +143,25 @@ function Pricing(props) {
     {
       title: "Supply Price",
       dataIndex: "supplier_price",
+      render: (value, row, index) => {
+        if (index === editingIndex) {
+          return [
+            <InputNumber
+              key={index}
+              style={{ width: "100%" }}
+              disabled={editable}
+              value={value}
+              onChange={(event) => setInput(event, index, "supplier_price")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />,
+          ];
+        } else {
+          return [<Typography key={index}>{value}</Typography>];
+        }
+      },
     },
     {
       title: "Markup (%)",
@@ -126,14 +171,23 @@ function Pricing(props) {
     {
       title: "Retail Price (w/o tax)",
       dataIndex: "price_without_tax",
+      render: (value) => {
+        return [numeral(value).format("0,0.0")];
+      },
     },
     {
       title: "Retail Price (w/ tax)",
       dataIndex: "price_with_tax",
+      render: (value) => {
+        return [numeral(value).format("0,0.0")];
+      },
     },
     {
       title: "Final Retail Price",
-      dataIndex: "price_with_tax",
+      dataIndex: "price",
+      render: (value) => {
+        return [numeral(value).format("0,0.0")];
+      },
     },
     {
       title: "Action",

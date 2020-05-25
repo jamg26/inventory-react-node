@@ -224,7 +224,12 @@ const EditableTable = () => {
       >
         Add
       </Button>
-      <Table columns={columns} rowKey={"id"} dataSource={data} />
+      <Table
+        columns={columns}
+        rowKey={"id"}
+        dataSource={data}
+        pagination={{ position: ["bottomCenter"], size: "small" }}
+      />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
   TagOutlined,
   UserOutlined,
   UserAddOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 const { Header, Footer, Sider, Content } = Layout;
@@ -53,6 +54,12 @@ function Side(props) {
           <Link to="/web-admin/products" key="2">
             <TagOutlined />
             <span className="nav-text">Inventory</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="8">
+          <Link to="/web-admin/suppliers" key="8">
+            <TeamOutlined />
+            <span className="nav-text">Suppliers</span>
           </Link>
         </Menu.Item>
         <Menu.Item key="5">

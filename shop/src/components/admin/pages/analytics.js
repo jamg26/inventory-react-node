@@ -1,23 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { UserContext } from "../../../routes/routes";
-import { Button, Layout, Menu, PageHeader } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Layout,
+  Row,
+  Col,
+  Typography,
+  PageHeader,
+  Statistic,
+  Card,
+} from "antd";
+import {
+  ArrowRightOutlined,
+  UserOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
 import { checkAuth } from "../../helper/authCheckAdmin";
 import Side from "../inc/side";
 import Header from "../inc/header";
 import { withRouter } from "react-router-dom";
 import LoadingPage from "../../global-components/loading";
+import UserCount from "./analytics-cards/user_count_card";
+import AbandonedCarts from "./analytics-cards/abandoned_cart";
+import LowStocks from "./analytics-cards/product_on_low_stock";
+import NoStocks from "./analytics-cards/product_on_no_stock";
+import ActivePO from "./analytics-cards/active_po";
+import DuePO from "./analytics-cards/due_po";
+import { api_base_url_orders } from "../../../keys/index";
 const { Content } = Layout;
+const { Text } = Typography;
 function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
   const [showComponent, setShowComponent] = useState(false);
+  const [products, setProducts] = useState([]);
+  const get_products = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.get(
+      api_base_url_orders + "/products",
+      {},
+      { headers: headers }
+    );
+    setProducts(response.data);
+  };
   useEffect(() => {
     checkAuth(props, setShowComponent);
+    get_products();
   }, []);
-  // console.log(useContext(UserContext));
-  const toggle = () => {
-    setCollaped(!collaped);
-  };
   if (showComponent) {
     return [
       <Layout key="0">
@@ -40,7 +71,6 @@ function Dashboard(props) {
                   <Button
                     key="0"
                     onClick={() => {
-                      console.log(props.history);
                       props.history.go(+1);
                     }}
                     type="link"
@@ -51,8 +81,43 @@ function Dashboard(props) {
                   </Button>,
                   ,
                 ]}
-                // subTitle="This is a subtitle"
               />
+              <Row gutter={[16, 16]}>
+                <Col span={6}>
+                  <Card>
+                    <UserCount />
+                  </Card>
+                </Col>
+                <Col span={6}>
+                  <Card>
+                    <AbandonedCarts />
+                  </Card>
+                </Col>
+              </Row>
+              <Row gutter={[16, 16]}>
+                <Col span="12">
+                  <Card title="Products on Low Stocks">
+                    <LowStocks products={products} />
+                  </Card>
+                </Col>
+                <Col span="12">
+                  <Card title="Products on No Stocks">
+                    <NoStocks products={products} />
+                  </Card>
+                </Col>
+              </Row>
+              <Row gutter={[16, 16]}>
+                <Col span="12">
+                  <Card title="Active Purchase Orders">
+                    <ActivePO />
+                  </Card>
+                </Col>
+                <Col span="12">
+                  <Card title="Near Due Purchase Orders">
+                    <DuePO />
+                  </Card>
+                </Col>
+              </Row>
             </div>
           </Content>
         </Layout>

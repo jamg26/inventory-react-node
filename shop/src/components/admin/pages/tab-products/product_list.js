@@ -38,9 +38,6 @@ function ProductList() {
           )
         );
         setData(res.data);
-        //setTags(arrtag);
-        console.log(arrtag);
-        console.log(res.data);
       })
       .catch(function (err) {
         console.log(err);
@@ -230,7 +227,7 @@ function ProductList() {
         columns={columns}
         rowKey={"_id"}
         dataSource={data}
-        pagination={{ position: "bottomRight" }}
+        pagination={{ position: ["bottomCenter"], size: "small" }}
         rowSelection={{ ...rowSelection }}
       />
     </div>

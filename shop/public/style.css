@@ -162,3 +162,12 @@
   left: 50%;
   top: 50%;
 }
+.LeftRightDescrptionContainer .ant-descriptions-item-content {
+  text-align: left !important;
+}
+.invalid_input {
+  border: 1px solid #e23737 !important;
+}
+.valid_input {
+  border: 1px solid unset !important;
+}

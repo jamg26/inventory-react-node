@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { UserContext } from "../../../routes/routes";
 import { Button, Layout, Menu, PageHeader, Tabs, Typography, Form } from "antd";
-import { ArrowRightOutlined, FastForwardOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, InboxOutlined } from "@ant-design/icons";
 import { checkAuth } from "../../helper/authCheckAdmin";
 import Side from "../inc/side";
 import Header from "../inc/header";
@@ -15,16 +15,20 @@ import Variant from "./tab-add-product/variant";
 import ProductList from "./tab-products/product_list";
 import VariantList from "./tab-product-variants/variant_list";
 import LoadingPage from "../../global-components/loading";
+import AddSupplierModal from "../../global-components/add_supplier";
+import LowStock from "./analytics-cards/product_on_low_stock";
+import numeral from "numeral";
 import axios from "axios";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 function Dashboard(props) {
   const [showComponent, setShowComponent] = useState(false);
-  useEffect(() => {
-    checkAuth(props, setShowComponent);
-  }, []);
-  console.log(props);
+  const [products, setProducts] = useState([]);
+  const [show_add_supplier_modal, set_show_add_supplier_modal] = useState(
+    false
+  );
+
   const initialProductTypeState = {
     _id: "",
     product_type_name: "",
@@ -71,10 +75,7 @@ function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
   const [variant, setVariant] = useState(initialVariantState);
   const [product, setProduct] = useState(initialProductState);
-  const toggle = (key) => {
-    setCollaped(!collaped);
-    //console.log(key);
-  };
+
   //states of product
   const [productName, setProductName] = useState(product.product_name);
   const [productDesc, setProductDesc] = useState(product.product_description);
@@ -90,14 +91,10 @@ function Dashboard(props) {
   );
   const [productSKU, setProductSKU] = useState(variant.sku);
   const [productBarcode, setProductBarcode] = useState(variant.barcode);
-  const [productInitialStock, setProductInitialStock] = useState(
-    variant.quantity
-  );
-  const [productSupplyPrice, setProductSupplyPrice] = useState(
-    variant.supplier_price
-  );
-  const [prodMarkup, setProdMarkup] = useState("");
-
+  const [productInitialStock, setProductInitialStock] = useState(0);
+  const [productSupplyPrice, setProductSupplyPrice] = useState(0);
+  const [prodMarkup, setProdMarkup] = useState(0);
+  const [showDiv, setshowDiv] = useState(false);
   //states of tag
   const [inputValue, setInputValue] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
@@ -119,7 +116,9 @@ function Dashboard(props) {
       title: "Supply Price",
       dataIndex: "supply_price",
       render: (value) => (
-        <p style={{ marginBottom: -3 }}>{"₱" + productSupplyPrice}</p>
+        <p style={{ marginBottom: -3 }}>
+          {numeral(productSupplyPrice).format("0,0.0")}
+        </p>
       ),
     },
     {
@@ -132,12 +131,14 @@ function Dashboard(props) {
       dataIndex: "retail_no_tax",
       render: (value) => (
         <p style={{ marginBottom: -3 }}>
-          {(parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-          parseInt(productSupplyPrice)
-            ? "₱" +
-              ((parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-                parseInt(productSupplyPrice))
-            : "₱"}
+          {(parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice)
+            ? numeral(
+                (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) /
+                  100 +
+                  parseFloat(productSupplyPrice)
+              ).format("0,0.0")
+            : ""}
         </p>
       ),
     },
@@ -146,16 +147,18 @@ function Dashboard(props) {
       dataIndex: "retail_with_tax",
       render: (value) => (
         <p style={{ marginBottom: -3 }}>
-          {(parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-          parseInt(productSupplyPrice) +
-          parseInt(productSupplyPrice) * parseFloat(0.12)
-            ? "₱" +
-              (
-                (parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-                parseInt(productSupplyPrice) +
-                parseInt(productSupplyPrice) * parseFloat(0.12)
-              ).toFixed(2)
-            : "₱"}
+          {(parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice) +
+          parseFloat(productSupplyPrice) * parseFloat(0.12)
+            ? numeral(
+                (
+                  (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) /
+                    100 +
+                  parseFloat(productSupplyPrice) +
+                  parseFloat(productSupplyPrice) * parseFloat(0.12)
+                ).toFixed(2)
+              ).format("0,0.0")
+            : ""}
         </p>
       ),
     },
@@ -164,16 +167,18 @@ function Dashboard(props) {
       dataIndex: "final_retail_price",
       render: (value) => (
         <p style={{ marginBottom: -3 }}>
-          {(parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-          parseInt(productSupplyPrice) +
-          parseInt(productSupplyPrice) * parseFloat(0.12)
-            ? "₱" +
-              (
-                (parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-                parseInt(productSupplyPrice) +
-                parseInt(productSupplyPrice) * parseFloat(0.12)
-              ).toFixed(2)
-            : "₱"}
+          {(parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice) +
+          parseFloat(productSupplyPrice) * parseFloat(0.12)
+            ? numeral(
+                (
+                  (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) /
+                    100 +
+                  parseFloat(productSupplyPrice) +
+                  parseFloat(productSupplyPrice) * parseFloat(0.12)
+                ).toFixed(2)
+              ).format("0,0.0")
+            : ""}
         </p>
       ),
     },
@@ -185,11 +190,49 @@ function Dashboard(props) {
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [variantData, setVariantData] = useState([]);
+  const [SupplierList, setSupplierList] = useState([]);
   //const [submitVariant, setSubmitVariant] = useState([]);
+
+  const get_products = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.get(
+      api_base_url_orders + "/products",
+      {},
+      { headers: headers }
+    );
+    setProducts(response.data);
+  };
+  const get_suppliers = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.get(
+      api_base_url_orders + "/supplier_list",
+      {},
+      { headers: headers }
+    );
+    setSupplierList(response.data);
+  };
+  useEffect(() => {
+    checkAuth(props, setShowComponent);
+    get_products();
+    get_suppliers();
+  }, []);
+  const toggle = (key) => {
+    setCollaped(!collaped);
+    //console.log(key);
+  };
   const applyVariant = () => {
     let newArray = [];
-    selectedColors.forEach((element) => {
-      selectedSizes.forEach((x) => {
+    console.log("applyingvariants");
+    let selectedColorsContainer =
+      selectedColors.length != 0 ? selectedColors : [""];
+    let selectedSizesContainer =
+      selectedSizes.length != 0 ? selectedSizes : [""];
+    selectedColorsContainer.forEach((element) => {
+      selectedSizesContainer.forEach((x) => {
         newArray.push((element + "/" + x).toString());
       });
     });
@@ -200,39 +243,38 @@ function Dashboard(props) {
       var split = newArray[index].split("/");
       let newData = {
         id: count,
-        option_title: productName + " - " + newArray[count],
-        supplier: {
-          company_name: productSupplier,
-          supplier_code: productSupplierCode,
-        },
-        supplier_price: "₱" + productSupplyPrice,
-        price_with_tax:
-          "₱" +
-          (
-            (parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-            parseInt(productSupplyPrice) +
-            parseInt(productSupplyPrice) * parseFloat(0.12)
-          )
-            .toFixed(2)
-            .toString(),
-        price_without_tax:
-          "₱" +
-          (
-            (parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-            parseInt(productSupplyPrice)
-          ).toString(),
+        option_title:
+          productName +
+          (productName != "" && (split[0] != "" || split[1] != "")
+            ? " - "
+            : "") +
+          split[0] +
+          (split[0] != "" && split[1] != "" ? " / " : "") +
+          split[1],
+        supplier: productSupplier,
+        supplier_price: productSupplyPrice,
+        markup: prodMarkup,
+        price_with_tax: (
+          (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice) +
+          parseFloat(productSupplyPrice) * parseFloat(0.12)
+        )
+          .toFixed(2)
+          .toString(),
+        price_without_tax: (
+          (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice)
+        ).toString(),
         sku: productSKU,
-        price:
-          "₱" +
-          (
-            (parseInt(prodMarkup) * parseInt(productSupplyPrice)) / 100 +
-            parseInt(productSupplyPrice) +
-            parseInt(productSupplyPrice) * parseFloat(0.12)
-          )
-            .toFixed(2)
-            .toString(),
+        price: (
+          (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
+          parseFloat(productSupplyPrice) +
+          parseFloat(productSupplyPrice) * parseFloat(0.12)
+        )
+          .toFixed(2)
+          .toString(),
         images: imagePreview,
-        discounter_price: "₱" + productSupplyPrice,
+        discounter_price: productSupplyPrice,
         barcode: productBarcode,
         quantity: productInitialStock,
         brand: productBrand,
@@ -264,30 +306,52 @@ function Dashboard(props) {
     setSelectedSizes([]);
     setVariantData([]);
   };
-
+  useEffect(() => {
+    if (showDiv === false) {
+      if (
+        prodMarkup != "" &&
+        productInitialStock != "" &&
+        productSupplyPrice != ""
+      ) {
+        applyVariant();
+      }
+    }
+  }, [prodMarkup, productInitialStock, productSupplyPrice]);
   const addProduct = () => {
     if (productName === "") {
       alert("Please input a product name!");
+    } else if (prodMarkup == "") {
+      alert("Please input a markup!");
+    } else if (productInitialStock == "") {
+      alert("Please input a initial stock!");
+    } else if (productSupplyPrice == "") {
+      alert("Please input a supplier price!");
     } else {
       var dataProdType = {
         product_type_name: productType,
         product_type_description: productType + " type description",
       };
+      var selectedt = [];
+      for (let c = 0; c < selectedTags.length; c++) {
+        selectedt.push({
+          id: c,
+          tag_label: selectedTags[c],
+        });
+      }
       var dataProd = {
         product_name: productName,
         product_description: productDesc,
-        product_type: undefined,
-        product_tags: selectedTags,
+        product_type: productType,
+        product_tags: selectedt,
         variants: variantData,
         active: true,
       };
       console.log(dataProd);
       axios
         .post(api_base_url_orders + "/products/add", dataProd)
-        .then((res) => console.log(res.data))
+        .then((res) => clearAllInputs())
         .catch((err) => console.log(err.message));
     }
-    clearAllInputs();
   };
 
   if (showComponent) {
@@ -312,7 +376,6 @@ function Dashboard(props) {
                   <Button
                     key="0"
                     onClick={() => {
-                      console.log(props.history);
                       props.history.go(+1);
                     }}
                     type="link"
@@ -325,10 +388,29 @@ function Dashboard(props) {
                 ]}
                 // subTitle="This is a subtitle"
               />
+              <AddSupplierModal
+                show_add_supplier_modal={show_add_supplier_modal}
+                close={() => {
+                  set_show_add_supplier_modal(false);
+                }}
+                callback={() => {
+                  get_suppliers();
+                }}
+              />
               <Tabs
                 defaultActiveKey="1"
                 tabBarStyle={{ paddingLeft: "20px", paddingRight: "20px" }}
                 type="card"
+                tabBarExtraContent={
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      set_show_add_supplier_modal(true);
+                    }}
+                  >
+                    <InboxOutlined /> Add Supplier
+                  </Button>
+                }
               >
                 <TabPane tab="All Products" key="1">
                   <ProductList />
@@ -361,6 +443,7 @@ function Dashboard(props) {
                     >
                       <div style={{ width: "55%" }}>
                         <AddProduct
+                          SupplierList={SupplierList}
                           prodName={productName}
                           setProdName={(val) => setProductName(val)}
                           prodDesc={productDesc}
@@ -390,7 +473,9 @@ function Dashboard(props) {
                           setMarkup={(val) => setProdMarkup(val)}
                         />
                       </div>
-                      <div style={{ flexGrow: 1, width: "45%" }}>
+                      <div
+                        style={{ flexGrow: 1, width: "45%", padding: "10px" }}
+                      >
                         <UploadImage
                           imageFile={imagePreview}
                           setImageFile={setImagePreview}
@@ -409,6 +494,8 @@ function Dashboard(props) {
                         setVariants={setVariantData}
                         variantToTable={applyVariant}
                         markupData={prodMarkup}
+                        showDiv={showDiv}
+                        setshowDiv={setshowDiv}
                       />
                     </div>
                     <div style={{ float: "right" }}>
@@ -425,7 +512,7 @@ function Dashboard(props) {
                   </Form>
                 </TabPane>
                 <TabPane tab="Low Stock" key="5">
-                  Content of Tab Pane 3
+                  <LowStock products={products} />
                 </TabPane>
               </Tabs>
             </div>

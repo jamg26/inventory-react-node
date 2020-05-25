@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography, Switch, Button, Input, Space, Empty } from "antd";
+import {
+  Table,
+  Typography,
+  Switch,
+  Button,
+  Input,
+  Space,
+  Empty,
+  Modal,
+  Row,
+  Col,
+  Descriptions,
+  InputNumber,
+} from "antd";
 import {
   CloseOutlined,
   CheckOutlined,
@@ -9,8 +22,10 @@ import {
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
+import numeral from "numeral";
 import { api_base_url, api_base_url_orders } from "../../../../keys/index";
-
+import EditVariantModal from "./edit_variant_modal";
+const { Text } = Typography;
 function VariantList() {
   //const [data, setData] = useState([]);
   const [variantArray, setVariantArray] = useState([]);
@@ -19,6 +34,9 @@ function VariantList() {
   const [searchedColumn, setSearchColumn] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [edit_product_modal, set_edit_product_modal] = useState(false);
+  const [edit_data, set_edit_data] = useState(undefined);
+
   useEffect(() => {
     retrieveAllVariants();
   }, []);
@@ -30,6 +48,7 @@ function VariantList() {
         res.data.map((info) =>
           info.variants.map((x) =>
             arr.push({
+              variant_info: x,
               parent_id: info._id,
               variant_id: x._id,
               variant_name: x.option_title,
@@ -42,8 +61,6 @@ function VariantList() {
           )
         );
         setVariantArray(arr);
-        console.log(res.data);
-        console.log(arr);
       })
       .catch(function (err) {
         console.log(err);
@@ -56,7 +73,6 @@ function VariantList() {
       _id: index,
       active: newStatus,
     };
-    console.log(index, value, parentIndex);
     axios
       .post(
         api_base_url_orders + "/products/variants/update_status/" + parentIndex,
@@ -68,7 +84,6 @@ function VariantList() {
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       console.log(
         "selectedRowKeys: ",
         selectedRowKeys,
@@ -91,7 +106,6 @@ function VariantList() {
       };
       arr.push(newData);
     }
-    console.log(arr);
     axios
       .post(api_base_url_orders + "/products/variants/bulk_action", arr)
       .then((res) => {
@@ -114,7 +128,6 @@ function VariantList() {
       };
       arr.push(newData);
     }
-    console.log(arr);
     axios
       .post(api_base_url_orders + "/products/variants/bulk_action1", arr)
       .then((res) => {
@@ -189,6 +202,10 @@ function VariantList() {
     clearFilters();
     setSearchText("");
   };
+  const set_edit_product_data = (data) => {
+    set_edit_product_modal(true);
+    set_edit_data(data);
+  };
   const columns = [
     {
       title: "Variant Name",
@@ -197,12 +214,12 @@ function VariantList() {
         return [<Typography key={index}>{value}</Typography>];
       },
       ...getColumnSearchProps("variant_name"),
+      width: "20%",
     },
     {
       title: "Image",
       dataIndex: "variant_image",
       render: (value, row, index) => {
-        console.log("value", value);
         return [
           <>
             {value == "" || value == undefined ? (
@@ -230,22 +247,27 @@ function VariantList() {
     {
       title: "Quantity",
       dataIndex: "variant_quantity",
-      render: (value, row, index) => {
-        return [<Typography key={index}>{value}</Typography>];
-      },
       ...getColumnSearchProps("variant_quantity"),
+      render: (value, row, index) => {
+        return [
+          <Typography key={index}>{numeral(value).format("0,0")}</Typography>,
+        ];
+      },
     },
     {
       title: "Price",
       dataIndex: "variant_price",
-      render: (value, row, index) => {
-        return [<Typography key={index}>{value}</Typography>];
-      },
       ...getColumnSearchProps("variant_price"),
+      render: (value, row, index) => {
+        return [
+          <Typography key={index}>{numeral(value).format("0,0.0")}</Typography>,
+        ];
+      },
     },
     {
       title: "Status",
       dataIndex: "variant_status",
+      width: "8%",
       render: (value, row, index) => {
         return [
           <Switch
@@ -277,9 +299,38 @@ function VariantList() {
       //sorter: (a, b) =>  (a.active === b.active) ? 0 : a.active ? -1 : 1 ,
       //sortDirections: ['descend', 'ascend'],
     },
+    {
+      title: "Action",
+      dataIndex: "parent_id",
+      align: "center",
+      render: (value, row, index) => {
+        return [
+          <Button
+            type="primary"
+            onClick={() => {
+              set_edit_product_data(row);
+            }}
+          >
+            Edit
+          </Button>,
+        ];
+      },
+    },
   ];
+
   return (
     <div>
+      <EditVariantModal
+        edit_data={edit_data}
+        edit_product_modal={edit_product_modal}
+        refresh={() => {
+          retrieveAllVariants();
+        }}
+        close={() => {
+          set_edit_product_modal(false);
+          set_edit_data(undefined);
+        }}
+      />
       <Button
         type="primary"
         disabled={!hasSelected}
@@ -300,7 +351,7 @@ function VariantList() {
         columns={columns}
         rowKey={"variant_id"}
         dataSource={variantArray}
-        pagination={{ position: "bottomRight" }}
+        pagination={{ position: ["bottomCenter"], size: "small" }}
         rowSelection={{ ...rowSelection }}
       />
     </div>

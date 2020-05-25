@@ -95,8 +95,6 @@ function Head() {
     if (values.value_username == null || values.value_username == "") {
       values.value_username = accountdata.username;
     }
-    console.log(accountdata, "this is accountdata in submit");
-    console.log(values, "this is edit values");
     const save = {
       _id: accountdata._id,
       name: values.value_name,
@@ -142,7 +140,6 @@ function Head() {
       setposition(data.position);
     }
   }, []);
-  console.log("accountdata", accountdata);
   const menu = (
     <Menu>
       <Menu.Item key="user_info_menu">

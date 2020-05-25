@@ -40,7 +40,6 @@ function Dashboard(props) {
                   <Button
                     key="0"
                     onClick={() => {
-                      console.log(props.history);
                       props.history.go(+1);
                     }}
                     type="link"

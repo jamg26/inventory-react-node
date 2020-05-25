@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Input, Tag, AutoComplete, Button } from "antd";
+import {
+  Input,
+  Col,
+  AutoComplete,
+  Row,
+  Select,
+  Space,
+  InputNumber,
+  Divider,
+  Button,
+  message,
+} from "antd";
 import axios from "axios";
 import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { PlusSquareOutlined } from "@ant-design/icons";
 //import Tags from './product_tags';
 
 const { Option } = AutoComplete;
 function AddProduct(props) {
   const {
+    SupplierList,
     prodName,
     setProdName,
     prodDesc,
@@ -40,9 +53,11 @@ function AddProduct(props) {
     fontWeight: "bold",
   };
   const [tags, setTags] = useState([]);
-
+  const [product_tytpes, setproduct_tytpes] = useState([]);
+  const [newProductType, setnewProductType] = useState("");
   useEffect(() => {
     retrieveAllActiveTags();
+    get_product_types();
   }, []);
 
   const retrieveAllActiveTags = () => {
@@ -56,192 +71,303 @@ function AddProduct(props) {
         console.log(err);
       });
   };
-
-  const addTag = () => {
-    setSelectTag([
-      ...selectTag,
-      {
-        id: selectTag.length,
-        tag_label: inputTag,
-        value: inputTag,
-      },
-    ]);
-    /*var index = tags.findIndex(function (item, i) {
-            return item.product_tag_name === inputTag;
-        })
-        if (index > -1) {
-            tags.splice(index, 1);
-        }*/
-    //setInputValue('')
-    console.log(selectTag);
-    setInputTag("");
+  const get_product_types = async () => {
+    axios
+      .get(api_base_url_orders + "/product_type_list")
+      .then((res) => {
+        setproduct_tytpes(res.data);
+      })
+      .catch(function (err) {
+        get_product_types();
+      });
   };
-  /*const handleClose = (id, value) => {
-        var index = selectedTags.findIndex(function (item, i) {
-            return item.value === value;
+  const submitNewProductType = async () => {
+    if (newProductType == "") {
+      message.error("please provide a product type name");
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response = await axios
+        .post(
+          api_base_url_orders + "/add_new_product_type",
+          {
+            newProductType: newProductType,
+          },
+          { headers: headers }
+        )
+        .then((response) => {
+          message.success(response.data.message);
+          get_product_types();
+          setnewProductType();
         })
-        if (index > -1) {
-            selectedTags.splice(index, 1);
-            setTags([...tags, {
-                id: id,
-                product_tag_name: value
-            }])
-        }
-        //setInputValue('')
-        setInputTag('')
-    }*/
+        .catch((err) => {
+          message.error(err.response.data.message);
+          setnewProductType();
+        });
+    }
+  };
+  const addTag = (value) => {
+    setSelectTag(value);
+
+    //setInputTag("");
+  };
+  useEffect(() => {
+    console.log("selectTag", selectTag);
+  }, [selectTag]);
   return (
     <div style={{ backgroundColor: "#edf1f5", padding: "40px" }}>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>
-          Name<label style={{ color: "red" }}>*</label>
-        </label>
-        <div>
-          <Input
-            value={prodName}
-            onChange={(e) => setProdName(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Description</label>
-        <div>
-          <Input
-            value={prodDesc}
-            onChange={(e) => setProdDesc(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={{ fontWeight: "bold" }}>Tags</label>
-        <div>
-          <AutoComplete
-            style={{ width: "50%" }}
-            value={inputTag}
-            onChange={handleInput}
-            filterOption={(inputValue, option) =>
-              option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            }
-          >
-            {tags.map((tag) => (
-              <Option key={tag.id} value={tag.product_tag_name}>
-                {tag.product_tag_name}
-              </Option>
-            ))}
-          </AutoComplete>
-          <Button
-            style={{ marginLeft: 10, fontWeight: "bold" }}
-            onClick={addTag}
-          >
-            Add
-          </Button>
-        </div>
-        {selectTag.map((tag, index) => {
-          return (
-            <Tag
-              closable
-              key={tag.id}
-              //onClose={() => handleClose(tag.id, tag.value)}
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>
+              Name<label style={{ color: "red" }}>*</label>
+            </label>
+            <Input
+              value={prodName}
+              onPressEnter={(e) => e.preventDefault()}
+              onChange={(e) => setProdName(e.target.value)}
+              type="text"
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Description</label>
+            <Input
+              value={prodDesc}
+              onPressEnter={(e) => e.preventDefault()}
+              onChange={(e) => setProdDesc(e.target.value)}
+              type="text"
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Tags</label>
+            <Select
+              mode="tags"
+              style={{ width: "100%" }}
+              placeholder="Enter Tags here"
+              onChange={addTag}
+              value={selectTag}
             >
-              {tag.value}
-            </Tag>
-          );
-        })}
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Product Type</label>
-        <div>
-          <Input
-            value={prodType}
-            onChange={(e) => setProdType(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Brand</label>
-        <div>
-          <Input
-            value={prodBrand}
-            onChange={(e) => setProdBrand(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Supplier</label>
-        <label style={{ fontWeight: "bold", marginLeft: "58%" }}>
-          Supplier Code
-        </label>
-        <div>
-          <Input
-            value={prodSupp}
-            onChange={(e) => setProdSupp(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-          <Input
-            value={prodSuppCode}
-            onChange={(e) => setProdSuppCode(e.target.value)}
-            style={{ width: "30%", marginLeft: "19%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>SKU</label>
-        <label style={{ fontWeight: "bold", marginLeft: "63%" }}>Barcode</label>
-        <div>
-          <Input
-            value={prodSKU}
-            onChange={(e) => setProdSKU(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-          <Input
-            value={prodBcode}
-            onChange={(e) => setProdBcode(e.target.value)}
-            style={{ width: "30%", marginLeft: "19%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Initial stock</label>
-        <div>
-          <Input
-            value={prodIniStock}
-            onChange={(e) => setProdIniStock(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-        </div>
-      </div>
-      <div style={{ paddingBottom: "25px" }}>
-        <label style={labelStyle}>Supply Price</label>
-        <label style={{ fontWeight: "bold", marginLeft: "53%" }}>Markup</label>
-        <div>
-          <Input
-            value={prodSuppPrice}
-            onChange={(e) => setProdSuppPrice(e.target.value)}
-            style={{ width: "50%" }}
-            type="text"
-          />
-          <Input
-            value={markup}
-            onChange={(e) => setMarkup(e.target.value)}
-            style={{ width: "30%", marginLeft: "19%" }}
-            type="text"
-          />
-        </div>
-      </div>
+              {tags.map((tag) => (
+                <Option key={tag.id} value={tag.product_tag_name}>
+                  {tag.product_tag_name}
+                </Option>
+              ))}
+            </Select>
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Product Type</label>
+            <Select
+              showSearch
+              style={{ width: "100%" }}
+              value={prodType}
+              onChange={(e) => setProdType(e)}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              dropdownRender={(menu) => (
+                <div>
+                  <Row gutter={5} style={{ marginRight: 5, marginLeft: 5 }}>
+                    <Col span="20">
+                      <Input
+                        value={newProductType}
+                        onChange={(e) => {
+                          setnewProductType(e.target.value);
+                        }}
+                        size="small"
+                        style={{ width: "100%" }}
+                        placeholder="add new Product Type"
+                      />
+                    </Col>
+                    <Col span="4">
+                      <Button
+                        size={"small"}
+                        type="default"
+                        block
+                        onClick={() => {
+                          submitNewProductType();
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </Col>
+                  </Row>
+
+                  <Divider style={{ margin: "4px 0" }} />
+                  {menu}
+                </div>
+              )}
+            >
+              {product_tytpes.map((row, index) => {
+                return [
+                  <Option key={index} value={row._id}>
+                    {row.product_type_name}
+                  </Option>,
+                ];
+              })}
+            </Select>
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Brand</label>
+            <Input
+              value={prodBrand}
+              onChange={(e) => setProdBrand(e.target.value)}
+              type="text"
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Supplier</label>
+            <Select
+              showSearch
+              style={{ width: "100%" }}
+              value={prodSupp}
+              onChange={(e) => {
+                setProdSupp(e);
+                setProdSuppCode(e);
+              }}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {SupplierList.map((row, index) => {
+                return [
+                  <Option key={index} value={row._id}>
+                    {row.display_name}
+                  </Option>,
+                ];
+              })}
+            </Select>
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Supplier Code</label>
+            <Select
+              showSearch
+              style={{ width: "100%" }}
+              value={prodSuppCode}
+              onChange={(e) => {
+                setProdSupp(e);
+                setProdSuppCode(e);
+              }}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {SupplierList.map((row, index) => {
+                return [
+                  <Option key={index} value={row._id}>
+                    {row.supplier_code}
+                  </Option>,
+                ];
+              })}
+            </Select>
+          </Space>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>SKU</label>
+            <Input
+              value={prodSKU}
+              onChange={(e) => setProdSKU(e.target.value)}
+              type="text"
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Barcode</label>
+            <Input
+              value={prodBcode}
+              onChange={(e) => setProdBcode(e.target.value)}
+              type="text"
+            />
+          </Space>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Initial stock</label>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={prodIniStock}
+              onChange={(e) => setProdIniStock(e)}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9"></Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Supply Price</label>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={prodSuppPrice}
+              onChange={(e) => setProdSuppPrice(e)}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Space>
+        </Col>
+        <Col span="3"></Col>
+        <Col span="9">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Markup</label>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={markup}
+              onChange={(e) => setMarkup(e)}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Space>
+        </Col>
+      </Row>
     </div>
   );
 }

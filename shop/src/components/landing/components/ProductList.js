@@ -56,6 +56,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
     if (products.length != 0) {
       set_spinning_product_list(true);
       let data = [];
+      let counter = 0;
       for (let c = 0; c < products.length; c++) {
         let node = products[c];
         if (node.variants != undefined) {
@@ -97,7 +98,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
                   : null
                 : null;
             data.push({
-              key: c + x,
+              key: counter,
               order_id: order_id,
               item_id: item_id,
               product_id: node._id,
@@ -227,6 +228,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
               ),
               actionData: node,
             });
+            counter++;
           }
         }
       }
@@ -305,6 +307,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
     }
   }, [products, searchFilterProducts, category]);
   const setInput = (value, index, column) => {
+    console.log("setInput", value, index, column);
     let tempdata = [...filteredproducts];
     tempdata[index][column] = value;
     tempdata[index]["sub_total"] = numeral(
