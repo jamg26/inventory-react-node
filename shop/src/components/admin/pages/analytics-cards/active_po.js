@@ -8,14 +8,70 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 const { Text } = Typography;
-function UserCount() {
+function UserCount({ po }) {
   const [filteredlist, setfilteredlist] = useState([]);
+  useEffect(() => {
+    console.log("po", po);
+    if (po.length != 0) {
+      const temp = [];
+      for (let c = 0; c < po.length; c++) {
+        if (po[c].status == "Open") {
+          temp.push({
+            _id: po[c]._id,
+            po_no: po[c].po_no,
+            name: po[c].transfer_name,
+            type: po[c].type,
+            status: po[c].status,
+          });
+        }
+      }
+      setfilteredlist(temp);
+    }
+  }, [po]);
   const columns = [
     {
+      title: "No.",
+      dataIndex: "po_no",
+      key: "po_no",
+    },
+    {
       title: "Name",
-      dataIndex: "product_name",
-      key: "product_name",
-      width: "40%",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      render: (value, row, index) => {
+        if (value == "Issued") {
+          return [
+            <Typography key={index} style={{ color: "Green" }}>
+              {value}
+            </Typography>,
+          ];
+        } else if (value == "Void") {
+          return [
+            <Typography key={index} style={{ color: "Red" }}>
+              {value}
+            </Typography>,
+          ];
+        } else if (value == "DRAFT") {
+          return [
+            <Typography key={index} style={{ color: "Orange" }}>
+              {"Draft"}
+            </Typography>,
+          ];
+        } else {
+          return [<Typography key={index}>{value}</Typography>];
+        }
+      },
     },
   ];
   return [

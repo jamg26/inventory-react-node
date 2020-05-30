@@ -39,6 +39,7 @@ const { Meta } = Card;
 const { Panel } = Collapse;
 function ProductList({ products, category, refresh, showCart, show, cart }) {
   const [filteredproducts, setFilteredProducts] = useState([]);
+  const [filteredproductsFiltered, setfilteredproductsFiltered] = useState([]);
   const [visible, setVisible] = useState(false);
   const [imgSrc, setImgSrc] = useState("");
   const [productTitle, setProductTitle] = useState("");
@@ -232,6 +233,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
           }
         }
       }
+      setFilteredProducts(data);
       if (category == "All Products") {
         const filteredProd = data.filter((product) => {
           return (
@@ -265,7 +267,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
               .includes(searchFilterProducts.toLowerCase())
           );
         });
-        setFilteredProducts(filteredProd);
+        setfilteredproductsFiltered(filteredProd);
         set_spinning_product_list(false);
       } else {
         const filteredProd = data.filter((product) => {
@@ -301,7 +303,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
             product.product_type == category
           );
         });
-        setFilteredProducts(filteredProd);
+        setfilteredproductsFiltered(filteredProd);
         set_spinning_product_list(false);
       }
     }
@@ -479,7 +481,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       key: "quantity",
 
       width: "6.69%",
-      render: (value, result) => {
+      render: (value, result, index) => {
         return [
           <InputNumber
             key={result.key}
@@ -562,12 +564,12 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
         </Col>
       </Row>
       <Spin spinning={spinning_product_list}>
-        {filteredproducts.length !== 0 ? (
+        {filteredproductsFiltered.length !== 0 ? (
           <>
             {listStyle === "list" ? (
               <Table
                 key="0"
-                dataSource={filteredproducts}
+                dataSource={filteredproductsFiltered}
                 columns={columns}
                 pagination={{
                   position: ["bottomCenter"],
@@ -577,7 +579,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
               />
             ) : (
               <Row gutter={[16, 16]}>
-                {filteredproducts.map((row, index) => {
+                {filteredproductsFiltered.map((row, index) => {
                   return [
                     <Col span={4}>
                       <Card hoverable cover={row.category_image}>

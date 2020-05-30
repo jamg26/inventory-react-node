@@ -165,9 +165,28 @@
 .LeftRightDescrptionContainer .ant-descriptions-item-content {
   text-align: left !important;
 }
+.OpositeAlignment .ant-descriptions-item-content {
+  text-align: right !important;
+}
+
 .invalid_input {
   border: 1px solid #e23737 !important;
 }
 .valid_input {
   border: 1px solid unset !important;
+}
+.table-card-type {
+  width: 100%;
+  margin-top: 10px;
+}
+.table-card-type td,
+.table-card-type th {
+  padding: 5px;
+}
+.table-card-type thead {
+  background-color: steelblue;
+  color: white;
+}
+.table-card-type tbody {
+  background-color: #f0f0f0;
 }

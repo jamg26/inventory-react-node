@@ -22,7 +22,8 @@ function UserCount({ products }) {
         ) {
           for (let x = 0; x < products[c].variants.length; x++) {
             if (
-              products[c].variants[x].quantity < 10 &&
+              products[c].variants[x].quantity <=
+                products[c].variants[x].reorder_point &&
               products[c].variants[x].quantity > 0 &&
               products[c].variants[x].active
             ) {

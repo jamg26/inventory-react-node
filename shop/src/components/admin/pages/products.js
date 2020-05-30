@@ -77,6 +77,9 @@ function Dashboard(props) {
   const [product, setProduct] = useState(initialProductState);
 
   //states of product
+  const [reorder_point, setreorder_point] = useState(10);
+  const [reorder_amount, setreorder_amount] = useState(0);
+
   const [productName, setProductName] = useState(product.product_name);
   const [productDesc, setProductDesc] = useState(product.product_description);
   const [productType, setProductType] = useState(
@@ -254,6 +257,8 @@ function Dashboard(props) {
         supplier: productSupplier,
         supplier_price: productSupplyPrice,
         markup: prodMarkup,
+        reorder_point: reorder_point,
+        reorder_amount: reorder_amount,
         price_with_tax: (
           (parseFloat(prodMarkup) * parseFloat(productSupplyPrice)) / 100 +
           parseFloat(productSupplyPrice) +
@@ -284,10 +289,13 @@ function Dashboard(props) {
 
       newVariantData.push(newData);
     }
+    console.log("reorder_amount", reorder_amount);
     setVariantData(newVariantData);
   };
 
   const clearAllInputs = () => {
+    setreorder_amount(0);
+    setreorder_point(10);
     setProductName("");
     setProductDesc("");
     setProductType("");
@@ -316,7 +324,13 @@ function Dashboard(props) {
         applyVariant();
       }
     }
-  }, [prodMarkup, productInitialStock, productSupplyPrice]);
+  }, [
+    prodMarkup,
+    productInitialStock,
+    productSupplyPrice,
+    reorder_amount,
+    reorder_point,
+  ]);
   const addProduct = () => {
     if (productName === "") {
       alert("Please input a product name!");
@@ -443,6 +457,10 @@ function Dashboard(props) {
                     >
                       <div style={{ width: "55%" }}>
                         <AddProduct
+                          reorder_point={reorder_point}
+                          reorder_amount={reorder_amount}
+                          setreorder_point={(val) => setreorder_point(val)}
+                          setreorder_amount={(val) => setreorder_amount(val)}
                           SupplierList={SupplierList}
                           prodName={productName}
                           setProdName={(val) => setProductName(val)}

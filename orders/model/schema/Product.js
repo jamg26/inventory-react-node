@@ -4,8 +4,8 @@ const bcrypt = require("bcryptjs");
 
 const variants = new Schema({
   option_title: String,
-  // supplier: [{ type: Schema.Types.ObjectId, ref: "suppliers" }],
-  supplier: Object,
+  supplier: [{ type: Schema.Types.ObjectId, ref: "suppliers" }],
+  // supplier: Object,
   supplier_price: String,
   price_with_tax: String,
   price_without_tax: String,
@@ -18,7 +18,14 @@ const variants = new Schema({
     type: Boolean,
     default: false,
   },
-  reorder_point: String,
+  reorder_point: {
+    type: Number,
+    default: 10,
+  },
+  reorder_amount: {
+    type: Number,
+    default: 1,
+  },
   barcode: String,
   quantity: String,
   brand: String,

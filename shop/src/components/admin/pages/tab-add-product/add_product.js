@@ -19,6 +19,10 @@ import { PlusSquareOutlined } from "@ant-design/icons";
 const { Option } = AutoComplete;
 function AddProduct(props) {
   const {
+    reorder_point,
+    setreorder_point,
+    reorder_amount,
+    setreorder_amount,
     SupplierList,
     prodName,
     setProdName,
@@ -326,6 +330,7 @@ function AddProduct(props) {
             <InputNumber
               style={{ width: "100%" }}
               value={prodIniStock}
+              min={0}
               onChange={(e) => setProdIniStock(e)}
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -335,8 +340,42 @@ function AddProduct(props) {
           </Space>
         </Col>
         <Col span="3"></Col>
-        <Col span="9"></Col>
+        <Col span="9">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Reorder Point</label>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={reorder_point}
+              min={0}
+              onChange={(e) => setreorder_point(e)}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Space>
+        </Col>
       </Row>
+      <Row gutter={[16, 16]}>
+        <Col span="12"></Col>
+        <Col span="3"></Col>
+        <Col span="9">
+          <Space direction="vertical" style={{ width: "100%" }} size={2}>
+            <label style={labelStyle}>Reorder Amount</label>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={reorder_amount}
+              min={0}
+              onChange={(e) => setreorder_amount(e)}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            />
+          </Space>
+        </Col>
+      </Row>
+
       <Row gutter={[16, 16]}>
         <Col span="12">
           <Space direction="vertical" style={{ width: "100%" }} size={2}>
@@ -344,6 +383,7 @@ function AddProduct(props) {
             <InputNumber
               style={{ width: "100%" }}
               value={prodSuppPrice}
+              min={0}
               onChange={(e) => setProdSuppPrice(e)}
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -359,6 +399,7 @@ function AddProduct(props) {
             <InputNumber
               style={{ width: "100%" }}
               value={markup}
+              min={0}
               onChange={(e) => setMarkup(e)}
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")

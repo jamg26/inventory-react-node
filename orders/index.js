@@ -27,6 +27,20 @@ mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
   useCreateIndex: true,
 });
+mongoose.set("debug", async (collectionName, method, query, doc) => {
+  var fs = require("fs");
+
+  var data2 = ``;
+  if (method == "find") {
+  } else {
+    var data = `${collectionName}.${method} ---|| ${JSON.stringify(
+      query
+    )} ||--- ${new Date()}\n`;
+    fs.appendFileSync("logs.dat", data);
+  }
+
+  // console.log(`${collectionName}.${method}`, JSON.stringify(query), doc);
+});
 // look for process.env.PORT for port or else use 5001 as port
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {

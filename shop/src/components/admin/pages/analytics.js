@@ -34,6 +34,7 @@ function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
   const [showComponent, setShowComponent] = useState(false);
   const [products, setProducts] = useState([]);
+  const [purchaseOrderData, setpurchaseOrderData] = useState([]);
   const get_products = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -45,9 +46,21 @@ function Dashboard(props) {
     );
     setProducts(response.data);
   };
+  const retrieveAllData = () => {
+    axios
+      .get(api_base_url_orders + "/purchase_orders/")
+
+      .then((res) => {
+        setpurchaseOrderData(res.data);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
   useEffect(() => {
     checkAuth(props, setShowComponent);
     get_products();
+    retrieveAllData();
   }, []);
   if (showComponent) {
     return [
@@ -109,12 +122,12 @@ function Dashboard(props) {
               <Row gutter={[16, 16]}>
                 <Col span="12">
                   <Card title="Active Purchase Orders">
-                    <ActivePO />
+                    <ActivePO po={purchaseOrderData} />
                   </Card>
                 </Col>
                 <Col span="12">
                   <Card title="Near Due Purchase Orders">
-                    <DuePO />
+                    <DuePO po={purchaseOrderData} />
                   </Card>
                 </Col>
               </Row>

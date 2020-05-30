@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
-const CompanySchema = new Schema({
-  company_name: String,
-  company_description: String,
-  company_type: String,
+const LogSchema = new Schema({
+  log_content: String,
+  collection_name: String,
+  content: Object,
   created_at: Date,
   updated_at: Date,
 });
-CompanySchema.pre("save", function (next) {
+LogSchema.pre("save", function (next) {
   now = new Date();
   this.updated_at = now;
   if (!this.created_at) {
@@ -19,4 +19,4 @@ CompanySchema.pre("save", function (next) {
   next();
 });
 
-mongoose.model("companies", CompanySchema);
+mongoose.model("logs", LogSchema);
