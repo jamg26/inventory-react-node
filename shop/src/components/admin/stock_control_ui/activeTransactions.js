@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Table,
   Input,
@@ -24,6 +24,7 @@ import axios from "axios";
 import moment from "moment";
 import { api_base_url_orders } from "../../../keys/index";
 import ViewItem from "./modal/view_item";
+import { UserContext, SettingContext } from "../../../routes/routes";
 const Search = Input.Search;
 const { TextArea } = Input;
 const success = () => {
@@ -36,6 +37,7 @@ const rowAlreadyAdded = () => {
   message.info("Row has already been added", 4);
 };
 const EditableTable = ({ refresh_trigger }) => {
+  var settings = useContext(SettingContext);
   const initialProductTagState = {
     _id: undefined,
     key: "",
@@ -216,7 +218,9 @@ const EditableTable = ({ refresh_trigger }) => {
       render: (value, result, index) => {
         return [
           <Typography key={index}>
-            {moment(value).format("MM-DD-YYYY")}
+            {moment(value).format(
+              settings != undefined ? settings.date_format : "MM-DD-YYYY"
+            )}
           </Typography>,
         ];
       },
@@ -229,11 +233,15 @@ const EditableTable = ({ refresh_trigger }) => {
           moment().diff(moment(value), "days") > 0 &&
           result.status == "Open" ? (
             <Typography key={index} style={{ color: "red" }}>
-              {moment(value).format("MM-DD-YYYY")}
+              {moment(value).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )}
             </Typography>
           ) : (
             <Typography key={index}>
-              {moment(value).format("MM-DD-YYYY")}
+              {moment(value).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )}
             </Typography>
           ),
         ];
@@ -245,7 +253,9 @@ const EditableTable = ({ refresh_trigger }) => {
       render: (value, result, index) => {
         return [
           <Typography key={index}>
-            {moment(value).format("MM-DD-YYYY")}
+            {moment(value).format(
+              settings != undefined ? settings.date_format : "MM-DD-YYYY"
+            )}
           </Typography>,
         ];
       },

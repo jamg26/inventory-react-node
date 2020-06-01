@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Table,
   Input,
@@ -26,6 +26,7 @@ import { CSVLink } from "react-csv";
 import ReactFileReader from "react-file-reader";
 import axios from "axios";
 import moment from "moment";
+import { UserContext, SettingContext } from "../../../routes/routes";
 import numeral from "numeral";
 import Papa from "papaparse";
 const Search = Input.Search;
@@ -34,6 +35,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 const EditableTable = ({ SupplierList, products, refresh }) => {
+  var settings = useContext(SettingContext);
   const [product_variants, set_product_variants] = useState([]);
   const initialProductTagState = [
     {
@@ -41,7 +43,9 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
       invoice_no: 1,
       return_from: "",
       ship_to: "",
-      delivery_date: moment().format("MM-DD-YYYY"),
+      delivery_date: moment().format(
+        settings != undefined ? settings.date_format : "MM-DD-YYYY"
+      ),
       quantity: 0,
     },
   ];

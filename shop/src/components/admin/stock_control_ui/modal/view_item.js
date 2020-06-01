@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Table,
   Input,
@@ -23,8 +23,10 @@ import { CSVLink } from "react-csv";
 import axios from "axios";
 import moment from "moment";
 import { api_base_url_orders } from "../../../../keys/index";
+import { UserContext, SettingContext } from "../../../../routes/routes";
 const { Text } = Typography;
 function ViewItem({ viewitemModal, close, data, refresh }) {
+  var settings = useContext(SettingContext);
   const [viewdata, setviewdata] = useState(undefined);
   const [editdata, seteditdata] = useState(false);
   const [loadingreceive, setloadingreceive] = useState(false);
@@ -174,7 +176,11 @@ function ViewItem({ viewitemModal, close, data, refresh }) {
       <br />
       <Text strong>Date.: </Text>
       <Text>
-        {viewdata ? moment(viewdata.created_at).format("MM-DD-YYYY") : ""}
+        {viewdata
+          ? moment(viewdata.created_at).format(
+              settings != undefined ? settings.date_format : "MM-DD-YYYY"
+            )
+          : ""}
       </Text>
       <br />
       <Text strong>PO Status.: </Text>
@@ -294,7 +300,9 @@ function ViewItem({ viewitemModal, close, data, refresh }) {
         <tbody>
           <tr>
             <td style={{ verticalAlign: "middle" }}>
-              {moment(viewdata.delivery_due_date).format("MM-DD-YYYY")}
+              {moment(viewdata.delivery_due_date).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )}
             </td>
             <td style={{ verticalAlign: "middle" }}>
               {viewdata.entry_by && viewdata.entry_by.length != 0

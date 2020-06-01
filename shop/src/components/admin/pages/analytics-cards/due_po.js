@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Typography, Table, Space, Empty } from "antd";
 import { api_base_url } from "../../../../keys/index";
+import { UserContext, SettingContext } from "../../../../routes/routes";
 import {
   ArrowRightOutlined,
   UserOutlined,
@@ -10,6 +11,7 @@ import {
 import moment from "moment";
 const { Text } = Typography;
 function UserCount({ po }) {
+  var settings = useContext(SettingContext);
   const [filteredlist, setfilteredlist] = useState([]);
   useEffect(() => {
     console.log("po", po);
@@ -59,11 +61,15 @@ function UserCount({ po }) {
           moment().diff(moment(value), "days") > 0 &&
           result.status == "Open" ? (
             <Typography key={index} style={{ color: "red" }}>
-              {moment(value).format("MM-DD-YYYY")}
+              {moment(value).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )}
             </Typography>
           ) : (
             <Typography key={index}>
-              {moment(value).format("MM-DD-YYYY")}
+              {moment(value).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )}
             </Typography>
           ),
         ];

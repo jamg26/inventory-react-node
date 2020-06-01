@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Table,
   Input,
@@ -26,6 +26,7 @@ import ReactFileReader from "react-file-reader";
 import axios from "axios";
 import moment from "moment";
 import numeral from "numeral";
+import { UserContext, SettingContext } from "../../../routes/routes";
 import Papa from "papaparse";
 const Search = Input.Search;
 const { TextArea } = Input;
@@ -51,13 +52,16 @@ const selectData = () => {
   message.info("Please select a data or Add new Data first", 4);
 };
 const EditableTable = ({ SupplierList, products, refresh }) => {
+  var settings = useContext(SettingContext);
   const [product_variants, set_product_variants] = useState([]);
   const initialProductTagState = [
     {
       po_no: "PO-" + 1,
       invoice_no: 1,
       ship_to: "",
-      delivery_due_date: moment().format("MM-DD-YYYY"),
+      delivery_due_date: moment().format(
+        settings != undefined ? settings.date_format : "MM-DD-YYYY"
+      ),
       quantity: 0,
     },
   ];

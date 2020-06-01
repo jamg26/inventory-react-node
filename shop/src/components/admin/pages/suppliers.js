@@ -182,6 +182,8 @@ function Dashboard(props) {
               margin: "24px 16px 24px 16px",
               overflow: "initial",
               backgroundColor: "white",
+              borderBottom: "1px solid rgba(0,0,0,0.2)",
+              borderRight: "1px solid rgba(0,0,0,0.1)",
             }}
           >
             <div className="dyn-height">

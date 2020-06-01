@@ -9,6 +9,7 @@ import {
   PageHeader,
   Statistic,
   Card,
+  Space,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -70,31 +71,11 @@ function Dashboard(props) {
           <Header />
           <Content
             style={{
-              margin: "24px 16px 24px 16px",
+              margin: "0px 0px",
               overflow: "initial",
-              backgroundColor: "white",
             }}
           >
-            <div className="site-layout-background dyn-height">
-              <PageHeader
-                className="site-page-header"
-                title="Analytics"
-                onBack={() => props.history.goBack()}
-                extra={[
-                  <Button
-                    key="0"
-                    onClick={() => {
-                      props.history.go(+1);
-                    }}
-                    type="link"
-                    className="ant-page-header-back-button"
-                    style={{ fontSize: "16px" }}
-                  >
-                    <ArrowRightOutlined />
-                  </Button>,
-                  ,
-                ]}
-              />
+            <div className="dyn-height">
               <Row gutter={[16, 16]}>
                 <Col span={6}>
                   <Card>
@@ -109,25 +90,59 @@ function Dashboard(props) {
               </Row>
               <Row gutter={[16, 16]}>
                 <Col span="12">
-                  <Card title="Products on Low Stocks">
-                    <LowStocks products={products} />
+                  <Card
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.2)",
+                      borderRight: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Text strong> Products on Low Stocks</Text>
+
+                      <LowStocks products={products} />
+                    </Space>
                   </Card>
                 </Col>
                 <Col span="12">
-                  <Card title="Products on No Stocks">
-                    <NoStocks products={products} />
+                  <Card
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.2)",
+                      borderRight: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Text strong> Products on No Stocks</Text>
+
+                      <NoStocks products={products} />
+                    </Space>
                   </Card>
                 </Col>
               </Row>
               <Row gutter={[16, 16]}>
                 <Col span="12">
-                  <Card title="Active Purchase Orders">
-                    <ActivePO po={purchaseOrderData} />
+                  <Card
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.2)",
+                      borderRight: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Text strong> Active Purchase Orders</Text>
+                      <ActivePO po={purchaseOrderData} />
+                    </Space>
                   </Card>
                 </Col>
                 <Col span="12">
-                  <Card title="Near Due Purchase Orders">
-                    <DuePO po={purchaseOrderData} />
+                  <Card
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.2)",
+                      borderRight: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Text strong> Near Due Purchase Orders</Text>
+                      <DuePO po={purchaseOrderData} />
+                    </Space>
                   </Card>
                 </Col>
               </Row>

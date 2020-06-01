@@ -19,6 +19,7 @@ import {
   message,
 } from "antd";
 import Labels from "../../../global-components/labels";
+import { AbandonedList, SettingContext } from "../../../../routes/routes";
 import moment from "moment";
 import numeral from "numeral";
 import axios from "axios";
@@ -41,6 +42,7 @@ var initiallySortedRows = [];
 var fresh = 0;
 var InputObject = [];
 function Fulfillment(props) {
+  var settings = useContext(SettingContext);
   const inputEl = useRef(null);
   console.log("fulfillment");
   var rows = [];
@@ -148,7 +150,11 @@ function Fulfillment(props) {
           if (
             (node.order_no ? node.order_no.includes(filter) : "") ||
             item_number.includes(filter) ||
-            moment(node.order_date).format("MM-DD-YYYY").includes(filter) ||
+            moment(node.order_date)
+              .format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )
+              .includes(filter) ||
             moment(node.order_date).format("h:mm a").includes(filter) ||
             (node.order_note ? node.order_note.includes(filter) : "") ||
             custom.includes(filter) ||
@@ -216,7 +222,9 @@ function Fulfillment(props) {
                     ? node.line_item.length + " Item"
                     : node.line_item.length + " Items"
                   : "0 Items",
-              date: moment(node.order_date).format("MM-DD-YYYY"),
+              date: moment(node.order_date).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              ),
               time: moment(node.order_date).format("h:mm a"),
               note: node.order_note,
               noteIcon:

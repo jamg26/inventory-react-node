@@ -25,13 +25,14 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 import PrivateStaffNote from "../shared/private_staff_note";
-import { UserContext } from "../../../../routes/routes";
+import { UserContext, SettingContext } from "../../../../routes/routes";
 const { Search } = Input;
 const { Text } = Typography;
 var initiallySortedRows = [];
 var fresh = 0;
 function Payments(props) {
   const inputEl = useRef(null);
+  var settings = useContext(SettingContext);
   console.log("payment");
   var rows = [];
   var data = useContext(UserContext);
@@ -58,7 +59,9 @@ function Payments(props) {
                 ? node.line_item.length + " Item"
                 : node.line_item.length + " Items"
               : "0 Items",
-          date: moment(node.order_date).format("MM-DD-YYYY"),
+          date: moment(node.order_date).format(
+            settings != undefined ? settings.date_format : "MM-DD-YYYY"
+          ),
           time: moment(node.order_date).format("h:mm a"),
           note: node.order_note,
           noteIcon:
@@ -156,7 +159,11 @@ function Payments(props) {
             ? node.order_no.includes(event)
             : "" ||
               item_number.includes(event) ||
-              moment(node.order_date).format("MM-DD-YYYY").includes(event) ||
+              moment(node.order_date)
+                .format(
+                  settings != undefined ? settings.date_format : "MM-DD-YYYY"
+                )
+                .includes(event) ||
               moment(node.order_date).format("h:mm a").includes(event) ||
               node.order_note.includes(event) ||
               custom.includes(event) ||
@@ -179,7 +186,9 @@ function Payments(props) {
                   ? node.line_item.length + " Item"
                   : node.line_item.length + " Items"
                 : "0 Items",
-            date: moment(node.order_date).format("MM-DD-YYYY"),
+            date: moment(node.order_date).format(
+              settings != undefined ? settings.date_format : "MM-DD-YYYY"
+            ),
             time: moment(node.order_date).format("h:mm a"),
             note: node.order_note,
             noteIcon:

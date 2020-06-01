@@ -7,6 +7,13 @@
 .site-layout-background-store-front * {
   color: white !important;
 }
+.logo-contrainer {
+  background: rgba(0, 0, 0, 0.3);
+  margin: 0px;
+  padding: 0 10px;
+  text-align: center;
+  height: 70px;
+}
 .logo {
   height: 32px;
   background-color: rgba(225, 225, 225, 0.2);
@@ -189,4 +196,17 @@
 }
 .table-card-type tbody {
   background-color: #f0f0f0;
+}
+body {
+  font-family: "Roboto", sans-serif !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
+  -webkit-font-smoothing: antialiased;
+}
+.ant-btn-primary {
+  background-color: #4482ff !important;
+  border-color: #4482ff !important;
+}
+.ant-btn-primary:disabled {
+  background-color: unset !important;
+  border-color: unset !important;
 }

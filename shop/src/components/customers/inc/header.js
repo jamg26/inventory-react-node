@@ -60,7 +60,11 @@ function Head() {
   return [
     <Header
       className="site-layout-background"
-      style={{ paddingRight: "10px", paddingLeft: "10px" }}
+      style={{
+        paddingRight: "10px",
+        paddingLeft: "10px",
+        borderBottom: "1px solid rgba(0,0,0,0.1)",
+      }}
     >
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button

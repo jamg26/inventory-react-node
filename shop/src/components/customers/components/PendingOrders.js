@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import numeral from "numeral";
 import moment from "moment";
 import { Table, Tabs, PageHeader, Popconfirm, Button } from "antd";
+import { UserContext, SettingContext } from "../../../routes/routes";
 import ButtonGroup from "antd/lib/button/button-group";
 function AllOrders({ orderList, setOrderId, cancelOrder }) {
+  var settings = useContext(SettingContext);
   const [list, setList] = useState([]);
   useEffect(() => {
     if (orderList.length != 0) {
@@ -35,7 +37,11 @@ function AllOrders({ orderList, setOrderId, cancelOrder }) {
       key: "order_date",
       width: "9%",
       render: (result) => {
-        return [moment(result).format("MM-DD-YYYY")];
+        return [
+          moment(result).format(
+            settings != undefined ? settings.date_format : "MM-DD-YYYY"
+          ),
+        ];
       },
     },
     {
@@ -44,7 +50,13 @@ function AllOrders({ orderList, setOrderId, cancelOrder }) {
       key: "delivery_date",
       width: "9%",
       render: (result) => {
-        return [result ? moment(result).format("MM-DD-YYYY") : null];
+        return [
+          result
+            ? moment(result).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )
+            : null,
+        ];
       },
     },
     {

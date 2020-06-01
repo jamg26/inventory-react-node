@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Table,
   Input,
@@ -25,6 +25,7 @@ import { api_base_url_orders } from "../../../keys";
 import { CSVLink } from "react-csv";
 import ReactFileReader from "react-file-reader";
 import axios from "axios";
+import { UserContext, SettingContext } from "../../../routes/routes";
 import moment from "moment";
 import numeral from "numeral";
 import Papa from "papaparse";
@@ -34,13 +35,16 @@ const { Option } = Select;
 const { Text } = Typography;
 
 const EditableTable = ({ SupplierList, products, refresh }) => {
+  var settings = useContext(SettingContext);
   const [product_variants, set_product_variants] = useState([]);
   const initialProductTagState = [
     {
       po_no: "ST-" + 1,
       ship_from: "",
       ship_to: "",
-      delivery_due_date: moment().format("MM-DD-YYYY"),
+      delivery_due_date: moment().format(
+        settings != undefined ? settings.date_format : "MM-DD-YYYY"
+      ),
       quantity: 0,
     },
   ];

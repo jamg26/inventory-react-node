@@ -10,7 +10,7 @@ module.exports = (app) => {
   app.get(keys.sub + "/products", async (req, res) => {
     const reponse = await products
       .find({ active: true })
-      .populate("variants.product_type")
+      .populate("product_type")
       .populate("variants.supplier");
     res.send(reponse);
     ("");
@@ -18,7 +18,7 @@ module.exports = (app) => {
   app.get(keys.sub + "/products/all", async (req, res) => {
     const reponse = await products
       .find({})
-      .populate("variants.product_type")
+      .populate("product_type")
       .populate("variants.supplier");
     res.send(reponse);
     ("");

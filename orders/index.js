@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const compression = require("compression");
 const keys = require("./config/keys");
-
+const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -13,6 +13,11 @@ app.use(bodyParser.json({ limit: "50mb" }));
 require("./model");
 //apply CORS middleware
 app.use(cors());
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 //require Routes
 require("./routes/getter_routes")(app);
 require("./routes/supplier_routes")(app);

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { Table, Input, Tabs, PageHeader, Card, Button } from "antd";
 import EditCustomerModal from "../modal/EditCustomer";
+import { UserContext, SettingContext } from "../../../routes/routes";
 function AccountDetails(props) {
+  var settings = useContext(SettingContext);
   const [visible, setVisible] = useState(false);
   const [refresh_user_data, set_refresh_user_data] = useState(false);
   const [data, setData] = useState([
@@ -52,7 +54,9 @@ function AccountDetails(props) {
             data.country != undefined ? data.country : ""
           } ${data.postal_code != undefined ? data.postal_code : ""}`,
           birthdate: data.birthdate
-            ? moment(data.birthdate).format("MM-DD-YYYY")
+            ? moment(data.birthdate).format(
+                settings != undefined ? settings.date_format : "MM-DD-YYYY"
+              )
             : "",
           gender: data.gender,
           phone: data.phone,

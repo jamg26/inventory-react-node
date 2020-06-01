@@ -11,9 +11,11 @@ import {
   TeamOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import { SettingContext } from "../../../routes/routes";
 import { Link } from "react-router-dom";
 const { Header, Footer, Sider, Content } = Layout;
 function Side(props) {
+  var settings = useContext(SettingContext);
   const [collaped, setCollaped] = useState(false);
   const toggle = () => {
     setCollaped(!collaped);
@@ -21,15 +23,23 @@ function Side(props) {
   return [
     <Sider
       className="sider"
-      theme={"light"}
+      theme={"dark"}
       onCollapse={toggle}
       collapsible
       collapsed={collaped}
       key="0"
     >
-      <div className="logo" />
+      <Link to="/web-admin/" key="0">
+        {settings && settings.logo != "" ? (
+          <div className="logo-contrainer">
+            <img src={settings.logo} style={{ height: "100%" }} />
+          </div>
+        ) : (
+          <div className="logo" />
+        )}
+      </Link>
       <Menu
-        theme="light"
+        theme="dark"
         mode="inline"
         defaultSelectedKeys={[props.no.toString()]}
       >

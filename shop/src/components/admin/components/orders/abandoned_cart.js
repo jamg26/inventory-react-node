@@ -24,7 +24,7 @@ import {
   FileSearchOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { AbandonedList } from "../../../../routes/routes";
+import { AbandonedList, SettingContext } from "../../../../routes/routes";
 import PrivateStaffNote from "../shared/private_staff_note";
 const { Search } = Input;
 const { Text } = Typography;
@@ -35,6 +35,7 @@ function All(props) {
   console.log("all");
   var rows = [];
   var data = useContext(AbandonedList);
+  var settings = useContext(SettingContext);
   const [row, setRow] = useState([]);
   if (fresh == 0) {
     for (var c = 0; c < data.length; c++) {
@@ -63,7 +64,9 @@ function All(props) {
               ? node.line_item.length + " Item"
               : node.line_item.length + " Items"
             : "0 Items",
-        date: moment(node.order_date).format("MM-DD-YYYY"),
+        date: moment(node.order_date).format(
+          settings != undefined ? settings.date_format : "MM-DD-YYYY"
+        ),
         time: moment(node.order_date).format("h:mm a"),
         note: node.order_note,
         noteIcon:
@@ -163,7 +166,9 @@ function All(props) {
       if (
         (node.order_no ? node.order_no.includes(event) : "") ||
         item_number.includes(event) ||
-        moment(node.order_date).format("MM-DD-YYYY").includes(event) ||
+        moment(node.order_date)
+          .format(settings != undefined ? settings.date_format : "MM-DD-YYYY")
+          .includes(event) ||
         moment(node.order_date).format("h:mm a").includes(event) ||
         (node.order_note != undefined ? node.order_note.includes(event) : "") ||
         custom.includes(event) ||
@@ -182,7 +187,9 @@ function All(props) {
                 ? node.line_item.length + " Item"
                 : node.line_item.length + " Items"
               : "0 Items",
-          date: moment(node.order_date).format("MM-DD-YYYY"),
+          date: moment(node.order_date).format(
+            settings != undefined ? settings.date_format : "MM-DD-YYYY"
+          ),
           time: moment(node.order_date).format("h:mm a"),
           note: node.order_note,
           noteIcon:

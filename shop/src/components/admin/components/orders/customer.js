@@ -23,6 +23,7 @@ import moment from "moment";
 import numeral from "numeral";
 import axios from "axios";
 import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { AbandonedList, SettingContext } from "../../../../routes/routes";
 import {
   ThunderboltOutlined,
   FileSearchOutlined,
@@ -34,6 +35,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 function Customer(props) {
+  var settings = useContext(SettingContext);
   const [customers, setCustomers] = useState([]);
   const [selected, setSelected] = useState(undefined);
   const [order, setOrder] = useState([]);
@@ -85,7 +87,9 @@ function Customer(props) {
                 ? node.line_item.length + " Item"
                 : node.line_item.length + " Items"
               : "0 Items",
-          date: moment(node.order_date).format("MM-DD-YYYY"),
+          date: moment(node.order_date).format(
+            settings != undefined ? settings.date_format : "MM-DD-YYYY"
+          ),
           payment_text: node.payment_status,
           payment: (
             <Labels
@@ -205,7 +209,9 @@ function Customer(props) {
       var row = record.data.line_item[c];
       line_items.push({
         product: row.product.length != 0 ? row.product[0].product_name : "",
-        order_date: moment(row.order_date).format("MM-DD-YYYY"),
+        order_date: moment(row.order_date).format(
+          settings != undefined ? settings.date_format : "MM-DD-YYYY"
+        ),
         price: numeral(row.price).format("0,0.00"),
         original_price: numeral(row.original_price).format("0,0.00"),
         quantity: row.quantity,
