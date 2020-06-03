@@ -22,6 +22,7 @@ import {
   ShoppingCartOutlined,
   LoadingOutlined,
   PlusOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { api_base_url_settings } from "../../../keys/index";
 import axios from "axios";
@@ -257,29 +258,40 @@ function Dashboard(props) {
                   <Text strong>Your Logo</Text>
                 </Col>
                 <Col span="8">
-                  <Upload
-                    style={{ width: "100%" }}
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    customRequest={dummyRequest}
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
-                  >
+                  <Space>
+                    <Upload
+                      style={{ width: "100%" }}
+                      name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      customRequest={dummyRequest}
+                      beforeUpload={beforeUpload}
+                      onChange={handleChange}
+                    >
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt="avatar"
+                          style={{ width: "100%" }}
+                        />
+                      ) : (
+                        <div>
+                          {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                          <div className="ant-upload-text">Upload</div>
+                        </div>
+                      )}
+                    </Upload>
                     {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{ width: "100%" }}
-                      />
-                    ) : (
-                      <div>
-                        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-                        <div className="ant-upload-text">Upload</div>
-                      </div>
-                    )}
-                  </Upload>
+                      <Button
+                        size="small"
+                        onClick={() => setimageUrl(undefined)}
+                        type="link"
+                      >
+                        <CloseCircleOutlined />
+                      </Button>
+                    ) : null}
+                  </Space>
                 </Col>
               </Row>
               <Row gutter={[16, 16]} align="middle">

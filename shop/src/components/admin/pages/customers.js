@@ -25,14 +25,11 @@ function Dashboard(props) {
           <Header />
           <Content
             style={{
-              margin: "24px 16px 24px 16px",
+              margin: "0px 0px",
               overflow: "initial",
-              backgroundColor: "white",
-              borderBottom: "1px solid rgba(0,0,0,0.2)",
-              borderRight: "1px solid rgba(0,0,0,0.1)",
             }}
           >
-            <div className="site-layout-background dyn-height">
+            <div className=" dyn-height">
               <PageHeader
                 className="site-page-header"
                 title="Customers"

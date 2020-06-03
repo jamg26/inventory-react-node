@@ -12,7 +12,9 @@ function checkAuth(req, res, next) {
   if (login_token != "") {
     next();
   } else {
-    res.status(401).send({ status: "unautorized" });
+    res
+      .status(401)
+      .send({ status: "unautorized", message: "User not Authorized" });
   }
 }
 module.exports = (app) => {

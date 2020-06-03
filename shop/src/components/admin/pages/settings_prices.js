@@ -9,6 +9,7 @@ import {
   PageHeader,
   Statistic,
   Card,
+  Divider,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -31,36 +32,10 @@ import { api_base_url_orders } from "../../../keys/index";
 const { Content } = Layout;
 const { Text } = Typography;
 function Dashboard(props) {
-  const [collaped, setCollaped] = useState(false);
   const [showComponent, setShowComponent] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [purchaseOrderData, setpurchaseOrderData] = useState([]);
-  const get_products = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_orders + "/products",
-      {},
-      { headers: headers }
-    );
-    setProducts(response.data);
-  };
-  const retrieveAllData = () => {
-    axios
-      .get(api_base_url_orders + "/purchase_orders/")
 
-      .then((res) => {
-        setpurchaseOrderData(res.data);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  };
   useEffect(() => {
     checkAuth(props, setShowComponent);
-    get_products();
-    retrieveAllData();
   }, []);
   if (showComponent) {
     return [
@@ -78,10 +53,8 @@ function Dashboard(props) {
             }}
           >
             <div className="site-layout-background dyn-height">
-              <PageHeader className="site-page-header" title="Price List" />
-              {props.no == "9" ? "Organization Profile" : null}
-              {props.no == "10" ? "Taxes" : null}
-              {props.no == "11" ? "Price List" : null}
+              <h1>Price Lists</h1>
+              <Divider />
             </div>
           </Content>
         </Layout>

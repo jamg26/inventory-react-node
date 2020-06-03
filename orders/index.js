@@ -19,6 +19,7 @@ app.use(
   })
 );
 //require Routes
+require("./routes/bundle_routes")(app);
 require("./routes/getter_routes")(app);
 require("./routes/supplier_routes")(app);
 require("./routes/stock_control_routes")(app);

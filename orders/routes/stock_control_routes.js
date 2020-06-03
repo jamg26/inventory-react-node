@@ -16,7 +16,9 @@ function checkAuth(req, res, next) {
   if (login_token != "") {
     next();
   } else {
-    res.status(401).send({ status: "unautorized" });
+    res
+      .status(401)
+      .send({ status: "unautorized", message: "User not Authorized" });
   }
 }
 module.exports = (app) => {
@@ -180,6 +182,14 @@ module.exports = (app) => {
                       product.variants[c].quantity =
                         parseFloat(product.variants[c].quantity) +
                         parseFloat(result.quantity);
+                      product.variants[c].logs.push({
+                        log:
+                          `${
+                            result.type + " with id of '" + result._id + "'"
+                          } Added a stock(` +
+                          result.quantity +
+                          `)`,
+                      });
                       break;
                     }
                   }
@@ -213,6 +223,14 @@ module.exports = (app) => {
                       let total =
                         parseFloat(product.variants[c].quantity) -
                         parseFloat(result.quantity);
+                      product.variants[c].logs.push({
+                        log:
+                          `${
+                            result.type + " with id of '" + result._id + "'"
+                          } deducted a stock(` +
+                          result.quantity +
+                          `)`,
+                      });
                       product.variants[c].quantity = total;
                       break;
                     }

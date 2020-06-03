@@ -695,7 +695,11 @@ function StaffTable() {
           expandable={{ expandedRowRender }}
           columns={columns}
           dataSource={filteredStaff}
-          pagination={{ defaultPageSize: 10, position: ["bottomCenter"] }}
+          pagination={{
+            defaultPageSize: 10,
+            position: ["bottomCenter"],
+            size: "small",
+          }}
         ></Table>
       </section>
 

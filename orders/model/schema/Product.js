@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
-
+const logs = new Schema({
+  log: String,
+  created_at: Date,
+  updated_at: Date,
+});
 const variants = new Schema({
   option_title: String,
   supplier: [{ type: Schema.Types.ObjectId, ref: "suppliers" }],
@@ -35,6 +39,7 @@ const variants = new Schema({
     type: Boolean,
     default: true,
   },
+  logs: [logs],
   created_at: Date,
   updated_at: Date,
 });
@@ -72,7 +77,15 @@ variants.pre("save", function (next) {
   }
   next();
 });
+logs.pre("save", function (next) {
+  now = new Date();
+  this.updated_at = now;
+  if (!this.created_at) {
+    this.created_at = now;
+  }
 
+  next();
+});
 ProductSchema.pre("save", function (next) {
   now = new Date();
   this.updated_at = now;

@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { UserContext } from "../../../routes/routes";
-import { Button, Layout, Menu, PageHeader, Tabs, Typography, Form } from "antd";
+import {
+  Button,
+  Layout,
+  Menu,
+  PageHeader,
+  Tabs,
+  Typography,
+  Form,
+  Row,
+  Col,
+} from "antd";
 import { ArrowRightOutlined, InboxOutlined } from "@ant-design/icons";
 import { checkAuth } from "../../helper/authCheckAdmin";
 import Side from "../inc/side";
@@ -19,6 +29,8 @@ import AddSupplierModal from "../../global-components/add_supplier";
 import LowStock from "./analytics-cards/product_on_low_stock";
 import numeral from "numeral";
 import axios from "axios";
+import AddBundle from "../components/bundles/add_bundle";
+import BundleList from "../components/bundles/bundle_list";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
@@ -82,16 +94,10 @@ function Dashboard(props) {
 
   const [productName, setProductName] = useState(product.product_name);
   const [productDesc, setProductDesc] = useState(product.product_description);
-  const [productType, setProductType] = useState(
-    product.product_type.product_type_name
-  );
+  const [productType, setProductType] = useState(null);
   const [productBrand, setProductBrand] = useState(variant.brand);
-  const [productSupplier, setProductSupplier] = useState(
-    variant.supplier.company_name
-  );
-  const [productSupplierCode, setProductSupplierCode] = useState(
-    variant.supplier.supplier_code
-  );
+  const [productSupplier, setProductSupplier] = useState(null);
+  const [productSupplierCode, setProductSupplierCode] = useState(null);
   const [productSKU, setProductSKU] = useState(variant.sku);
   const [productBarcode, setProductBarcode] = useState(variant.barcode);
   const [productInitialStock, setProductInitialStock] = useState(0);
@@ -332,6 +338,7 @@ function Dashboard(props) {
     reorder_point,
   ]);
   const addProduct = () => {
+    console.log("variantData", variantData);
     if (productName === "") {
       alert("Please input a product name!");
     } else if (prodMarkup == "") {
@@ -376,14 +383,11 @@ function Dashboard(props) {
           <Header />
           <Content
             style={{
-              margin: "24px 16px 24px 16px",
+              margin: "0px",
               overflow: "initial",
-              backgroundColor: "white",
-              borderBottom: "1px solid rgba(0,0,0,0.2)",
-              borderRight: "1px solid rgba(0,0,0,0.1)",
             }}
           >
-            <div className="site-layout-background dyn-height">
+            <div className=" dyn-height">
               <PageHeader
                 className="site-page-header"
                 title="Inventory"
@@ -414,7 +418,7 @@ function Dashboard(props) {
                 }}
               />
               <Tabs
-                defaultActiveKey="1"
+                defaultActiveKey="7"
                 tabBarStyle={{ paddingLeft: "20px", paddingRight: "20px" }}
                 type="card"
                 tabBarExtraContent={
@@ -530,6 +534,12 @@ function Dashboard(props) {
                       </Button>
                     </div>
                   </Form>
+                </TabPane>
+                <TabPane tab="Add Bundle" key="6">
+                  <AddBundle SupplierList={SupplierList} />
+                </TabPane>
+                <TabPane tab="Bundles List" key="7">
+                  <BundleList />
                 </TabPane>
                 <TabPane tab="Low Stock" key="5">
                   <LowStock products={products} />

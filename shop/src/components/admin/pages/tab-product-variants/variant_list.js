@@ -102,12 +102,12 @@ function VariantList() {
       let newData = {
         parent_id: selectedRows[index].parent_id,
         variant_id: selectedRows[index].variant_id,
-        variant_active: newStatus,
+        variant_active: true,
       };
       arr.push(newData);
     }
     axios
-      .post(api_base_url_orders + "/products/variants/bulk_action", arr)
+      .post(api_base_url_orders + "/products/variants/bulk_action1", arr)
       .then((res) => {
         setVariantArray([...variantArray, arr]);
         retrieveAllVariants();
@@ -124,7 +124,7 @@ function VariantList() {
       let newData = {
         parent_id: selectedRows[index].parent_id,
         variant_id: selectedRows[index].variant_id,
-        variant_active: !newStatus,
+        variant_active: false,
       };
       arr.push(newData);
     }

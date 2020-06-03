@@ -107,6 +107,12 @@ module.exports = (app) => {
   // Create a new Product
   app.post(keys.sub + "/products/add", async (req, res) => {
     let product = new products(req.body);
+    for (let x = 0; x < product.variants.length; x++) {
+      const variant = product.variants[x];
+      variant.logs.push({
+        log: "Product Added",
+      });
+    }
     product
       .save()
       .then((product) => {
@@ -150,6 +156,9 @@ module.exports = (app) => {
             variants[index].price_with_tax = request.price_w_tax;
             variants[index].price = request.final_price;
             variants[index].images = request.imageFile;
+            variants[index].logs.push({
+              log: "Product Information Updated",
+            });
           }
         });
 
@@ -198,6 +207,9 @@ module.exports = (app) => {
           product.variants.forEach((element, index, variants) => {
             if (element.id === variant_id) {
               variants[index].active = variant_status;
+              variants[index].logs.push({
+                log: "Product Active Status(" + variant_status + ") Updated",
+              });
             }
           });
           product
@@ -254,11 +266,11 @@ module.exports = (app) => {
           res.status(400).send("data not found");
         } else {
           product.variants.forEach((element, index, variants) => {
-            if (element.id === variant_id) {
-              variants[index].active = !product_active;
-              if (product_active === true) {
-                variants[index].active = !product_active;
-              }
+            if (element._id === variant_id) {
+              variants[index].active = product_active;
+              variants[index].logs.push({
+                log: "Product Active Status(" + product_active + ") Updated",
+              });
             }
           });
           product
@@ -282,30 +294,37 @@ module.exports = (app) => {
     for (let index = 0; index < arr.length; index++) {
       let product_id = arr[index].parent_id;
       let variant_id = arr[index].variant_id;
-      let product_active = arr[index].variant_status;
-      products.findById(product_id, function (err, product) {
-        if (!product) {
-          res.status(400).send("data not found");
+      let product_active = arr[index].variant_active;
+      console.log("product_active", arr[index].parent_id);
+      products.findOne({ _id: product_id }, async (err, product) => {
+        if (product == null) {
+          console.log("null");
         } else {
-          product.variants.forEach((element, index, variants) => {
-            if (element.id === variant_id) {
-              variants[index].active = product_active;
+          product.variants.forEach((element, ind, variant) => {
+            if (element._id == variant_id) {
+              console.log(variant_id);
+              variant[ind].active = product_active;
+              variant[ind].logs.push({
+                log: "Product Active Status(" + product_active + ") Updated",
+              });
               /*if (product_active === true) {
                               variants[index].active = !product_active;
                           }*/
             }
           });
-          product
+          await product
             .save()
             .then((prod) => {
-              //console.log(prod)
+              // console.log(prod);
             })
             .catch((err) => {
-              console.log(err);
+              // console.log("err", err);
             });
         }
       });
+      if (parseFloat(index) + parseFloat(1) == arr.length) {
+        res.json("Product status bulk action updated");
+      }
     }
-    res.json("Product status bulk action updated");
   });
 };

@@ -10,7 +10,9 @@ function checkAuth(req, res, next) {
   if (login_token != "" && login_token != undefined) {
     next();
   } else {
-    res.status(401).send({ status: "unautorized" });
+    res
+      .status(401)
+      .send({ status: "unautorized", message: "User not Authorized" });
   }
 }
 module.exports = (app) => {
@@ -281,6 +283,13 @@ module.exports = (app) => {
                         parseFloat(prod.variants[x].quantity) -
                         parseFloat(result.line_item[c].quantity);
                       prod.variants[x].quantity = latest;
+                      prod.variants[x].logs.push({
+                        log:
+                          "Product is Placed on Order with id# '" +
+                          order_id +
+                          "' in quantity of " +
+                          result.line_item[c].quantity,
+                      });
                       console.log("found you");
                     }
                   }

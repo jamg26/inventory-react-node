@@ -1,4 +1,5 @@
 // compile all model require statement in one require file in index.js
+require("./schema/Bundles");
 require("./schema/User");
 require("./schema/Company");
 require("./schema/Customer");

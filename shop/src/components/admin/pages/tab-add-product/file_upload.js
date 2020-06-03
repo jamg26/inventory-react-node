@@ -1,79 +1,81 @@
 import React, { useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
-import { Empty } from "antd";
+import { Empty, Space, Upload, message, Typography } from "antd";
+const { Dragger } = Upload;
+const { Text } = Typography;
 function FileUpload(props) {
   const { imageFile, setImageFile } = props;
   const originColor = "#dfe4e6";
   const [colorBorder, setColorBorder] = useState(originColor);
-  const onImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        setImageFile(e.target.result);
-      };
-      reader.readAsDataURL(event.target.files[0]);
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
     }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error("Image must smaller than 2MB!");
+    }
+    return isJpgOrPng && isLt2M;
   };
-  const changeColor = () => {
-    setColorBorder("#23a4eb");
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
   };
-  const changeBackColor = () => {
-    setColorBorder(originColor);
+  const propsDragger = {
+    showUploadList: false,
+    name: "file",
+    onChange(info) {
+      const { status } = info.file;
+      console.log(info.file);
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (status === "done") {
+        getBase64(info.file.originFileObj, (imageUrl) => {
+          setImageFile(imageUrl);
+        });
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
   };
   return (
     <div>
-      <label style={{ fontWeight: "bold", color: "black" }}>Upload image</label>
-      <div style={{ textAlign: "center", padding: "10px" }}>
-        {imageFile == undefined || imageFile == "" ? (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        ) : (
-          <img alt="preview" style={{ width: "50%" }} src={imageFile} />
-        )}
-      </div>
-      <div
-        style={{
-          width: "100%",
-          textAlign: "center",
-          border: "1px dashed",
-          borderColor: colorBorder,
-          padding: "8px 15px 10px 15px",
-          backgroundColor: "#f7f9fa",
-          cursor: "pointer",
-        }}
-        onMouseEnter={changeColor}
-        onMouseLeave={changeBackColor}
+      <Text>Upload Image</Text>
+      <Space
+        direction="vertical"
+        style={{ width: "100%", textAlign: "center" }}
       >
-        <label htmlFor="group_image" style={{ cursor: "pointer" }}>
-          <div style={{ margin: -15, paddingTop: "20px" }}>
-            <InboxOutlined style={{ fontSize: 45, color: "#23a4eb" }} />
-          </div>
-          <p
-            style={{
-              marginTop: "20px",
-              color: "rgba(0, 0, 0, 0.85)",
-              fontSize: "14px",
-            }}
-          >
+        {imageFile ? (
+          <img src={imageFile} style={{ width: "80%" }} />
+        ) : (
+          <Empty />
+        )}
+        <Dragger
+          {...propsDragger}
+          beforeUpload={beforeUpload}
+          customRequest={dummyRequest}
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
             Click or drag file to this area to upload
           </p>
-          <p
-            style={{
-              fontSize: "12px",
-              color: "rgba(0, 0, 0, 0.45)",
-              marginTop: "5px",
-            }}
-          >
-            Support for a single or bulk upload. Strictly prohibit from
-            uploading company data or other band files
+          <p className="ant-upload-hint">
+            Support for a single upload. Strictly prohibit from uploading
+            company data or other band files
           </p>
-        </label>
-      </div>
-      <input
-        type={"file"}
-        onChange={onImageChange}
-        style={{ display: "none" }}
-        id="group_image"
-      />
+        </Dragger>
+      </Space>
     </div>
   );
 }
