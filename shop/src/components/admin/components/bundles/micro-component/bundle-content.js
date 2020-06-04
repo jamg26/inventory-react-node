@@ -20,6 +20,7 @@ import {
   Menu,
   Badge,
   Tag,
+  Modal,
 } from "antd";
 import Labels from "../../../../global-components/labels";
 import moment from "moment";
@@ -56,7 +57,65 @@ function BundleList({ bundle_list, selected, refresh }) {
   const [bundle, set_bundle] = useState(undefined);
   const [bundleorig, set_bundleorig] = useState(undefined);
   const [editable, seteditable] = useState(false);
+  const [add_item_modal, set_add_item_modal] = useState(false);
   const [variantArray, setVariantArray] = useState([]);
+  const [add_item_product_index, set_add_item_product_index] = useState("");
+  const [add_item_product, set_add_item_product] = useState(undefined);
+  const submit_add_item = async () => {
+    let webadmin_login_token = localStorage.getItem("webadmin_login_token");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios
+      .post(
+        api_base_url_orders + "/bundles/add_bundle_item",
+        {
+          login_token: webadmin_login_token,
+          data: add_item_product,
+          selected: selected,
+        },
+        { headers: headers }
+      )
+      .then((response) => {
+        message.success(response.data.message);
+        cancel_add_items();
+        refresh();
+      })
+      .catch((err) => {
+        message.error(err.response.data.message);
+      });
+  };
+  const update_add_items_info = (value) => {
+    let notset = true;
+    for (let c = 0; c < bundle.bundle_items.length; c++) {
+      const element = bundle.bundle_items[c];
+      if (element.variant_id == variantArray[value].variant_id) {
+        notset = false;
+        break;
+      }
+    }
+
+    if (notset) {
+      set_add_item_product_index(value);
+      console.log(variantArray[value]);
+      set_add_item_product(variantArray[value]);
+    } else {
+      message.warning("item already in the bundle.");
+    }
+  };
+  const update_add_items_digits = (value, column) => {
+    let temp = cloneDeep(add_item_product);
+    temp[column] = value;
+    set_add_item_product(temp);
+  };
+  const open_add_item_modal = () => {
+    set_add_item_modal(true);
+  };
+  const cancel_add_items = () => {
+    set_add_item_modal(false);
+    set_add_item_product(undefined);
+    set_add_item_product_index("");
+  };
   const retrieveAllActiveTags = () => {
     axios
       .get(api_base_url_orders + "/product_tags/active")
@@ -133,14 +192,18 @@ function BundleList({ bundle_list, selected, refresh }) {
     get_product_types();
   }, []);
   useEffect(() => {
-    seteditable(false);
-    set_bundleorig(undefined);
-    console.log("selected");
-    let cc = [...bundle_list];
-    for (let x = 0; x < cc.length; x++) {
-      if (selected == cc[x]._id) {
-        set_bundle(cc[x]);
-        break;
+    if (selected == "") {
+      set_bundle(undefined);
+    } else {
+      seteditable(false);
+      set_bundleorig(undefined);
+      console.log("selected");
+      let cc = [...bundle_list];
+      for (let x = 0; x < cc.length; x++) {
+        if (selected == cc[x]._id) {
+          set_bundle(cc[x]);
+          break;
+        }
       }
     }
   }, [selected]);
@@ -212,6 +275,29 @@ function BundleList({ bundle_list, selected, refresh }) {
     let tempmain = cloneDeep(bundleorig);
     tempmain.bundle_items[index][column] = value;
     set_bundleorig(tempmain);
+  };
+  const toogle_bundle = async (value) => {
+    let webadmin_login_token = localStorage.getItem("webadmin_login_token");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios
+      .post(
+        api_base_url_orders + "/bundles/toogle_bundle",
+        {
+          login_token: webadmin_login_token,
+          value: value,
+          selected: selected,
+        },
+        { headers: headers }
+      )
+      .then((response) => {
+        message.success(response.data.message);
+        refresh();
+      })
+      .catch((err) => {
+        message.error(err.response.data.message);
+      });
   };
   const submit_Changes = async () => {
     console.log("bundleorig", bundleorig);
@@ -390,6 +476,81 @@ function BundleList({ bundle_list, selected, refresh }) {
 
   return [
     <>
+      <Modal
+        title="Add Item"
+        visible={add_item_modal}
+        onOk={() => {
+          submit_add_item();
+        }}
+        onCancel={() => {
+          cancel_add_items();
+        }}
+      >
+        <Row gutter={[16, 16]}>
+          <Col span="24">
+            <Text>Product</Text>
+            <Select
+              showSearch
+              style={{ width: "100%", minWidth: 200 }}
+              dropdownMatchSelectWidth={false}
+              value={add_item_product_index}
+              onChange={(e) => update_add_items_info(e)}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {variantArray.map((data, index) => {
+                return [
+                  <Option
+                    key={data.key}
+                    value={index}
+                    disabled={data.variant_quantity_max == 0 ? true : false}
+                    title="no Stock"
+                  >
+                    {data.variant_name}
+                  </Option>,
+                ];
+              })}
+            </Select>
+          </Col>
+          <Col span="24">
+            <Text>Purchase Cost : </Text>
+            <Text strong>
+              {add_item_product
+                ? numeral(add_item_product.variant_supplier_price).format(
+                    "0,0.00"
+                  )
+                : ""}
+            </Text>
+          </Col>
+          <Col span="24">
+            <Text>Markup : </Text>
+            <Text strong>
+              {add_item_product ? add_item_product.variant_markup + "%" : ""}
+            </Text>
+          </Col>
+          <Col span="24">
+            <Text>Quantity</Text>
+            <InputNumber
+              style={{ width: "100%" }}
+              onChange={(e) => update_add_items_digits(e, "variant_quantity")}
+              value={add_item_product ? add_item_product.variant_quantity : ""}
+            />
+          </Col>
+          <Col span="24">
+            <Text>Selling Price</Text>
+            <InputNumber
+              style={{ width: "100%" }}
+              onChange={(e) => update_add_items_digits(e, "variant_price")}
+              value={
+                add_item_product
+                  ? numeral(add_item_product.variant_price).format("0,0.00")
+                  : ""
+              }
+            />
+          </Col>
+        </Row>
+      </Modal>
       <Row align="middle" style={{ padding: 10 }}>
         <Col span="24">
           <Space>
@@ -411,10 +572,36 @@ function BundleList({ bundle_list, selected, refresh }) {
                 <CheckOutlined /> Save
               </Button>
             ) : (
-              <Button type="primary">
-                <PlusOutlined />
-                Add Item
-              </Button>
+              <>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    open_add_item_modal();
+                  }}
+                >
+                  <PlusOutlined />
+                  Add Item
+                </Button>
+                {bundle.active ? (
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      toogle_bundle(false);
+                    }}
+                  >
+                    Disable
+                  </Button>
+                ) : (
+                  <Button
+                    className="ant-btn-succcess"
+                    onClick={() => {
+                      toogle_bundle(true);
+                    }}
+                  >
+                    Enable
+                  </Button>
+                )}
+              </>
             )}
           </Space>
         </Col>

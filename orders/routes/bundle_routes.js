@@ -137,4 +137,73 @@ module.exports = (app) => {
         });
       });
   });
+
+  app.post(keys.sub + "/bundles/toogle_bundle", checkAuth, async (req, res) => {
+    const { selected, value } = req.body;
+    const bundled = bundles
+      .findOne({ _id: selected })
+      .then(async (bundle) => {
+        bundle.active = value;
+        await bundle
+          .save()
+          .then(() => {
+            res.send({
+              status: "OK",
+              message:
+                "Successfully " + (value ? "Enable" : "Disable") + " Bundle",
+            });
+          })
+          .catch(() => {
+            res.status(400).send({
+              status: "ERROR",
+              message:
+                "something went wrong while " +
+                (value ? "enable" : "disable") +
+                " the bundle!!",
+            });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400).send({
+          status: "ERROR",
+          message: "something went wrong while fetching the bundle data!!",
+          err: err,
+        });
+      });
+  });
+  app.post(
+    keys.sub + "/bundles/add_bundle_item",
+    checkAuth,
+    async (req, res) => {
+      const { selected, data } = req.body;
+      const bundled = bundles
+        .findOne({ _id: selected })
+        .then(async (bundle) => {
+          bundle.bundle_items.push(data);
+          await bundle
+            .save()
+            .then(() => {
+              res.send({
+                status: "OK",
+                message: "Successfully Updated Bundle Data",
+              });
+            })
+            .catch(() => {
+              res.status(400).send({
+                status: "ERROR",
+                message: "something went wrong while saving the bundle data!!",
+              });
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(400).send({
+            status: "ERROR",
+            message: "something went wrong while fetching the bundle data!!",
+            err: err,
+          });
+        });
+    }
+  );
 };
