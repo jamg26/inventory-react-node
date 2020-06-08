@@ -1,22 +1,39 @@
 import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../routes/routes";
-import { Button, Layout, message, Card, Input, Space } from "antd";
+import {
+  Button,
+  Layout,
+  message,
+  Card,
+  Input,
+  Space,
+  Select,
+  Radio,
+  DatePicker,
+} from "antd";
 import {
   MailOutlined,
   SmileOutlined,
   UserOutlined,
   LockOutlined,
   CheckOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
+import moment from "moment";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import { api_base_url } from "../../../keys";
 const { Content } = Layout;
+const { Option } = Select;
 function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
   const [submitloading, setsubmitloading] = useState(false);
+  const [initialBirthDate, setinitialBirthDate] = useState(
+    moment("2000-01-01")
+  );
 
   const [initialEmail, setInitialEmail] = useState("");
+  const [initialGender, setinitialGender] = useState("Not Specified");
   const [initialName, setinitialName] = useState("");
   const [initialNameLast, setinitialNameLast] = useState("");
   const [initialUserName, setinitialUserName] = useState("");
@@ -76,6 +93,8 @@ function Dashboard(props) {
                           lastname: initialNameLast,
                           username: initialUserName,
                           password: NewPassword,
+                          gender: initialGender,
+                          birthdate: initialBirthDate,
                         },
                         { headers: headers }
                       );
@@ -156,7 +175,23 @@ function Dashboard(props) {
               setinitialNameLast(el.target.value);
             }}
           />
-
+          <Space style={{ width: "100%" }}>
+            <DatePicker
+              size="large"
+              placeholder="Birth Date"
+              value={initialBirthDate}
+              onChange={(e) => setinitialBirthDate(e)}
+            />
+            <Radio.Group
+              style={{ width: "100%" }}
+              size="large"
+              onChange={(el) => setinitialGender(el.target.value)}
+              value={initialGender}
+            >
+              <Radio value={"Female"}>Female</Radio>
+              <Radio value={"Male"}>Male</Radio>
+            </Radio.Group>
+          </Space>
           <Input
             onPressEnter={() => {
               submitShop();

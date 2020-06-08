@@ -39,6 +39,10 @@ const CustomerShema = new Schema({
     type: Boolean,
     default: true,
   },
+  visited_once: {
+    type: Boolean,
+    default: false,
+  },
   email_verified_at: Date,
   password: String,
   login_token: {

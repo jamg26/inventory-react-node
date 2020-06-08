@@ -10,6 +10,8 @@ import {
   UserAddOutlined,
   TeamOutlined,
   SettingOutlined,
+  MessageOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import { SettingContext } from "../../../routes/routes";
 import { Link } from "react-router-dom";
@@ -89,6 +91,18 @@ function Side(props) {
           <Link to="/web-admin/users" key="5">
             <UserAddOutlined />
             <span className="nav-text">Staff</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="12">
+          <Link to="/web-admin/messages">
+            <MessageOutlined />
+            <span className="nav-text">Messages</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="13">
+          <Link to="/web-admin/email">
+            <MailOutlined />
+            <span className="nav-text">Email</span>
           </Link>
         </Menu.Item>
         <Menu.Item key="9">

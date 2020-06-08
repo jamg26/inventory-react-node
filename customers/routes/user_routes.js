@@ -6,7 +6,7 @@ const Companies = mongoose.model("companies");
 module.exports = (app) => {
   app.get(keys.sub + "/users", async (req, res) => {
     const request = req.query;
-    const result = await User.find({})
+    const result = await User.find({ status: true })
       .then((user) => {
         res.send(user);
       })

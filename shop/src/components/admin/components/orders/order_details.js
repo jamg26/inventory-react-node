@@ -85,6 +85,7 @@ function OrderDetail(props) {
           _id: node._id,
           key: c,
           order_text: node.order_no,
+          status: node.order_status,
           order: (
             <Button type="link" onClick={() => props.SetOrder(order_id)}>
               {node.order_no}
@@ -190,6 +191,12 @@ function OrderDetail(props) {
       sorter: (a, b) => a.order_text.length - b.order_text.length,
       sortDirections: ["descend", "ascend"],
       align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      sorter: (a, b) => a.purchase.length - b.purchase.length,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Purchase",

@@ -7,6 +7,8 @@ import {
   PercentageOutlined,
   InboxOutlined,
   GoldOutlined,
+  MessageOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 const { Header, Footer, Sider, Content } = Layout;
 function Side(props) {
@@ -42,7 +44,19 @@ function Side(props) {
             <span className="nav-text">My Orders</span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="3">
+        <Menu.Item key="5">
+          <Link to="/account/messages">
+            <MessageOutlined />
+            <span className="nav-text">Messages</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="6">
+          <Link to="/account/email">
+            <MailOutlined />
+            <span className="nav-text">Email</span>
+          </Link>
+        </Menu.Item>
+        {/* <Menu.Item key="3">
           <Link to="/account/points">
             <GoldOutlined />
             <span className="nav-text">Points Accumulated</span>
@@ -53,7 +67,7 @@ function Side(props) {
             <PercentageOutlined />
             <span className="nav-text">Special Discounts</span>
           </Link>
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     </Sider>,
   ];

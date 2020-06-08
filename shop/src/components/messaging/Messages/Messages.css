@@ -1,0 +1,15 @@
+.messages {
+  padding: 5px 0;
+  overflow: auto;
+  flex: auto;
+  -ms-overflow-style: none !important;
+}
+.messages::-webkit-scrollbar {
+  display: none !important;
+}
+.css-y1c0xs::-webkit-scrollbar {
+  display: none !important;
+}
+.css-y1c0xs {
+  -ms-overflow-style: none !important;
+}

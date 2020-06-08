@@ -1,9 +1,10 @@
 const keys = require("../config/keys");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-
+const moment = require("moment");
 //models{ customer_timeline: { log_text: "Customer Account Created" } }
 const customers = mongoose.model("customers");
+const logs = mongoose.model("customers_login_logs");
 module.exports = (app) => {
   app.get(keys.sub + "/", async (req, res) => {
     res.send("customers server");
@@ -13,24 +14,197 @@ module.exports = (app) => {
     const result = await customers.find({ active: true });
     res.send(result);
   });
+
   app.get(keys.sub + "/get_customer_list_count", async (req, res) => {
-    const result = await customers.countDocuments({ active: true });
+    const now = moment().subtract(1, "week").valueOf();
+    const result = await customers.countDocuments({
+      active: true,
+      created_at: { $gte: now },
+    });
     res.status(200).send({ count: result, status: "OK" });
   });
+  app.get(keys.sub + "/get_customer_gender_list_count", async (req, res) => {
+    const now = moment().subtract(1, "week").valueOf();
+    const result = await customers.countDocuments({
+      active: true,
+      gender: "Male",
+    });
+    const result_female = await customers.countDocuments({
+      active: true,
+      gender: "Female",
+    });
+    const result_not_specified = await customers.countDocuments({
+      active: true,
+      gender: "Not Specified",
+    });
+    res.status(200).send({
+      count: result,
+      count_not_specified: result_not_specified,
+      femalecount: result_female,
+      status: "OK",
+    });
+  });
+  app.get(keys.sub + "/get_login_logs", async (req, res) => {
+    // const now = moment().subtract(1, "week").valueOf();
+    const log = await logs.aggregate([
+      { $sort: { created_at: -1 } },
+      {
+        $group: {
+          _id: {
+            month: { $month: "$created_at" },
+            year: { $year: "$created_at" },
+          },
+          number_of_logins: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).send({ data: log, status: "OK" });
+  });
+  app.get(keys.sub + "/get_login_logs_today", async (req, res) => {
+    const now3 = moment.utc().toDate();
+    var startOfToday = new Date(
+      now3.getFullYear(),
+      now3.getMonth(),
+      now3.getDate()
+    );
+    console.log("startOfToday", startOfToday, now3);
+    const log = await logs.aggregate([
+      {
+        $match: {
+          created_at: { $gte: startOfToday },
+        },
+      },
+      { $sort: { created_at: 1 } },
+      {
+        $group: {
+          _id: {
+            hour: { $hour: "$created_at" },
+            month: { $month: "$created_at" },
+            year: { $year: "$created_at" },
+          },
+          date: {
+            $first: "$created_at",
+          },
+          number_of_logins: { $sum: 1 },
+        },
+      },
+    ]);
+    const now = moment.utc().subtract(1, "days").toDate();
+    var startOfyesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    console.log("startOfyesterday", startOfyesterday, startOfToday);
+    const logyesterday = await logs.aggregate([
+      {
+        $match: {
+          $and: [
+            { created_at: { $gt: startOfyesterday } },
+            { created_at: { $lt: startOfToday } },
+          ],
+        },
+      },
+      { $sort: { created_at: 1 } },
+      {
+        $group: {
+          _id: {
+            hour: { $hour: "$created_at" },
+            year: { $year: "$created_at" },
+          },
+          date: {
+            $first: "$created_at",
+          },
+          number_of_logins: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).send({ today: log, yesterday: logyesterday });
+  });
+  app.get(keys.sub + "/get_returning_customers", async (req, res) => {
+    const now3 = moment.utc().toDate();
+    var startOfToday = new Date(
+      now3.getFullYear(),
+      now3.getMonth(),
+      now3.getDate()
+    );
+    console.log("startOfToday", startOfToday, now3);
+    const log = await logs.aggregate([
+      {
+        $match: {
+          not_new: false,
+          created_at: { $gte: startOfToday },
+        },
+      },
+      { $sort: { created_at: 1 } },
+      {
+        $group: {
+          _id: {
+            hour: { $hour: "$created_at" },
+            month: { $month: "$created_at" },
+            year: { $year: "$created_at" },
+          },
+          date: {
+            $first: "$created_at",
+          },
+          number_of_logins: { $sum: 1 },
+        },
+      },
+    ]);
+    const log2 = await logs.aggregate([
+      {
+        $match: {
+          not_new: true,
+          created_at: { $gte: startOfToday },
+        },
+      },
+      { $sort: { created_at: 1 } },
+      {
+        $group: {
+          _id: {
+            hour: { $hour: "$created_at" },
+            month: { $month: "$created_at" },
+            year: { $year: "$created_at" },
+          },
+          date: {
+            $first: "$created_at",
+          },
+          number_of_logins: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).send({ today: log, new_visit: log2 });
+  });
+  app.get(keys.sub + "/get_unique_customers", async (req, res) => {
+    // const now = moment().subtract(1, "week").valueOf();
+    const result = await customers.countDocuments({
+      active: true,
+      visited_once: true,
+    });
+    res.status(200).send({ count: result, status: "OK" });
+  });
+
   app.post(keys.sub + "/login", async (req, res) => {
     const request = req.body;
     const user = await customers.find({ username: request.username });
     if (user.length > 0) {
       if (bcrypt.compareSync(request.password, user[0].password)) {
         // Passwords match
-
+        let ccc = user[0].visited_once;
         let token = bcrypt.hashSync(
           user[0].username + " " + user[0].password,
           10
         );
         user[0].login_token = token;
+        user[0].visited_once = true;
+
         await user[0].save();
         // user[0].password = "";
+        const log = new logs({
+          customer_id: user[0]._id,
+          not_new: ccc,
+        });
+        log.save();
         let check_initial_setup = false;
         res.send({
           token: token,
@@ -62,6 +236,8 @@ module.exports = (app) => {
           lname: request.lastname,
           username: request.username,
           email: request.email,
+          gender: request.gender,
+          birthdate: request.birthdate,
           password: hash,
           customer_timeline: [
             { timestamp: new Date(), log_text: "Account Registered" },

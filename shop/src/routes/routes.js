@@ -13,6 +13,8 @@ import {
 import AccountIndex from "../components/customers/pages/index";
 import AccountOrder from "../components/customers/pages/orders";
 import AccountPoints from "../components/customers/pages/points";
+import AccountMessage from "../components/customers/pages/messages";
+import AccountEmailling from "../components/customers/pages/emailling";
 import LandingIndex from "../components/landing/pages/index";
 import LandingSignup from "../components/landing/pages/signup";
 import LandingInitialComponent from "../components/landing/pages/homepage";
@@ -28,6 +30,9 @@ import AdminStockControl from "../components/admin/pages/stock_control";
 import AdminSettings from "../components/admin/pages/settings";
 import AdminSettingsTax from "../components/admin/pages/settings_taxes";
 import AdminSettingsPrice from "../components/admin/pages/settings_prices";
+import AdminMessages from "../components/admin/pages/messages";
+import AdminEmail from "../components/admin/pages/emailling";
+
 import axios from "axios";
 import { Button, Result } from "antd";
 import {
@@ -90,6 +95,12 @@ const RouteController = ({
                         <Route key={4} exact path="/account/discounts">
                           <AccountIndex no={4} />
                         </Route>
+                        <Route key={5} exact path="/account/messages">
+                          <AccountMessage no={5} />
+                        </Route>
+                        <Route key={6} exact path="/account/email">
+                          <AccountEmailling no={6} />
+                        </Route>
                         {/* admin ui */}
                         <Route key={0} exact path="/web-admin">
                           <AdminInitialComponent no={0} />
@@ -127,6 +138,12 @@ const RouteController = ({
                         </Route>
                         <Route key={11} exact path="/web-admin/settings/prices">
                           <AdminSettingsPrice no={11} />
+                        </Route>
+                        <Route key={12} exact path="/web-admin/messages">
+                          <AdminMessages no={12} />
+                        </Route>
+                        <Route key={13} exact path="/web-admin/email">
+                          <AdminEmail no={13} />
                         </Route>
                         <Route key={6}>
                           <Result

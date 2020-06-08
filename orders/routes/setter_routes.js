@@ -253,6 +253,7 @@ module.exports = (app) => {
           result.payment_status = "PAID";
           result.payment_info = details;
           result.payment_date = new Date();
+          result.check_out_date = new Date();
           result.active = true;
           result.order_log.push({
             log: "Order Placed",

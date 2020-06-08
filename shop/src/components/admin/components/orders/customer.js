@@ -80,6 +80,7 @@ function Customer(props) {
           data: node,
           _id: node._id,
           order_text: node.order_no,
+          status: node.order_status,
           order: node.order_no,
           purchase:
             node.line_item.length != 0
@@ -138,6 +139,12 @@ function Customer(props) {
       sorter: (a, b) => a.order_text.length - b.order_text.length,
       sortDirections: ["descend", "ascend"],
       align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      sorter: (a, b) => a.purchase.length - b.purchase.length,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Purchase",

@@ -19,12 +19,10 @@ import {
 } from "antd";
 import axios from "axios";
 import scriptLoader from "react-async-script-loader";
-import { api_base_url_orders } from "../../../keys/index";
+import { api_base_url_orders, sandbox, production } from "../../../keys/index";
 const CLIENT = {
-  sandbox:
-    "AdD0UPAaMrRGbG7M-v-O-V1PauKeQSdZ2fhJtuXTYORM-573Byv2YxwGfKQZcyJhEE6Bi3RalwRwrDqk",
-  production:
-    "ATnwSeIeaje0vM9uaAEDvDszZfY2L5C8bTZg5G3cna3adTrqD-5WZIKsxoQc3WEvxXLhqcTQ_Zhjiav7",
+  sandbox: sandbox,
+  production: production,
 };
 
 const CLIENT_ID =

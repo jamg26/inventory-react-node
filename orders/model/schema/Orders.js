@@ -71,6 +71,7 @@ const OrderSchema = new Schema({
   payment_note: String,
   payment_total: String,
   payment_date: Date,
+  check_out_date: Date,
   fulfillment_status: {
     type: String,
     default: "Pending",

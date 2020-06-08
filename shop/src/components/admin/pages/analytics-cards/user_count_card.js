@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Statistic } from "antd";
+import { Statistic, Space, Row, Col, Typography, Avatar } from "antd";
 import { api_base_url } from ".././../../../keys/index";
 import {
   ArrowRightOutlined,
   UserOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+const { Text, Title } = Typography;
 function UserCount() {
   const [customercount, setcustomercount] = useState(0);
   const get_abandoned_carts = async () => {
@@ -24,13 +25,21 @@ function UserCount() {
     get_abandoned_carts();
   }, []);
   return [
-    <Statistic
-      title="No. of Users Account"
-      value={customercount}
-      valueStyle={{ color: "#3f8600" }}
-      prefix={<UserOutlined />}
-      suffix="Accounts"
-    />,
+    <Row gutter={[16, 16]}>
+      <Col span="12">
+        <Avatar
+          style={{ backgroundColor: "#f74343", color: "white" }}
+          size={100}
+          icon={<UserOutlined />}
+        />
+      </Col>
+      <Col span="12" style={{ textAlign: "right" }}>
+        <Title style={{ color: "#f74343" }}>{customercount}</Title>
+        <Text strong style={{ color: "#6d7072" }}>
+          New Users
+        </Text>
+      </Col>
+    </Row>,
   ];
 }
 

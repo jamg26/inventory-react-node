@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "chat_server": "cd chat_server && npm start",
     "customer": "cd customers && npm start",
     "settings": "cd settings && npm start",
+    "email": "cd email && npm start",
     "event-bus": "cd event-bus && npm start",
     "orders": "cd orders && npm start",
     "payments": "cd payments && npm start",
     "products": "cd products && npm start",
     "shop": "cd shop && npm start",
-    "start": "concurrently \"npm run customer\" \"npm run settings\" \"npm run orders\"  \"npm run shop\""
+    "start": "concurrently \"npm run customer\" \"npm run settings\" \"npm run orders\" \"npm run email\" \"npm run chat_server\"  \"npm run shop\""
   },
   "keywords": [],
   "author": "",

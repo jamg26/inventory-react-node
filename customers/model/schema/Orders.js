@@ -64,6 +64,7 @@ const OrderSchema = new Schema({
     default: "For Delivery",
   },
   order_date: Date,
+  delivered_date: Date,
   order_note: String,
   phone: String,
   address: String,
