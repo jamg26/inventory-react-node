@@ -41,9 +41,9 @@ function Orders(props) {
   if (showComponent) {
     return [
       <Layout>
-        <Side setCategory={setCategory} no={props.no} />
+        {/* <Side setCategory={setCategory} no={props.no} /> */}
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header no={props.no} />
           <Content
             style={{
               margin: "24px 16px 24px 16px",
@@ -51,7 +51,7 @@ function Orders(props) {
             }}
           >
             <div className=" dyn-height">
-              <Card bodyStyle={{ padding: 0 }}>
+              <Card bodyStyle={{ padding: 0, border: "1px solid #e9e9e9" }}>
                 <Chatting
                   name={accountdata ? accountdata.name : ""}
                   room={accountdata ? accountdata._id : ""}

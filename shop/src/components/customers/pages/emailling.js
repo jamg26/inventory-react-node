@@ -75,6 +75,9 @@ function Orders(props) {
                         ? setting_configuration.send_through_email
                         : undefined
                     }
+                    system_settings={
+                      setting_configuration ? setting_configuration : undefined
+                    }
                   />
                 </TabPane>
                 <TabPane

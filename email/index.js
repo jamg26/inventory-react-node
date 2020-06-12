@@ -9,6 +9,7 @@ const app = express();
 app.use(compression());
 var cors = require("cors");
 app.use(bodyParser.json({ limit: "50mb" }));
+app.set("view engine", "pug");
 //require models
 require("./model");
 //apply CORS middleware
@@ -19,6 +20,7 @@ app.use(
   })
 );
 //require Routes
+require("./routes/retreive_email_routes")(app);
 require("./routes/getter_routes")(app);
 require("./routes/setter_routes")(app);
 

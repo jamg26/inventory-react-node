@@ -78,9 +78,16 @@ function All(props) {
           ) : null,
         customer:
           node.customer.length != 0 ? (
-            <Button type="link" onClick={() => props.setCustomer(customer_id)}>
-              {node.customer[0].fname + " " + node.customer[0].lname}
-            </Button>
+            props.report ? (
+              node.customer[0].fname + " " + node.customer[0].lname
+            ) : (
+              <Button
+                type="link"
+                onClick={() => props.setCustomer(customer_id)}
+              >
+                {node.customer[0].fname + " " + node.customer[0].lname}
+              </Button>
+            )
           ) : (
             <Text type="secondary">{"no Customer"}</Text>
           ),

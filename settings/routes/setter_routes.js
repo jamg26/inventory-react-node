@@ -43,6 +43,10 @@ module.exports = (app) => {
         send_through_email: request.org_send_through,
         base_currency: request.org_base_currency,
         date_format: request.org_date_format,
+        aws_region: request.aws_region,
+        aws_access_key_id: request.aws_access_key_id,
+        aws_secret_key: request.aws_secret_key,
+        g_account_password: request.g_account_password,
       });
       setting
         .save()
@@ -85,6 +89,10 @@ module.exports = (app) => {
             setting.send_through_email = request.org_send_through;
             setting.base_currency = request.org_base_currency;
             setting.date_format = request.org_date_format;
+            setting.aws_region = request.aws_region;
+            setting.aws_access_key_id = request.aws_access_key_id;
+            setting.aws_secret_key = request.aws_secret_key;
+            setting.g_account_password = request.g_account_password;
             setting
               .save()
               .then(() => {

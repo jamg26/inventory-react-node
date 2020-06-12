@@ -105,7 +105,7 @@ const Chat = (props) => {
           settypingprompt(user + " is " + text + "...");
           setTimeout(() => {
             settypingprompt("");
-          }, 1000);
+          }, 5000);
         }
       });
     }

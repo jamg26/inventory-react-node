@@ -22,6 +22,8 @@ import {
 import { api_base_url_messages } from "../../../../keys/index";
 import TextArea from "antd/lib/input/TextArea";
 import axios from "axios";
+import RichTextEditor from "react-rte";
+import "draft-js/dist/Draft.css";
 const { Title, Text } = Typography;
 function EmailComponent(props) {
   const [userdata, setuserdata] = useState(undefined);
@@ -30,7 +32,9 @@ function EmailComponent(props) {
   const [emailvalid, setemailvalid] = useState(true);
   const [disablebutton, setdisablebutton] = useState(false);
   const [subject, setsubject] = useState("");
-  const [emailsubject, setemailsubject] = useState("");
+  const [emailsubject, setemailsubject] = useState(() =>
+    RichTextEditor.createEmptyValue()
+  );
   useEffect(() => {
     let account = localStorage.getItem("landing_remembered_account");
     if (account === null || account == "") {
@@ -60,20 +64,24 @@ function EmailComponent(props) {
     }
 
     setsubject("");
-    setemailsubject("");
+    setemailsubject(RichTextEditor.createEmptyValue());
   };
   const SendMessage = async () => {
+    console.log("emailsubject", emailsubject.toString("html"));
     setdisablebutton(true);
     if (email != "") {
       if (name == "") {
         message.error("please provide an name");
+        setdisablebutton(false);
       } else {
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-          if (emailsubject == "") {
+          if (emailsubject.toString("html") == "") {
             message.error("please provide a message");
+            setdisablebutton(false);
           } else {
             if (subject == "") {
               message.error("please provide a subject");
+              setdisablebutton(false);
             } else {
               setemailvalid(true);
               const headers = {
@@ -87,8 +95,11 @@ function EmailComponent(props) {
                     customer_email: email,
                     customer_id: userdata ? userdata._id : "",
                     to: props.shop_email,
+                    aws_region: props.system_settings.aws_region,
+                    aws_access_key_id: props.system_settings.aws_access_key_id,
+                    aws_secret_key: props.system_settings.aws_secret_key,
                     subject: subject,
-                    text: emailsubject,
+                    text: emailsubject.toString("html"),
                   },
                   { headers: headers }
                 )
@@ -98,13 +109,16 @@ function EmailComponent(props) {
                   clearAll();
                 })
                 .catch((err) => {
-                  message.error(err.response.data.message);
+                  message.error(
+                    "something went wrong..please try again later."
+                  );
                   setdisablebutton(false);
                 });
             }
           }
         } else {
           message.error("please provide a valid email");
+          setdisablebutton(false);
         }
       }
     } else {
@@ -120,8 +134,8 @@ function EmailComponent(props) {
     return [
       <>
         <Row gutter={[16, 16]}>
-          <Col span="8"></Col>
-          <Col span="8">
+          <Col span="7"></Col>
+          <Col span="10">
             <Row gutter={[16, 16]} align="middle">
               <Col span="24" style={{ textAlign: "center" }}>
                 <Title level={4}>Contact Us</Title>
@@ -165,15 +179,20 @@ function EmailComponent(props) {
               </Col>
             </Row>
             <Row gutter={[16, 16]}>
-              <Col span="24" style={{ textAlign: "center" }}>
-                <TextArea
+              <Col span="24">
+                <RichTextEditor
+                  value={emailsubject}
+                  onChange={(e) => setemailsubject(e)}
+                  placeholder="Message"
+                />
+                {/* <TextArea
                   placeholder="Message"
                   rows={5}
                   value={emailsubject}
                   onChange={(e) => {
                     setemailsubject(e.target.value);
                   }}
-                />
+                /> */}
               </Col>
             </Row>
             <Row gutter={[16, 16]} align="middle">
@@ -206,7 +225,7 @@ function EmailComponent(props) {
               </Col>
             </Row>
           </Col>
-          <Col span="8"></Col>
+          <Col span="7"></Col>
         </Row>
       </>,
     ];

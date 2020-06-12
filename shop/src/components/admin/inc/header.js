@@ -15,6 +15,7 @@ import {
   DatePicker,
   Space,
   message,
+  Avatar,
 } from "antd";
 import {
   UserOutlined,
@@ -22,20 +23,36 @@ import {
   NotificationOutlined,
   BellOutlined,
   LockOutlined,
+  HomeOutlined,
+  BarChartOutlined,
+  InboxOutlined,
+  TagOutlined,
+  UserAddOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  MessageOutlined,
+  MailOutlined,
+  BellFilled,
+  MessageFilled,
+  MessageTwoTone,
+  SolutionOutlined,
 } from "@ant-design/icons";
+
 import axios from "axios";
-import { api_base_url } from "../../../keys/index";
+import { api_base_url, api_base_url_messages } from "../../../keys/index";
 import { Link } from "react-router-dom";
 import CredentialsAccount from "./section/accountCredentials";
 const { Header } = Layout;
 const { Text } = Typography;
-function Head() {
+const { SubMenu } = Menu;
+function Head(props) {
   const [username, setUserName] = useState("");
   const [position, setposition] = useState("");
   const [accountdata, setaccountdata] = useState({});
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [visibleEditCredential, setvisibleEditCredential] = useState(false);
-
+  const [newmessage, setnewmessage] = useState(0);
+  const [customer_supports, set_customer_supports] = useState([]);
   const [form_edit_staff] = Form.useForm();
   const [dateBirthday, setBirthday] = useState("");
   const formItemLayout = {
@@ -116,6 +133,30 @@ function Head() {
       }
     });
   };
+  const fetch_customer_supports = async (id) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.post(
+      api_base_url_messages + "/get_client_messages",
+      { client_id: id },
+      { headers: headers }
+    );
+    set_customer_supports(response.data.messages);
+  };
+  useEffect(() => {
+    console.log("customer_supports", customer_supports);
+    let count = 0;
+    for (let c = 0; c < customer_supports.length; c++) {
+      const element = customer_supports[c];
+      if (element.unseen != 0) {
+        console.log("new message");
+        count++;
+      }
+    }
+    setnewmessage(count);
+  }, [customer_supports]);
+
   const openNotification = () => {
     notification.open({
       message: "Sample Notification Title",
@@ -138,6 +179,12 @@ function Head() {
       setaccountdata(data);
       setUserName(data.username);
       setposition(data.position);
+      if (props.no != "12") {
+        fetch_customer_supports(data._id);
+        setInterval(() => {
+          fetch_customer_supports(data._id);
+        }, 10000);
+      }
     }
   }, []);
   const menu = (
@@ -183,35 +230,211 @@ function Head() {
     <Menu>
       <Menu.Item key={0}>
         <Link
-          to={""}
+          to={"#"}
           style={{ fontSize: "inherit" }}
-          onClick={() => openNotification()}
+          // onClick={() => openNotification()}
         >
-          Sample Notification 1
-        </Link>
-      </Menu.Item>
-
-      <Menu.Item key={1}>
-        <Link
-          to={""}
-          style={{ fontSize: "inherit" }}
-          onClick={() => openNotification()}
-        >
-          Sample Notification 2
+          no new notification
         </Link>
       </Menu.Item>
     </Menu>
   );
   return [
     <Header
-      className="site-layout-background"
+      className="site-layout-background ant-layout-header-custom"
       style={{
-        paddingRight: "10px",
-        paddingLeft: "10px",
+        paddingRight: 0,
+        paddingLeft: 0,
+
         borderBottom: "1px solid rgba(0,0,0,0.1)",
       }}
       key="0"
     >
+      <div class="topnav">
+        {/* <Link
+          to="/web-admin/home"
+          key="0"
+          className={`${props.no.toString() == "1" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <HomeOutlined />
+            Home
+          </Space>
+        </Link> */}
+        <Link
+          to="/web-admin/analytics"
+          key="4"
+          className={`${props.no.toString() == "6" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <BarChartOutlined />
+            <span className="nav-text">Analytics</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/orders"
+          key="1"
+          className={`${props.no.toString() == "3" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <InboxOutlined />
+            <span className="nav-text">Orders</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/products"
+          key="2"
+          className={`${props.no.toString() == "4" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <TagOutlined />
+            <span className="nav-text">Inventory</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/stock_control"
+          key="6"
+          className={`${props.no.toString() == "2" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <InboxOutlined />
+            <span className="nav-text">Stock Control</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/suppliers"
+          key="8"
+          className={`${props.no.toString() == "8" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <TeamOutlined />
+            <span className="nav-text">Suppliers</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/users"
+          key="5"
+          className={`${props.no.toString() == "7" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <UserAddOutlined />
+            <span className="nav-text">Staff</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/customers"
+          key="3"
+          className={`${props.no.toString() == "5" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <UserOutlined />
+            <span className="nav-text">Customers</span>
+          </Space>
+        </Link>
+
+        <Link
+          to="/web-admin/reports"
+          className={`${props.no.toString() == "14" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <SolutionOutlined />
+            <span className="nav-text">Reports</span>
+          </Space>
+        </Link>
+
+        <Link
+          to="/web-admin/messages"
+          className={`${props.no.toString() == "12" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <MessageOutlined />
+            <span className="nav-text">Messages</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/email"
+          className={`${props.no.toString() == "13" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <MailOutlined />
+            <span className="nav-text">Email</span>
+          </Space>
+        </Link>
+
+        <Space size="0" style={{ height: "100%", float: "right" }}>
+          <Link
+            to="/web-admin/settings"
+            key="9"
+            className={`${props.no.toString() == "9" ? "active" : ""}`}
+          >
+            <Space direction="vertical" size="0">
+              <SettingOutlined />
+              <span className="nav-text">Settings</span>
+            </Space>
+          </Link>
+          <Dropdown overlay={notif} trigger={["click"]}>
+            <Button
+              type="link"
+              style={{
+                textAlign: "left",
+                float: "right",
+                height: "100%",
+                color: "black",
+              }}
+            >
+              <Row gutter="20" align="middle">
+                <Col span="6">
+                  <Badge count={0}>
+                    <BellFilled style={{ color: "#9d9d9d" }} />
+                  </Badge>
+                </Col>
+              </Row>
+            </Button>
+          </Dropdown>
+
+          <Link
+            to="/web-admin/messages"
+            style={{
+              textAlign: "left",
+              float: "right",
+              height: "100%",
+              color: "black",
+            }}
+          >
+            <Row gutter="20" align="middle">
+              <Col span="6">
+                <Badge count={newmessage}>
+                  <MessageFilled style={{ color: "#9d9d9d", height: "100%" }} />
+                </Badge>
+              </Col>
+            </Row>
+          </Link>
+
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button
+              type="link"
+              style={{
+                textAlign: "left",
+                float: "right",
+                height: "100%",
+                color: "black",
+              }}
+            >
+              <Row gutter="20">
+                <Col span="24" align="middle" justify="center">
+                  <Space>
+                    <Avatar icon={<UserOutlined />} />
+                    <Space direction="vertical" size="0">
+                      {username}
+                      <Text type="secondary">{position}</Text>
+                    </Space>
+                  </Space>
+                </Col>
+              </Row>
+            </Button>
+          </Dropdown>
+        </Space>
+      </div>
       <Modal
         title="Update Passowrd"
         visible={visibleEditCredential}
@@ -275,38 +498,6 @@ function Head() {
           </Form.Item>
         </Form>
       </Modal>
-      <Dropdown overlay={menu} trigger={["click"]}>
-        <Button
-          type="link"
-          style={{
-            textAlign: "left",
-            float: "right",
-            height: "100%",
-            color: "black",
-          }}
-        >
-          <Row gutter="20">
-            <Col span="6" align="middle" justify="center">
-              <UserOutlined style={{ height: "100%" }} className="center-svg" />
-            </Col>
-
-            <Col span="18">
-              {username}
-              <br></br> <Text type="secondary">{position}</Text>
-            </Col>
-          </Row>
-        </Button>
-      </Dropdown>
-      <Dropdown overlay={notif} trigger={["click"]}>
-        <Button
-          type="link"
-          style={{ float: "right", height: "100%", color: "black" }}
-        >
-          <Badge count={99} dot>
-            <BellOutlined />
-          </Badge>
-        </Button>
-      </Dropdown>
     </Header>,
   ];
 }

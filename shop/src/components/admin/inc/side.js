@@ -87,6 +87,12 @@ function Side(props) {
             <span className="nav-text">Analytics</span>
           </Link>
         </Menu.Item>
+        <Menu.Item key="14">
+          <Link to="/web-admin/reports">
+            <MailOutlined />
+            <span className="nav-text">Reports</span>
+          </Link>
+        </Menu.Item>
         <Menu.Item key="7">
           <Link to="/web-admin/users" key="5">
             <UserAddOutlined />

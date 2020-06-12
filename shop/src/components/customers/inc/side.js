@@ -44,16 +44,16 @@ function Side(props) {
             <span className="nav-text">My Orders</span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="5">
+        {/* <Menu.Item key="5">
           <Link to="/account/messages">
             <MessageOutlined />
             <span className="nav-text">Messages</span>
           </Link>
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item key="6">
           <Link to="/account/email">
-            <MailOutlined />
-            <span className="nav-text">Email</span>
+            <MessageOutlined />
+            <span className="nav-text">Messages</span>
           </Link>
         </Menu.Item>
         {/* <Menu.Item key="3">

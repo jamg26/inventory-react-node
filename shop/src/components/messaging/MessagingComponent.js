@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
-import { Row, Col, Menu, Typography, Avatar, Badge } from "antd";
+import {
+  Row,
+  Col,
+  Menu,
+  Typography,
+  Avatar,
+  Badge,
+  Divider,
+  Input,
+} from "antd";
 import {
   ArrowRightOutlined,
   RightOutlined,
@@ -10,7 +19,7 @@ import {
 import TextContainer from "./TextContainer/TextContainer";
 import Messages from "./Messages/Messages";
 import InfoBar from "./InfoBar/InfoBar";
-import Input from "./Input/Input";
+import CustomInput from "./Input/Input";
 
 import "./Chat.css";
 import axios from "axios";
@@ -107,7 +116,7 @@ const Chat = (props) => {
             settypingprompt(user + " is " + text + "...");
             setTimeout(() => {
               settypingprompt("");
-            }, 1000);
+            }, 5000);
           }
         }
       });
@@ -137,7 +146,7 @@ const Chat = (props) => {
   useEffect(() => {
     setInterval(() => {
       fetch_customer_supports();
-    }, 5000);
+    }, 10000);
   }, []);
   const sendMessage = (event) => {
     event.preventDefault();
@@ -176,9 +185,15 @@ const Chat = (props) => {
           style={{
             padding: "0px",
             height: "60vh",
-            borderRight: "1px solid #ccc",
+            borderRight: "1px solid #e9e9e9",
           }}
         >
+          <Row align="middle" style={{ padding: 4 }}>
+            <Col span="24">
+              <Input style={{ border: "0px solid #ccc" }} size="large" />
+            </Col>
+          </Row>
+          <Divider style={{ margin: "0px" }} />
           <Menu
             onSelect={(item, key) => {
               listener(item.key);
@@ -218,7 +233,7 @@ const Chat = (props) => {
               <div style={{ padding: "2px" }}>
                 <span style={{ color: "rgba(0,0,0,.45)" }}>{typingprompt}</span>
               </div>
-              <Input
+              <CustomInput
                 message={message}
                 setMessage={setMessage}
                 sendMessage={sendMessage}

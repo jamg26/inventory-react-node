@@ -25,7 +25,11 @@ import {
 } from "@ant-design/icons";
 
 const InfoBar = ({ room }) => (
-  <div style={{ borderBottom: "1px solid #ccc", borderTop: "1px solid #ccc" }}>
+  <div
+    style={{
+      borderBottom: "1px solid #e9e9e9",
+    }}
+  >
     <Row gutter={[16]} align="middle">
       <Col span="24">
         <Space align="center" style={{ margin: 10 }}>

@@ -44,7 +44,7 @@ import DuePO from "./analytics-cards/due_po";
 import { api_base_url_orders } from "../../../keys/index";
 const { Option } = Select;
 const { Content } = Layout;
-const { Text, Paragraph } = Typography;
+const { Text, Paragraph, Link } = Typography;
 function Dashboard(props) {
   const setting_configuration = useContext(SettingContext);
   const setting_configuration_refresher = useContext(SettingContextRefresher);
@@ -59,6 +59,11 @@ function Dashboard(props) {
   const [org_business_location, set_org_business_location] = useState(
     "Philippines"
   );
+  const [aws_region, set_aws_region] = useState("");
+  const [aws_access_key_id, set_aws_access_key_id] = useState("");
+  const [aws_secret_key, set_aws_secret_key] = useState("");
+  const [g_account_password, set_g_account_password] = useState("");
+
   const [org_street_one, set_org_street_one] = useState("");
   const [org_street_two, set_org_street_two] = useState("");
   const [org_city, set_org_city] = useState("");
@@ -95,6 +100,11 @@ function Dashboard(props) {
       set_org_send_through(setting_configuration.send_through_email);
       set_org_base_currency(setting_configuration.base_currency);
       set_org_date_format(setting_configuration.date_format);
+
+      set_aws_region(setting_configuration.aws_region);
+      set_aws_access_key_id(setting_configuration.aws_access_key_id);
+      set_aws_secret_key(setting_configuration.aws_secret_key);
+      set_g_account_password(setting_configuration.g_account_password);
     }
   }, [setting_configuration]);
   const beforeUpload = (file) => {
@@ -209,6 +219,10 @@ function Dashboard(props) {
                 org_send_through,
                 org_base_currency,
                 org_date_format,
+                aws_region,
+                aws_access_key_id,
+                aws_secret_key,
+                g_account_password,
               },
               { headers: headers }
             )
@@ -240,7 +254,7 @@ function Dashboard(props) {
       <Layout key="0">
         <Side no={props.no} />
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header no={props.no} />
           <Content
             style={{
               margin: "24px 16px 24px 16px",
@@ -431,7 +445,7 @@ function Dashboard(props) {
                   <Text strong>Primary Contact</Text>
                 </Col>
                 <Col span="6">
-                  <Space direction="vertical">
+                  <Space direction="vertical" style={{ width: "100%" }}>
                     <Text type="secondary">SENDER</Text>
                     <Paragraph
                       className={`${
@@ -446,10 +460,25 @@ function Dashboard(props) {
                     >
                       {org_sender_email}
                     </Paragraph>
+                    <Input
+                      placeholder="AWS region"
+                      value={aws_region}
+                      onChange={(e) => set_aws_region(e.target.value)}
+                    />
+                    <Input
+                      placeholder="AWS Access Key Id"
+                      value={aws_access_key_id}
+                      onChange={(e) => set_aws_access_key_id(e.target.value)}
+                    />
+                    <Input.Password
+                      placeholder="Secret Access Key"
+                      value={aws_secret_key}
+                      onChange={(e) => set_aws_secret_key(e.target.value)}
+                    />
                   </Space>
                 </Col>
                 <Col span="6">
-                  <Space direction="vertical">
+                  <Space direction="vertical" style={{ width: "100%" }}>
                     <Text type="secondary">EMAIL ARE SENT THROUGH</Text>
                     <Paragraph
                       strong
@@ -464,6 +493,18 @@ function Dashboard(props) {
                     >
                       {org_send_through}
                     </Paragraph>
+                    <Input.Password
+                      placeholder="google account app password"
+                      value={g_account_password}
+                      onChange={(e) => set_g_account_password(e.target.value)}
+                    />
+                    <Link
+                      style={{ fontSize: "smaller" }}
+                      href="https://support.google.com/accounts/answer/185833"
+                      target="_blank"
+                    >
+                      how to get account app password?
+                    </Link>
                   </Space>
                 </Col>
               </Row>

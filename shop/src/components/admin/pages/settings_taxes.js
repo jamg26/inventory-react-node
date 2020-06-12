@@ -369,7 +369,7 @@ function Dashboard(props) {
       <Layout key="0">
         <Side no={props.no} />
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header no={props.no} />
           <Content
             style={{
               margin: "24px 16px 24px 16px",

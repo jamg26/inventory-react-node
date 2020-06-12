@@ -32,6 +32,7 @@ import AdminSettingsTax from "../components/admin/pages/settings_taxes";
 import AdminSettingsPrice from "../components/admin/pages/settings_prices";
 import AdminMessages from "../components/admin/pages/messages";
 import AdminEmail from "../components/admin/pages/emailling";
+import AccountReport from "../components/admin/pages/reports";
 
 import axios from "axios";
 import { Button, Result } from "antd";
@@ -106,7 +107,8 @@ const RouteController = ({
                           <AdminInitialComponent no={0} />
                         </Route>
                         <Route key={1} exact path="/web-admin/home">
-                          <AdminHome no={1} />
+                          {/* <AdminHome no={1} /> */}
+                          <AdminAnalytics no={6} />
                         </Route>
                         <Route key={2} exact path="/web-admin/stock_control">
                           <AdminStockControl no={2} />
@@ -144,6 +146,9 @@ const RouteController = ({
                         </Route>
                         <Route key={13} exact path="/web-admin/email">
                           <AdminEmail no={13} />
+                        </Route>
+                        <Route key={14} exact path="/web-admin/reports">
+                          <AccountReport no={14} />
                         </Route>
                         <Route key={6}>
                           <Result

@@ -15,6 +15,7 @@ import {
   PercentageOutlined,
 } from "@ant-design/icons";
 import { SettingContext } from "../../../routes/routes";
+import Mail from "../components/Mail/Mail";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 function Orders(props) {
@@ -41,21 +42,25 @@ function Orders(props) {
   if (showComponent) {
     return [
       <Layout>
-        <Side setCategory={setCategory} no={props.no} />
+        {/* <Side setCategory={setCategory} no={props.no} /> */}
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header no={props.no} />
           <Content
             style={{
-              margin: "24px 16px 24px 16px",
               overflow: "initial",
             }}
           >
-            <div className=" dyn-height">
-              <Card>
-                <Chatting
-                  name={accountdata ? accountdata.name : ""}
-                  room={accountdata ? accountdata._id : ""}
-                  id={accountdata ? accountdata._id : ""}
+            <div className=" dyn-height-no-padding">
+              <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+                <Mail
+                  system_settings={
+                    setting_configuration ? setting_configuration : undefined
+                  }
+                  shop_email={
+                    setting_configuration
+                      ? setting_configuration.sender_email
+                      : undefined
+                  }
                 />
               </Card>
             </div>

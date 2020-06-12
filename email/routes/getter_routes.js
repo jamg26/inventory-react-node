@@ -2,6 +2,7 @@ const keys = require("../config/keys");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
+var Mailgun = require("mailgun-js");
 //models
 const orders = mongoose.model("orders");
 const products = mongoose.model("products");
@@ -9,6 +10,9 @@ const product_types = mongoose.model("product_types");
 const settings = mongoose.model("settings");
 const taxes = mongoose.model("taxes");
 const messaging = mongoose.model("messages");
+var api_key = "e3de81e59bc637b41d01c148313f78bd-8b34de1b-5c4ef5dc";
+var domain = "sandboxc5a36f98c7024f4191f21419c878e1d1.mailgun.org";
+var from_who = "";
 function checkAuth(req, res, next) {
   const { login_token } = req.body;
   console.log(login_token);
@@ -21,8 +25,22 @@ function checkAuth(req, res, next) {
   }
 }
 module.exports = (app) => {
-  app.get(keys.sub + "/", async (req, res) => {
-    res.send("email server");
+  //Do something when you're landing on the first page
+  app.get(keys.sub + "/change_env", (req, res) => {
+    process.env.EMAIL = "process_env@gmail.com";
+    res.send({ status: "OK", email: process.env.EMAIL });
+  });
+  app.get(keys.sub + "/", function (req, res) {
+    //render the index.jade file - input forms for humans
+    res.render("index-page", function (err, html) {
+      if (err) {
+        // log any error to the console for debug
+        console.log(err);
+      } else {
+        //no error, so send the html to the browser
+        res.send(html);
+      }
+    });
   });
 
   app.post(keys.sub + "/get_client_messages", async (req, res) => {

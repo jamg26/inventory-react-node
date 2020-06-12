@@ -378,9 +378,9 @@ function Dashboard(props) {
   if (showComponent) {
     return [
       <Layout key="0">
-        <Side no={props.no} />
+        {/* <Side no={props.no} /> */}
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header no={props.no} />
           <Content
             style={{
               margin: "0px",

@@ -36,7 +36,7 @@ const fillTheInput = () => {
 const rowAlreadyAdded = () => {
   message.info("Row has already been added", 4);
 };
-const EditableTable = ({ refresh_trigger }) => {
+const EditableTable = ({ refresh_trigger, searchword, filterfromprops }) => {
   var settings = useContext(SettingContext);
   const initialProductTagState = {
     _id: undefined,
@@ -73,7 +73,11 @@ const EditableTable = ({ refresh_trigger }) => {
   useEffect(() => {
     retrieveAllData();
   }, [refresh_trigger]);
-
+  useEffect(() => {
+    if (searchword) {
+      setSearch(searchword);
+    }
+  }, [searchword]);
   const retrieveAllData = () => {
     setLoading(true);
     axios
@@ -155,6 +159,8 @@ const EditableTable = ({ refresh_trigger }) => {
         },
       ],
       filterMultiple: false,
+      defaultFilteredValue: filterfromprops ? [filterfromprops] : [],
+      filterDropdownVisible: filterfromprops ? false : undefined,
       onFilter: (value, record) => record.status.indexOf(value) === 0,
       sortDirections: ["descend", "ascend"],
       align: "center",
@@ -305,40 +311,90 @@ const EditableTable = ({ refresh_trigger }) => {
   useEffect(() => {
     console.log(purchaseOrderData);
     setfilteredPurchaseOrderData(
-      purchaseOrderData.filter(
-        (data) =>
-          data.po_no.toLowerCase().includes(search.toLowerCase()) ||
-          (data.transfer_name
-            ? data.transfer_name.toLowerCase().includes(search.toLowerCase())
-            : "") ||
-          data.invoice_no.toLowerCase().includes(search.toLowerCase()) ||
-          (data.supplier && data.supplier.length != 0
-            ? data.supplier[0].display_name
-            : ""
-          )
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          data.status.toLowerCase().includes(search.toLowerCase()) ||
-          data.type.toLowerCase().includes(search.toLowerCase()) ||
-          (data.received_by && data.received_by.length != 0
-            ? data.received_by[0].name
-            : ""
-          )
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          data.ship_to.toLowerCase().includes(search.toLowerCase()) ||
-          data.delivery_due_date.toLowerCase().includes(search.toLowerCase()) ||
-          data.item_cost
-            .toString()
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          data.quantity
-            .toString()
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          data.tax.toString().toLowerCase().includes(search.toLowerCase()) ||
-          data.total.toString().toLowerCase().includes(search.toLowerCase())
-      )
+      purchaseOrderData.filter((data) => {
+        if (searchword == undefined) {
+          return (
+            data.po_no.toLowerCase().includes(search.toLowerCase()) ||
+            (data.transfer_name
+              ? data.transfer_name.toLowerCase().includes(search.toLowerCase())
+              : "") ||
+            data.invoice_no.toLowerCase().includes(search.toLowerCase()) ||
+            (data.supplier && data.supplier.length != 0
+              ? data.supplier[0].display_name
+              : ""
+            )
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            data.status.toLowerCase().includes(search.toLowerCase()) ||
+            data.type.toLowerCase().includes(search.toLowerCase()) ||
+            (data.received_by && data.received_by.length != 0
+              ? data.received_by[0].name
+              : ""
+            )
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            data.ship_to.toLowerCase().includes(search.toLowerCase()) ||
+            data.delivery_due_date
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            data.item_cost
+              .toString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            data.quantity
+              .toString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            data.tax.toString().toLowerCase().includes(search.toLowerCase()) ||
+            data.total.toString().toLowerCase().includes(search.toLowerCase())
+          );
+        } else {
+          if (data.type.toLowerCase() == searchword.toLowerCase()) {
+            return (
+              data.po_no.toLowerCase().includes(search.toLowerCase()) ||
+              (data.transfer_name
+                ? data.transfer_name
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+                : "") ||
+              data.invoice_no.toLowerCase().includes(search.toLowerCase()) ||
+              (data.supplier && data.supplier.length != 0
+                ? data.supplier[0].display_name
+                : ""
+              )
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.status.toLowerCase().includes(search.toLowerCase()) ||
+              data.type.toLowerCase().includes(search.toLowerCase()) ||
+              (data.received_by && data.received_by.length != 0
+                ? data.received_by[0].name
+                : ""
+              )
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.ship_to.toLowerCase().includes(search.toLowerCase()) ||
+              data.delivery_due_date
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.item_cost
+                .toString()
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.quantity
+                .toString()
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.tax
+                .toString()
+                .toLowerCase()
+                .includes(search.toLowerCase()) ||
+              data.total.toString().toLowerCase().includes(search.toLowerCase())
+            );
+          } else {
+            return false;
+          }
+        }
+      })
     );
   }, [search, purchaseOrderData]);
   // End of Search area

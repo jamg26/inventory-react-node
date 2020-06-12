@@ -24,6 +24,7 @@ function checkAuth(req, res, next) {
 module.exports = (app) => {
   app.get(keys.sub + "/purchase_orders", async (req, res) => {
     PurchaseOrder.find()
+      .sort({ created_at: -1 })
       .populate("product")
       .populate("received_by")
       .populate("entry_by")
