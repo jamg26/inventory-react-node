@@ -51,18 +51,53 @@ function Orders(props) {
             }}
           >
             <div className=" dyn-height-no-padding">
-              <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-                <Mail
-                  system_settings={
-                    setting_configuration ? setting_configuration : undefined
+              <Tabs
+                defaultActiveKey="1"
+                type="card"
+                tabBarStyle={{ paddingLeft: "20px", paddingRight: "20px" }}
+              >
+                <TabPane
+                  tab={
+                    <span>
+                      <ContainerOutlined />
+                      Email
+                    </span>
                   }
-                  shop_email={
-                    setting_configuration
-                      ? setting_configuration.sender_email
-                      : undefined
+                  key="1"
+                >
+                  <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+                    <Mail
+                      system_settings={
+                        setting_configuration
+                          ? setting_configuration
+                          : undefined
+                      }
+                      shop_email={
+                        setting_configuration
+                          ? setting_configuration.sender_email
+                          : undefined
+                      }
+                    />
+                  </Card>
+                </TabPane>
+                <TabPane
+                  tab={
+                    <span>
+                      <WechatOutlined />
+                      Chat
+                    </span>
                   }
-                />
-              </Card>
+                  key="2"
+                >
+                  <Card bodyStyle={{ padding: 0, border: "1px solid #e9e9e9" }}>
+                    <Chatting
+                      name={accountdata ? accountdata.name : ""}
+                      room={accountdata ? accountdata._id : ""}
+                      id={accountdata ? accountdata._id : ""}
+                    />
+                  </Card>
+                </TabPane>
+              </Tabs>
             </div>
           </Content>
         </Layout>

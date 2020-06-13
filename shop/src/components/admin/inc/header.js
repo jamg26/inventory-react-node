@@ -338,7 +338,7 @@ function Head(props) {
             <span className="nav-text">Messages</span>
           </Space>
         </Link>
-        <Link
+        {/* <Link
           to="/web-admin/email"
           className={`${props.no.toString() == "13" ? "active" : ""}`}
         >
@@ -346,7 +346,7 @@ function Head(props) {
             <MailOutlined />
             <span className="nav-text">Email</span>
           </Space>
-        </Link>
+        </Link> */}
 
         <Space size="0" style={{ height: "100%", float: "right" }}>
           <Link
