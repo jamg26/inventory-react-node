@@ -4,6 +4,11 @@ const bcrypt = require("bcryptjs");
 
 const line_items = new Schema({
   product: Array,
+  bundle: Array,
+  product_type: {
+    type: String,
+    default: "Product",
+  },
   variant_id: String,
   quantity: String,
   quantity_max: String,

@@ -8,7 +8,7 @@ import {
   TagOutlined,
   PercentageOutlined,
   WalletOutlined,
-  RollbackOutlined,
+  UserAddOutlined,
   BankOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -30,16 +30,7 @@ function Side(props) {
       collapsed={collaped}
       key="0"
     >
-      <Link to="/web-admin/" key="0">
-        {settings && settings.logo != "" ? (
-          <div className="logo-contrainer">
-            <img src={settings.logo} style={{ height: "100%" }} />
-          </div>
-        ) : (
-          <div className="logo" />
-        )}
-      </Link>
-
+      <div className="logo" />
       <Menu
         theme="dark"
         mode="inline"
@@ -62,6 +53,12 @@ function Side(props) {
             <Link to="/web-admin/settings/prices" key="11">
               <PercentageOutlined />
               <span className="nav-text">Price List</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="7">
+            <Link to="/web-admin/users" key="5">
+              <UserAddOutlined />
+              <span className="nav-text">Staff</span>
             </Link>
           </Menu.Item>
         </Menu.ItemGroup>

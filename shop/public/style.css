@@ -12,7 +12,6 @@
   margin: 0px;
   padding: 0 10px;
   text-align: center;
-  height: 70px;
 }
 .logo {
   height: 32px;
@@ -382,11 +381,17 @@ body {
 
 /* Add a color to the active/current link */
 .topnav a.active {
-  background-color: #3b8dff;
-  color: white;
+  /* background-color: #3b8dff; */
+  color: #3b8dff;
 }
 .ant-layout-header-custom {
   height: auto !important;
   min-height: 32px !important;
   line-height: unset !important;
+}
+.ant-table-tbody > tr:hover > td {
+  background: unset !important;
+}
+.ant-table-tbody > tr:hover > td {
+  background: #d1f5ff !important;
 }

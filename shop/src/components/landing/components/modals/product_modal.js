@@ -43,32 +43,34 @@ function Product_modal({
           onOk={close}
           onCancel={close}
           className="catalogue_close_button"
-          width={"40%"}
+          width={"60%"}
           footer={null}
         >
           <Row gutter={[16, 16]} align={"middle"}>
-            <Col span={10} style={{ textAlign: "center" }}>
+            <Col span={12} style={{ textAlign: "center" }}>
               {modal_data.category_modal_image}
             </Col>
-            <Col span={14}>
-              <table style={{ height: "90%", marginTop: "10%" }}>
+            <Col span={2} style={{ textAlign: "center" }}></Col>
+            <Col span={10}>
+              <table style={{ height: "90%" }}>
                 <tr>
                   <td style={{ verticalAlign: "top" }}>
-                    <Text style={{ fontSize: "22px" }} strong>
-                      {modal_data.product_name}
-                    </Text>
-                    <br />
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.weight}
-                    </Text>
-                    <br />
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.color}
-                    </Text>
-                    <br />
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.size}
-                    </Text>
+                    <Space direction="vertical" size="2">
+                      <Text style={{ fontSize: "22px" }} strong>
+                        {modal_data.product_name}
+                      </Text>
+                      <Space direction="vertical" size="0">
+                        <Text style={{ fontSize: "16px" }} type="secondary">
+                          {modal_data.weight}
+                        </Text>
+                        <Text style={{ fontSize: "16px" }} type="secondary">
+                          {modal_data.color}
+                        </Text>
+                        <Text style={{ fontSize: "16px" }} type="secondary">
+                          {modal_data.size}
+                        </Text>
+                      </Space>
+                    </Space>
                     <br />
                     <br />
                     <Text strong style={{ fontSize: "16px" }}>
@@ -79,26 +81,77 @@ function Product_modal({
                     </Text>
                     <br />
                     <br />
-                    <Text strong style={{ fontSize: "16px" }}>
-                      Category :{" "}
-                    </Text>
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.product_type}
-                    </Text>
-                    <br />
-                    <Text strong style={{ fontSize: "16px" }}>
-                      Tags :{" "}
-                    </Text>
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.tags}
-                    </Text>
-                    <br />
-                    <Text strong style={{ fontSize: "16px" }}>
-                      Stock :{" "}
-                    </Text>
-                    <Text style={{ fontSize: "16px" }} type="secondary">
-                      {modal_data.stock} {modal_data.quantity} available
-                    </Text>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "right",
+                            }}
+                          >
+                            <Text strong style={{ fontSize: "16px" }}>
+                              Category :{" "}
+                            </Text>
+                          </td>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "left",
+                            }}
+                          >
+                            <Text style={{ fontSize: "16px" }} type="secondary">
+                              {modal_data.product_type}
+                            </Text>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "right",
+                            }}
+                          >
+                            <Text strong style={{ fontSize: "16px" }}>
+                              Tags :{" "}
+                            </Text>
+                          </td>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "left",
+                            }}
+                          >
+                            <Text style={{ fontSize: "16px" }} type="secondary">
+                              {modal_data.tags}
+                            </Text>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "right",
+                            }}
+                          >
+                            <Text strong style={{ fontSize: "16px" }}>
+                              Stock :{" "}
+                            </Text>
+                          </td>
+                          <td
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "left",
+                            }}
+                          >
+                            <Text style={{ fontSize: "16px" }} type="secondary">
+                              {modal_data.stock} {modal_data.quantity} available
+                            </Text>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
                     <br />
                     <br />
                   </td>
@@ -106,8 +159,8 @@ function Product_modal({
                 <tr>
                   <td style={{ verticalAlign: "bottom" }}>
                     <Row gutter={[16, 16]}>
-                      <Col span="8">
-                        <Text strong>
+                      <Col span="8" style={{ textAlign: "center" }}>
+                        <Text strong style={{ fontSize: "18px" }}>
                           {"\u20B1"}
                           {modal_data.price}
                         </Text>
@@ -199,8 +252,8 @@ function Product_modal({
                           </button>
                         </div>
                       </Col>
-                      <Col span="8" style={{ textAlign: "right" }}>
-                        <Text strong>
+                      <Col span="8" style={{ textAlign: "center" }}>
+                        <Text strong style={{ fontSize: "18px" }}>
                           {"\u20B1"}
                           {modal_data.sub_total}
                         </Text>

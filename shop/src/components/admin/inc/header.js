@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Layout,
   Button,
@@ -42,10 +42,12 @@ import axios from "axios";
 import { api_base_url, api_base_url_messages } from "../../../keys/index";
 import { Link } from "react-router-dom";
 import CredentialsAccount from "./section/accountCredentials";
+import { SettingContext } from "../../../routes/routes";
 const { Header } = Layout;
 const { Text } = Typography;
 const { SubMenu } = Menu;
 function Head(props) {
+  var settings = useContext(SettingContext);
   const [username, setUserName] = useState("");
   const [position, setposition] = useState("");
   const [accountdata, setaccountdata] = useState({});
@@ -245,22 +247,16 @@ function Head(props) {
       style={{
         paddingRight: 0,
         paddingLeft: 0,
-
-        borderBottom: "1px solid rgba(0,0,0,0.1)",
+        border: "10px solid #348dff",
       }}
       key="0"
     >
       <div class="topnav">
-        {/* <Link
-          to="/web-admin/home"
-          key="0"
-          className={`${props.no.toString() == "1" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <HomeOutlined />
-            Home
-          </Space>
-        </Link> */}
+        <Link to="/web-admin/" key="0">
+          {settings && settings.logo != "" && settings.logo ? (
+            <img src={settings.logo} style={{ height: "32px" }} />
+          ) : null}
+        </Link>
         <Link
           to="/web-admin/analytics"
           key="4"
@@ -311,16 +307,7 @@ function Head(props) {
             <span className="nav-text">Suppliers</span>
           </Space>
         </Link>
-        <Link
-          to="/web-admin/users"
-          key="5"
-          className={`${props.no.toString() == "7" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <UserAddOutlined />
-            <span className="nav-text">Staff</span>
-          </Space>
-        </Link>
+
         <Link
           to="/web-admin/customers"
           key="3"

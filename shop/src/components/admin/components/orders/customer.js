@@ -215,7 +215,14 @@ function Customer(props) {
     for (var c = 0; c < record.data.line_item.length; c++) {
       var row = record.data.line_item[c];
       line_items.push({
-        product: row.product.length != 0 ? row.product[0].product_name : "",
+        product:
+          row.product_type == "Product"
+            ? row.product.length != 0
+              ? row.product[0].product_name
+              : ""
+            : row.bundle.length != 0
+            ? row.bundle[0].name
+            : "",
         order_date: moment(row.order_date).format(
           settings != undefined ? settings.date_format : "MM-DD-YYYY"
         ),

@@ -527,7 +527,7 @@ function Mail(props) {
                   <Col span="24">
                     <Space>
                       <Avatar />
-                      <Space size="0">
+                      <Space size="2">
                         <Text strong>
                           {RetrievedEmail && RetrievedEmail.length != 0
                             ? RetrievedEmail[activeEmail]
@@ -548,12 +548,16 @@ function Mail(props) {
                             ? RetrievedEmail[activeEmail]
                               ? RetrievedEmail[activeEmail][0]
                                 ? RetrievedEmail[activeEmail][0].from
-                                  ? RetrievedEmail[activeEmail][0].from.value[0]
-                                      .address
+                                  ? "<" +
+                                    RetrievedEmail[activeEmail][0].from.value[0]
+                                      .address +
+                                    ">"
                                   : ""
                                 : RetrievedEmail[activeEmail][1].from
-                                ? RetrievedEmail[activeEmail][1].from.value[0]
-                                    .address
+                                ? "<" +
+                                  RetrievedEmail[activeEmail][1].from.value[0]
+                                    .address +
+                                  ">"
                                 : ""
                               : ""
                             : ""}
@@ -562,22 +566,24 @@ function Mail(props) {
                     </Space>
                   </Col>
                 </Row>
+                <Divider />
                 <div
                   dangerouslySetInnerHTML={{
                     __html:
                       RetrievedEmail && RetrievedEmail.length != 0
                         ? RetrievedEmail[activeEmail]
-                          ? RetrievedEmail[activeEmail][1].text
+                          ? RetrievedEmail[activeEmail][1]
                             ? RetrievedEmail[activeEmail][1].text
                               ? // quotedPrintable
                                 windows1252
                                   .decode(
                                     quotedPrintable.decode(
-                                      RetrievedEmail[
-                                        activeEmail
-                                      ][1].text.replace(/\r\n/g, "")
+                                      RetrievedEmail[activeEmail][1].text
+                                        .replace(/\r\n/g, "")
+                                        .replace(/=3D/g, "=")
                                     )
                                   )
+                                  // .replace(/\n/g, "<br>")
                                   .replace(
                                     /--NextPart Content-Type: text\/plain\;/g,
                                     ""
@@ -603,7 +609,15 @@ function Mail(props) {
                                     /Header --NextPart Content-Type: text\/plain\;/g,
                                     ""
                                   )
-                              : // RetrievedEmail[activeEmail][1].text
+                                  .replace(/.*?--/, "")
+
+                                  .replace(/--.*?--/g, "")
+                                  .replace(/-- .*?--/g, "")
+                                  .replace(/--.*? --/g, "")
+                                  .replace(/-- .*? --/g, "")
+                              : // .replace(/.*?--/g, "")
+                              // .replace(/--.*?/g, "")
+                              // RetrievedEmail[activeEmail][1].text
                               //     .replace(/=3D/g, "")
                               //     .replace(/=E2/g, "")
                               //     .replace(/=80/g, "")
@@ -620,11 +634,12 @@ function Mail(props) {
                                   ? windows1252
                                       .decode(
                                         quotedPrintable.decode(
-                                          RetrievedEmail[
-                                            activeEmail
-                                          ][1].text.replace(/\r\n/g, "")
+                                          RetrievedEmail[activeEmail][1].text
+                                            .replace(/\r\n/g, "")
+                                            .replace(/=3D/g, "=")
                                         )
                                       )
+                                      // .replace(/\n/g, "<br>")
                                       .replace(
                                         /--NextPart Content-Type: text\/plain\;/g,
                                         ""
@@ -656,7 +671,15 @@ function Mail(props) {
                                         /Header --NextPart Content-Type: text\/plain\;/g,
                                         ""
                                       )
-                                  : ""
+                                      .replace(/.*?--/, "")
+
+                                      .replace(/--.*?--/g, "")
+                                      .replace(/-- .*?--/g, "")
+                                      .replace(/--.*? --/g, "")
+                                      .replace(/-- .*? --/g, "")
+                                  : // .replace(/.*?--/g, "")
+                                    // .replace(/--.*?/g, "")
+                                    ""
                                 : ""
                               : ""
                             : ""
@@ -664,6 +687,7 @@ function Mail(props) {
                         : "",
                   }}
                 />
+                <Divider />
                 <Row gutter={[16, 16]} style={{ marginTop: 30 }}>
                   <Col span="24">
                     <Button

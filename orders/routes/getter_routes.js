@@ -60,6 +60,7 @@ module.exports = (app) => {
   });
   app.get(keys.sub + "/customer_cart/:id", async (req, res) => {
     const request = req.params;
+    console.log(request.id);
     const cart = await orders.findOne({ customer: request.id, active: false });
     res.send({ cart });
   });

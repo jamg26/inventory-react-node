@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 const { Header } = Layout;
-function Head() {
+function Head({ loggedin }) {
   const [username, setUserName] = useState("");
   useEffect(() => {
     let account = localStorage.getItem("landing_remembered_account");
@@ -67,14 +67,20 @@ function Head() {
       }}
       key="0"
     >
-      <Dropdown overlay={menu} trigger={["click"]}>
-        <Button
-          type="link"
-          style={{ float: "right", height: "100%", color: "black" }}
-        >
-          <UserOutlined />
-        </Button>
-      </Dropdown>
+      {loggedin ? (
+        <Dropdown overlay={menu} trigger={["click"]}>
+          <Button
+            type="link"
+            style={{ float: "right", height: "100%", color: "black" }}
+          >
+            <UserOutlined />
+          </Button>
+        </Dropdown>
+      ) : (
+        <Link to="/login" style={{ float: "right" }}>
+          Signin/Signup
+        </Link>
+      )}
     </Header>,
   ];
 }

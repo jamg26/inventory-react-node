@@ -16,6 +16,21 @@ function checkAuth(req, res, next) {
   }
 }
 module.exports = (app) => {
+  app.get(keys.sub + "/bundles", async (req, res) => {
+    const Bundles = bundles
+      .find({ active: true })
+      .populate("product_type")
+      .then((bundles) => {
+        res.send({ status: "OK", message: "", data: bundles });
+      })
+      .catch(() => {
+        res.status(400).send({
+          status: "ERROR",
+          message: "something went wrong fetching list of bundles",
+          data: [],
+        });
+      });
+  });
   app.get(keys.sub + "/bundle_list", async (req, res) => {
     const Bundles = bundles
       .find({})

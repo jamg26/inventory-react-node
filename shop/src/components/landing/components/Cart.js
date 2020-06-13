@@ -17,7 +17,7 @@ import {
 } from "antd";
 import axios from "axios";
 import moment from "moment";
-import numeral from "numeral";
+import numeral, { set } from "numeral";
 import { DeleteOutlined } from "@ant-design/icons";
 import PreviewImage from "../../global-components/previewImageModal";
 import CustomerInfo from "./CustomerInfo";
@@ -65,112 +65,222 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       let sub = 0;
       for (let x = 0; x < cart.line_item.length; x++) {
         let node = cart.line_item[x];
-        let category =
-          node.product.length != 0 && node.product[0].product_type.length != 0
-            ? node.product[0].product_type[0].product_type_name
-            : "No Category";
-        if (
-          category.toLowerCase() == "meat" ||
-          category.toLowerCase() == "meats"
-        ) {
-          setExcl(true);
-        }
-        let taggg =
-          node.product.length != 0 && node.product[0].product_tags != undefined
-            ? node.product[0].product_tags.map((d) => {
-                return [d.tag_label];
-              })
-            : [];
-        for (let c = 0; c < taggg.length; c++) {
+        if (node.product_type == "Product" || node.product_type == undefined) {
+          let category =
+            node.product.length != 0 && node.product[0].product_type.length != 0
+              ? node.product[0].product_type[0].product_type_name
+              : "No Category";
           if (
-            taggg[c][0].toLowerCase() == "meat" ||
-            taggg[c][0].toLowerCase() == "meats"
+            category.toLowerCase() == "meat" ||
+            category.toLowerCase() == "meats"
           ) {
             setExcl(true);
-            break;
           }
-        }
-        let image =
-          node.product[0].length != 0 && node.product[0].variants[0].length != 0
-            ? node.product[0].variants[0].images != "" &&
-              node.product[0].variants[0].images != undefined &&
-              node.product[0].variants[0].images != null
-              ? node.product[0].variants[0].images
-              : null
-            : null;
-        let price =
-          node.product.length != 0 && node.product[0].variants.length != 0
-            ? node.product[0].variants[0].price
-            : 0;
-        let quantity = node.quantity_max;
-        filteredcart.push({
-          key: x,
-          order_id: cart._id,
-          product_id: node.product.length != 0 ? node.product[0]._id : "",
-          item_id: node._id,
-          product_name:
-            node.product.length != 0 ? node.product[0].product_name : "",
-          product_description:
-            node.product.length != 0 ? node.product[0].product_description : "",
-          tags: (
-            <>
-              {node.product.length != 0 &&
-              node.product[0].product_tags != undefined
-                ? node.product[0].product_tags.map((d) => {
-                    return [d.tag_label + " "];
-                  })
-                : null}
-            </>
-          ),
-          tag_list:
+          let taggg =
             node.product.length != 0 &&
             node.product[0].product_tags != undefined
               ? node.product[0].product_tags.map((d) => {
                   return [d.tag_label];
                 })
-              : [],
-          product_variant_id: node.variant_id,
-          product_type: category,
-          brand:
+              : [];
+          for (let c = 0; c < taggg.length; c++) {
+            if (
+              taggg[c][0].toLowerCase() == "meat" ||
+              taggg[c][0].toLowerCase() == "meats"
+            ) {
+              setExcl(true);
+              break;
+            }
+          }
+          let image =
+            node.product[0].length != 0 &&
+            node.product[0].variants[0].length != 0
+              ? node.product[0].variants[0].images != "" &&
+                node.product[0].variants[0].images != undefined &&
+                node.product[0].variants[0].images != null
+                ? node.product[0].variants[0].images
+                : null
+              : null;
+          let price =
             node.product.length != 0 && node.product[0].variants.length != 0
-              ? node.product[0].variants[0].brand
-              : "No Brand",
-          size:
-            node.product.length != 0 && node.product[0].variants.length != 0
-              ? node.product[0].variants[0].size
-              : "No Size",
-          color:
-            node.product.length != 0 && node.product[0].variants.length != 0
-              ? node.product[0].variants[0].color
-              : "No Color",
-          weight:
-            node.product.length != 0 && node.product[0].variants.length != 0
-              ? node.product[0].variants[0].weight
-              : "No Weight",
-          stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
-          image:
-            image != null ? (
-              <img
-                onClick={() => imageModal(image, node.product[0].product_name)}
-                style={{
-                  width: "100%",
-                  cursor: "pointer",
-                  margin: "0 auto",
-                }}
-                src={image}
-              />
-            ) : (
-              <Empty description={false} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              ? node.product[0].variants[0].price
+              : 0;
+          let quantity = node.quantity_max;
+          filteredcart.push({
+            key: x,
+            type: node.product_type,
+            order_id: cart._id,
+            product_id: node.product.length != 0 ? node.product[0]._id : "",
+            item_id: node._id,
+            product_name:
+              node.product.length != 0 ? node.product[0].product_name : "",
+            product_description:
+              node.product.length != 0
+                ? node.product[0].product_description
+                : "",
+            tags: (
+              <>
+                {node.product.length != 0 &&
+                node.product[0].product_tags != undefined
+                  ? node.product[0].product_tags.map((d) => {
+                      return [d.tag_label + " "];
+                    })
+                  : null}
+              </>
             ),
+            tag_list:
+              node.product.length != 0 &&
+              node.product[0].product_tags != undefined
+                ? node.product[0].product_tags.map((d) => {
+                    return [d.tag_label];
+                  })
+                : [],
+            product_variant_id: node.variant_id,
+            product_type: category,
+            brand:
+              node.product.length != 0 && node.product[0].variants.length != 0
+                ? node.product[0].variants[0].brand
+                : "No Brand",
+            size:
+              node.product.length != 0 && node.product[0].variants.length != 0
+                ? node.product[0].variants[0].size
+                : "No Size",
+            color:
+              node.product.length != 0 && node.product[0].variants.length != 0
+                ? node.product[0].variants[0].color
+                : "No Color",
+            weight:
+              node.product.length != 0 && node.product[0].variants.length != 0
+                ? node.product[0].variants[0].weight
+                : "No Weight",
+            stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
+            image:
+              image != null ? (
+                <img
+                  onClick={() =>
+                    imageModal(image, node.product[0].product_name)
+                  }
+                  style={{
+                    width: "100%",
+                    cursor: "pointer",
+                    margin: "0 auto",
+                  }}
+                  src={image}
+                />
+              ) : (
+                <Empty
+                  description={false}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              ),
 
-          price: numeral(price).format("0,0.00"),
-          price_raw: price,
-          quantity: quantity,
-          initial_quantity: node.quantity,
-          sub_total: numeral(node.quantity * price).format("0,0.00"),
-          actionData: node._id,
-        });
-        sub = parseFloat(sub) + parseFloat(node.quantity) * parseFloat(price);
+            price: numeral(price).format("0,0.00"),
+            price_raw: price,
+            quantity: quantity,
+            initial_quantity: node.quantity,
+            sub_total: numeral(node.quantity * price).format("0,0.00"),
+            actionData: node._id,
+          });
+          sub = parseFloat(sub) + parseFloat(node.quantity) * parseFloat(price);
+        } else {
+          let category =
+            node.bundle.length != 0 &&
+            node.bundle[0].product_type != null &&
+            node.bundle[0].product_type.length != 0
+              ? node.bundle[0].product_type[0].product_type_name
+              : "No Category";
+          if (
+            category.toLowerCase() == "meat" ||
+            category.toLowerCase() == "meats"
+          ) {
+            setExcl(true);
+          }
+          let taggg =
+            node.bundle.length != 0 && node.bundle[0].product_tags != undefined
+              ? node.bundle[0].product_tags.map((d) => {
+                  return [d.tag_label];
+                })
+              : [];
+          for (let c = 0; c < taggg.length; c++) {
+            if (
+              taggg[c][0].toLowerCase() == "meat" ||
+              taggg[c][0].toLowerCase() == "meats"
+            ) {
+              setExcl(true);
+              break;
+            }
+          }
+          let image =
+            node.bundle[0].length != 0
+              ? node.bundle[0].image != "" &&
+                node.bundle[0].image != undefined &&
+                node.bundle[0].image != null
+                ? node.bundle[0].image
+                : null
+              : null;
+          let price = node.bundle.length != 0 ? node.bundle[0].bundle_price : 0;
+          let quantity = node.quantity_max;
+          filteredcart.push({
+            key: x,
+            type: node.product_type,
+            order_id: cart._id,
+            product_id: node.bundle.length != 0 ? node.bundle[0]._id : "",
+            item_id: node._id,
+            product_name:
+              node.bundle.length != 0 ? node.bundle[0].product_name : "",
+            product_description:
+              node.bundle.length != 0 ? node.bundle[0].product_description : "",
+            tags: (
+              <>
+                {node.bundle.length != 0 &&
+                node.bundle[0].product_tags != undefined
+                  ? node.bundle[0].product_tags.map((d) => {
+                      return [d.tag_label + " "];
+                    })
+                  : null}
+              </>
+            ),
+            tag_list:
+              node.bundle.length != 0 &&
+              node.bundle[0].product_tags != undefined
+                ? node.bundle[0].product_tags.map((d) => {
+                    return [d.tag_label];
+                  })
+                : [],
+            product_variant_id: node.variant_id,
+            product_type: category,
+            brand: node.bundle.length != 0 ? node.bundle[0].brand : "No Brand",
+            size: "(" + node.product_type + ")",
+            color: "",
+            weight: "",
+            stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
+            image:
+              image != null ? (
+                <img
+                  onClick={() => imageModal(image, node.bundle[0].product_name)}
+                  style={{
+                    width: "100%",
+                    cursor: "pointer",
+                    margin: "0 auto",
+                  }}
+                  src={image}
+                />
+              ) : (
+                <Empty
+                  description={false}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              ),
+
+            price: numeral(price).format("0,0.00"),
+            price_raw: price,
+            quantity: quantity,
+            initial_quantity: node.quantity,
+            sub_total: numeral(node.quantity * price).format("0,0.00"),
+            actionData: node._id,
+          });
+          sub = parseFloat(sub) + parseFloat(node.quantity) * parseFloat(price);
+        }
       }
       setsubtotoal(sub);
       setDeliveryMethod(cart.delivery_method);
@@ -191,8 +301,10 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
     tempdata[index]["sub_total"] = numeral(
       tempdata[index]["price_raw"] * tempdata[index]["initial_quantity"]
     ).format("0,0.00");
-
+    console.log(pastvalue, value);
     if (pastvalue != value) {
+      // setCartrow(tempdata);
+      console.log("quantity", value);
       const headers = {
         "Content-Type": "application/json",
       };
@@ -204,6 +316,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
         {
           order_id: tempdata[index]["order_id"],
           product_id: tempdata[index]["product_id"],
+          product_type: tempdata[index]["type"],
           product_variant_id: tempdata[index]["product_variant_id"],
           item_id: tempdata[index]["item_id"],
           quantity: value,
@@ -246,7 +359,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       title: "Name",
       dataIndex: "product_name",
       key: "product_name",
-      width: "14.54%",
+      width: "21.01%",
       render: (result, row, index) => {
         return [
           <>
@@ -283,13 +396,11 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       width: "6.61%",
       render: (value, result) => {
         return [
-          <>
+          <Space direction="vertical" size="0">
             <Text>{result.size}</Text>
-            <br />
             <Text>{result.weight}</Text>
-            <br />
             <Text>{result.color}</Text>
-          </>,
+          </Space>,
         ];
       },
     },
@@ -297,7 +408,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
-      width: "8.55%",
+      width: "6%",
     },
     {
       title: "Price",
@@ -313,7 +424,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       dataIndex: "quantity",
       key: "quantity",
 
-      width: "6.69%",
+      width: "5%",
       render: (value, result) => {
         return [
           <InputNumber
@@ -321,9 +432,10 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
             value={result.initial_quantity}
             min={0}
             max={parseFloat(value)}
-            onChange={(event) =>
-              setInput(event, result.key, "initial_quantity")
-            }
+            onChange={(event) => {
+              console.log(event, "event", event);
+              setInput(event, result.key, "initial_quantity");
+            }}
           />,
         ];
       },
@@ -332,7 +444,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "7.23%",
+      width: "5%",
       align: "right",
       render: (value) => {
         return [value];
@@ -379,11 +491,12 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
         </Row>
 
         <Row gutter={[16, 16]} key="1">
-          <Col span="7" key="0">
+          <Col span="10" key="0">
             <Text strong>Order Note</Text>
             <TextArea
               disabled={cart == null ? true : false}
               rows={4}
+              style={{ width: "100%" }}
               placeholder="Type here"
               value={customerNote}
               onChange={(event) => setCustomerNote(event.target.value)}
@@ -391,7 +504,6 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
             />
           </Col>
           <Col span="1" key="1"></Col>
-          <Col span="3" key="2"></Col>
           <Col span="5" key="3">
             <Text strong>Delivery Type</Text>
             <br></br>
@@ -472,10 +584,10 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
                   type="primary"
                   disabled={!proceed}
                   onClick={() => {
+                    setProceedtoDetail(false);
                     document
                       .getElementById("ResidentialView")
                       .scrollIntoView({ behavior: "smooth" });
-                    setProceedtoDetail(false);
                   }}
                 >
                   Proceed to Checkout
@@ -485,20 +597,28 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
           </Col>
         </Row>
       </Card>
-      {cart ? (
-        <PageHeader
-          className="site-page-header"
-          title={"Residential and Contact Details"}
-        />
-      ) : null}
-      <CustomerInfo
-        cart={cart}
-        get_cart={() => {
-          setProceedtoDetail(true);
-          get_cart();
-        }}
-        proceed={proceedtoDetail}
-      />
+
+      {proceedtoDetail ? (
+        <div id="ResidentialView"></div>
+      ) : (
+        <>
+          {cart ? (
+            <PageHeader
+              className="site-page-header"
+              title={"Contact Details and Delivery Address"}
+            />
+          ) : null}
+          <CustomerInfo
+            cart={cart}
+            get_cart={() => {
+              setProceedtoDetail(true);
+              get_cart();
+            }}
+            proceed={proceedtoDetail}
+          />
+        </>
+      )}
+
       <PreviewImage
         visible={visible}
         imgSrc={imgSrc}

@@ -11,6 +11,10 @@ import {
   Typography,
   Space,
   Spin,
+  Input,
+  Modal,
+  Button,
+  message,
 } from "antd";
 import Side from "../inc/side";
 import Header from "../inc/header";
@@ -21,7 +25,7 @@ import { checkAuth } from "../../helper/authCheck";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import LoadingPage from "../../global-components/loading";
-import { api_base_url_orders } from "../../../keys/index";
+import { api_base_url_orders, api_base_url } from "../../../keys/index";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -29,21 +33,82 @@ function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
   const [active, setActive] = useState("0");
   const [category, setCategory] = useState("All Products");
-  const [showComponent, setShowComponent] = useState(false);
+  const [showComponent, setShowComponent] = useState(true);
   const [refreshCart, SetRefreshCart] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [itemCount, setItemCount] = useState(0);
   const [products, setProducts] = useState([]);
+  const [bundle, setBundle] = useState([]);
   const [category_list, setcategory_list] = useState([]);
   const [cart, setCart] = useState(null);
+  const [loggedin, setloggedin] = useState(false);
+  const [FirstSetup, setFirstSetup] = useState(false);
 
   const toggle = () => {
     setCollaped(!collaped);
   };
+  const checkAuth = async () => {
+    const remember_me = localStorage.getItem("landing_remember_account");
+
+    let account = localStorage.getItem("landing_remembered_account");
+    if (account === null || account == "") {
+      account = undefined;
+    }
+    if (account === undefined) {
+      localStorage.setItem("landing_remember_account", false);
+      localStorage.setItem("landing_remembered_account", "");
+      localStorage.setItem("landing_credentials", "");
+      localStorage.setItem("landing_customer_id", "");
+      localStorage.setItem("landing_customer_login_token", "");
+      setloggedin(false);
+      const guest_address = localStorage.getItem("guest_address");
+      if (guest_address == "" || guest_address == undefined) {
+        setFirstSetup(true);
+      }
+    } else {
+      const data = JSON.parse(account);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response = await axios.post(
+        api_base_url + "/check_auth",
+        { _id: data._id, login_token: data.login_token },
+        { headers: headers }
+      );
+      if (response.data.status === "OK") {
+        localStorage.setItem(
+          "landing_remembered_account",
+          JSON.stringify(response.data.data)
+        );
+        localStorage.setItem(
+          "landing_credentials",
+          JSON.stringify(response.data.data)
+        );
+        localStorage.setItem("landing_customer_id", response.data.data._id);
+        localStorage.setItem(
+          "landing_customer_login_token",
+          response.data.data.login_token
+        );
+        setloggedin(true);
+      } else {
+        localStorage.setItem("landing_remember_account", false);
+        localStorage.setItem("landing_remembered_account", "");
+        localStorage.setItem("landing_credentials", "");
+        localStorage.setItem("landing_customer_id", "");
+        localStorage.setItem("landing_customer_login_token", "");
+        setloggedin(false);
+        const guest_address = localStorage.getItem("guest_address");
+        if (guest_address == "" || guest_address == undefined) {
+          setFirstSetup(true);
+        }
+      }
+    }
+  };
   useEffect(() => {
-    checkAuth(props, setShowComponent);
+    checkAuth();
     get_cart();
     get_products();
+    get_bundles();
     get_products_type_list();
   }, []);
   useEffect(() => {}, [products]);
@@ -61,7 +126,17 @@ function Dashboard(props) {
     );
     setProducts(response.data);
   };
-
+  const get_bundles = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.get(
+      api_base_url_orders + "/bundles",
+      {},
+      { headers: headers }
+    );
+    setBundle(response.data);
+  };
   const get_products_type_list = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -75,11 +150,15 @@ function Dashboard(props) {
   };
   const get_cart = async () => {
     let customer_id = localStorage.getItem("landing_customer_id");
+    let guest_id = localStorage.getItem("guest_id");
+    console.log("customer_cart", customer_id == "" ? guest_id : customer_id);
     const headers = {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/customer_cart/" + customer_id,
+      api_base_url_orders +
+        "/customer_cart/" +
+        (customer_id == "" ? guest_id : customer_id),
       {},
       { headers: headers }
     );
@@ -93,18 +172,55 @@ function Dashboard(props) {
       response.data.cart != null ? response.data.cart.line_item.length : 0
     );
   };
+  const [guest_address, setguest_address] = useState("");
+  const submit_address = () => {
+    if (guest_address == "") {
+      message.error("please enter a Delivery Address");
+    } else {
+      localStorage.setItem("guest_address", guest_address);
+      setFirstSetup(false);
+    }
+  };
   if (showComponent) {
     return [
       <Layout key="0">
         {/* <Side setCategory={setCategory} /> */}
         <Layout style={{ height: "100vh" }}>
-          <Header />
+          <Header loggedin={loggedin} />
           <Content
             style={{
               margin: "24px 16px 24px 16px",
               overflow: "initial",
             }}
           >
+            <Modal
+              visible={FirstSetup}
+              closable={false}
+              onCancel={() => {}}
+              footer={null}
+            >
+              <Space direction="vertical" style={{ width: "100%" }}>
+                <Text>Enter Delivery Address</Text>
+                <Input
+                  placeholder="Delivery Address"
+                  onPressEnter={() => {
+                    submit_address();
+                  }}
+                  value={guest_address}
+                  onChange={(e) => {
+                    setguest_address(e.target.value);
+                  }}
+                />
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    submit_address();
+                  }}
+                >
+                  Submit
+                </Button>
+              </Space>
+            </Modal>
             <div className=" dyn-height">
               <Row gutter={[16, 16]}>
                 <Col span={24}>
@@ -160,6 +276,7 @@ function Dashboard(props) {
                   <ProductList
                     category={category}
                     products={products}
+                    bundle={bundle}
                     cart={cart}
                     refresh={() => get_cart()}
                     showCart={showCart}

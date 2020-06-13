@@ -22,6 +22,7 @@ import moment from "moment";
 import numeral from "numeral";
 import { UserContext } from "../../../routes/routes";
 import NumberFormat from "react-number-format";
+import cloneDeep from "lodash/cloneDeep";
 import {
   ShoppingCartOutlined,
   UnorderedListOutlined,
@@ -37,7 +38,15 @@ const { Search } = Input;
 const { Text, Paragraph } = Typography;
 const { Meta } = Card;
 const { Panel } = Collapse;
-function ProductList({ products, category, refresh, showCart, show, cart }) {
+function ProductList({
+  products,
+  category,
+  refresh,
+  showCart,
+  show,
+  cart,
+  bundle,
+}) {
   const [filteredproducts, setFilteredProducts] = useState([]);
   const [filteredproductsFiltered, setfilteredproductsFiltered] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -49,15 +58,161 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
   const [product_modal_visible, setproduct_modal_visible] = useState(false);
   const [modal_data, setmodal_data] = useState(undefined);
   useEffect(() => {
+    console.log("modal_data", modal_data);
     if (modal_data != undefined) {
       setproduct_modal_visible(true);
     }
   }, [modal_data]);
   useEffect(() => {
+    set_spinning_product_list(true);
+    let data = [];
+    let counter = 0;
+    if (bundle.data && bundle.data.length != 0) {
+      for (let x = 0; x < bundle.data.length; x++) {
+        const element = bundle.data[x];
+        let quantity = element.initial_stock ? element.initial_stock : 0;
+        let init = 0;
+        let item_id = "";
+        let order_id = "";
+        if (cart != null) {
+          order_id = cart._id;
+          for (let po = 0; po < cart.line_item.length; po++) {
+            if (element._id == cart.line_item[po].variant_id) {
+              init = parseFloat(cart.line_item[po].quantity);
+              item_id = cart.line_item[po]._id;
+              break;
+            }
+          }
+        }
+
+        let price = element.bundle_price;
+        let image = element.image ? element.image : null;
+        data.push({
+          key: counter,
+          type: "Bundle",
+          order_id: order_id,
+          item_id: item_id,
+          product_id: element._id,
+          product_variant_id: element._id,
+          product_name: element.name,
+          product_description: element.description,
+          tags: (
+            <>
+              {element.product_tags != undefined
+                ? element.product_tags.map((d, inss) => {
+                    if (
+                      element.product_tags.length ==
+                      parseFloat(inss) + parseFloat(1)
+                    ) {
+                      return [d.tag_label + " "];
+                    } else {
+                      return [d.tag_label + ","];
+                    }
+                  })
+                : null}
+            </>
+          ),
+          tag_list:
+            element.product_tags != undefined
+              ? element.product_tags.map((d) => {
+                  return [d.tag_label];
+                })
+              : [],
+
+          category_image:
+            image != null ? (
+              <img
+                onClick={() => imageModal(image, element.product_name)}
+                style={{
+                  height: "25vh",
+                  cursor: "pointer",
+                  margin: "0 auto",
+                }}
+                src={image}
+              />
+            ) : (
+              <Empty
+                style={{
+                  marginTop: "0px",
+                  marginBottom: "0px",
+                }}
+                imageStyle={{
+                  verticalAlign: "middle",
+                  height: "25vh",
+                  marginBottom: "0px",
+                }}
+                description={false}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
+            ),
+          category_modal_image:
+            image != null ? (
+              <img
+                onClick={() => imageModal(image, element.product_name)}
+                style={{
+                  width: "100%",
+                  cursor: "pointer",
+                  margin: "0 auto",
+                }}
+                src={image}
+              />
+            ) : (
+              <Empty
+                style={{
+                  marginTop: "0px",
+                  marginBottom: "0px",
+                  height: "100%",
+                }}
+                imageStyle={{
+                  verticalAlign: "middle",
+                  width: "100%",
+                  marginBottom: "0px",
+                }}
+                description={false}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
+            ),
+          image:
+            image != null ? (
+              <img
+                onClick={() => imageModal(image, element.product_name)}
+                style={{
+                  width: "100%",
+                  cursor: "pointer",
+                  margin: "0 auto",
+                }}
+                src={image}
+              />
+            ) : (
+              <Empty description={false} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            ),
+          product_type:
+            element.product_type && element.product_type.length != 0
+              ? element.product_type[0].product_type_name
+              : "No Category",
+          brand:
+            element != undefined
+              ? element.length != 0
+                ? element.brand
+                : "No Brand"
+              : "No Brand",
+          size: "(Bundle)",
+          color: "",
+          weight: "",
+          stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
+          price: numeral(price).format("0,0.00"),
+          price_raw: price,
+          quantity: quantity,
+          initial_quantity: quantity > 0 ? init : 0,
+          sub_total: numeral((quantity > 0 ? init : 0) * price).format(
+            "0,0.00"
+          ),
+          actionData: element,
+        });
+        counter++;
+      }
+    }
     if (products.length != 0) {
-      set_spinning_product_list(true);
-      let data = [];
-      let counter = 0;
       for (let c = 0; c < products.length; c++) {
         let node = products[c];
         if (node.variants != undefined) {
@@ -100,6 +255,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
                 : null;
             data.push({
               key: counter,
+              type: "Product",
               order_id: order_id,
               item_id: item_id,
               product_id: node._id,
@@ -109,8 +265,15 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
               tags: (
                 <>
                   {node.product_tags != undefined
-                    ? node.product_tags.map((d) => {
-                        return [d.tag_label + " "];
+                    ? node.product_tags.map((d, inss) => {
+                        if (
+                          node.product_tags.length ==
+                          parseFloat(inss) + parseFloat(1)
+                        ) {
+                          return [d.tag_label];
+                        } else {
+                          return [d.tag_label + ", "];
+                        }
                       })
                     : null}
                 </>
@@ -121,6 +284,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
                       return [d.tag_label];
                     })
                   : [],
+
               category_image:
                 image != null ? (
                   <img
@@ -307,9 +471,8 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
         set_spinning_product_list(false);
       }
     }
-  }, [products, searchFilterProducts, category]);
+  }, [bundle, products, searchFilterProducts, category]);
   const setInput = (value, index, column) => {
-    console.log("setInput", value, index, column);
     let tempdata = [...filteredproducts];
     tempdata[index][column] = value;
     tempdata[index]["sub_total"] = numeral(
@@ -330,64 +493,110 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
   };
 
   const handleAddToCart = async (index, data) => {
-    if (data.initial_quantity != 0) {
-      let temp = [...index.variants];
-      const filteredvariants = temp.filter((tem) => {
-        return tem._id.includes(data.product_variant_id);
-      });
-      index.variants = filteredvariants;
+    if (data.type == "Product") {
+      if (data.initial_quantity != 0) {
+        //add product to the cart
+        let temp = [...index.variants];
+        const filteredvariants = temp.filter((tem) => {
+          return tem._id.includes(data.product_variant_id);
+        });
+        index.variants = filteredvariants;
 
-      let customer_id = localStorage.getItem("landing_customer_id");
-      let landing_customer_login_token = localStorage.getItem(
-        "landing_customer_login_token"
-      );
-      let account = localStorage.getItem("landing_remembered_account");
-      let customer_info = {};
-      if (account === null || account == "") {
-        account = undefined;
-      }
-      if (account === undefined) {
+        let customer_id = localStorage.getItem("landing_customer_id");
+        let guest_cart_id = localStorage.getItem("guest_cart_id");
+        let landing_customer_login_token = localStorage.getItem(
+          "landing_customer_login_token"
+        );
+        let account = localStorage.getItem("landing_remembered_account");
+        let customer_info = {};
+        if (account === null || account == "") {
+          account = undefined;
+        }
+        if (account === undefined) {
+        } else {
+          customer_info = JSON.parse(account);
+        }
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(
+          api_base_url_orders + "/add_to_cart",
+          {
+            guest_cart_id: guest_cart_id,
+            index,
+            data,
+            customer_id,
+            login_token: landing_customer_login_token,
+            customer_info,
+          },
+          { headers: headers }
+        );
+        console.log("guest id defining");
+        localStorage.setItem("guest_id", response.data.guest_id);
+        refresh();
+        // setInput(data.quantity > 0 ? 1 : 0, data.key, "initial_quantity");
       } else {
-        customer_info = JSON.parse(account);
+        //remove item to the cart
+        let customer_id = localStorage.getItem("landing_customer_id");
+        let landing_customer_login_token = localStorage.getItem(
+          "landing_customer_login_token"
+        );
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(
+          api_base_url_orders + "/update_cart",
+          {
+            order_id: data["order_id"],
+            product_id: data["product_id"],
+            product_variant_id: data["product_variant_id"],
+            item_id: data["item_id"],
+            quantity: data["initial_quantity"],
+            login_token: landing_customer_login_token,
+          },
+          { headers: headers }
+        );
+        refresh();
       }
-
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const response = await axios.post(
-        api_base_url_orders + "/add_to_cart",
-        {
-          index,
-          data,
-          customer_id,
-          login_token: landing_customer_login_token,
-          customer_info,
-        },
-        { headers: headers }
-      );
-      refresh();
-      // setInput(data.quantity > 0 ? 1 : 0, data.key, "initial_quantity");
     } else {
-      let customer_id = localStorage.getItem("landing_customer_id");
-      let landing_customer_login_token = localStorage.getItem(
-        "landing_customer_login_token"
-      );
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const response = await axios.post(
-        api_base_url_orders + "/update_cart",
-        {
-          order_id: data["order_id"],
-          product_id: data["product_id"],
-          product_variant_id: data["product_variant_id"],
-          item_id: data["item_id"],
-          quantity: data["initial_quantity"],
-          login_token: landing_customer_login_token,
-        },
-        { headers: headers }
-      );
-      refresh();
+      //add to cart bundle
+      if (data.initial_quantity != 0) {
+        //add bundle to the cart
+        index.variants = data.bundle_items;
+        let customer_id = localStorage.getItem("landing_customer_id");
+        let landing_customer_login_token = localStorage.getItem(
+          "landing_customer_login_token"
+        );
+        let account = localStorage.getItem("landing_remembered_account");
+        let customer_info = {};
+        if (account === null || account == "") {
+          account = undefined;
+        }
+        if (account === undefined) {
+        } else {
+          customer_info = JSON.parse(account);
+        }
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(
+          api_base_url_orders + "/add_to_cart",
+          {
+            index,
+            data,
+            customer_id,
+            login_token: landing_customer_login_token,
+            customer_info,
+          },
+          { headers: headers }
+        );
+        console.log("guest id defining");
+        localStorage.setItem("guest_id", response.data.guest_id);
+        refresh();
+      } else {
+        //remove bundle to the cart
+      }
     }
   };
   const imageModal = (src, name) => {
@@ -411,7 +620,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       title: "Name",
       dataIndex: "product_name",
       key: "product_name",
-      width: "14.54%",
+      width: "21.01‬%",
       render: (result, row, index) => {
         return [
           <>
@@ -449,13 +658,11 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       width: "6.61%",
       render: (value, result) => {
         return [
-          <>
+          <Space size="0" direction="vertical">
             <Text>{result.size}</Text>
-            <br />
             <Text>{result.weight}</Text>
-            <br />
             <Text>{result.color}</Text>
-          </>,
+          </Space>,
         ];
       },
     },
@@ -464,7 +671,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
-      width: "8.55%",
+      width: "6%",
     },
     {
       title: "Price",
@@ -480,7 +687,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       dataIndex: "quantity",
       key: "quantity",
 
-      width: "6.69%",
+      width: "5%",
       render: (value, result, index) => {
         return [
           <InputNumber
@@ -500,7 +707,7 @@ function ProductList({ products, category, refresh, showCart, show, cart }) {
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "7.23%",
+      width: "5%",
       align: "right",
     },
     {

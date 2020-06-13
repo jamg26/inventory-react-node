@@ -5,8 +5,10 @@ const axios = require("axios");
 //models
 const orders = mongoose.model("orders");
 const products = mongoose.model("products");
+const bundles = mongoose.model("bundles");
 function checkAuth(req, res, next) {
-  const { login_token } = req.body;
+  const { login_token, guest_cart_id } = req.body;
+
   if (login_token != "" && login_token != undefined) {
     next();
   } else {
@@ -16,8 +18,8 @@ function checkAuth(req, res, next) {
   }
 }
 module.exports = (app) => {
-  app.post(keys.sub + "/add_to_cart", checkAuth, (req, res) => {
-    const { index, data, customer_id, customer_info } = req.body;
+  app.post(keys.sub + "/add_to_cart", (req, res) => {
+    const { index, data, customer_id, customer_info, guest_cart_id } = req.body;
     const user_ip =
       req.ip.substr(0, 7) == "::ffff:" ? req.ip.substr(7) : req.ip;
     //get quantity ::
@@ -26,14 +28,25 @@ module.exports = (app) => {
     //pass product to order detail
     //generate a order no
     //customer_info
+
+    let guest_id =
+      customer_id == "" || customer_id == undefined
+        ? guest_cart_id == "" || guest_cart_id == undefined
+          ? mongoose.Types.ObjectId()
+          : guest_cart_id
+        : customer_id;
+    console.log(guest_id, customer_id);
     orders
-      .findOne({ active: false, customer: customer_id })
+      .findOne({
+        active: false,
+        customer: guest_id,
+      })
       .then(async (result) => {
         if (result == null) {
           // create new
           const order_no = await orders.find().countDocuments();
           const order = new orders({
-            customer: customer_id,
+            customer: guest_id,
             customer_info: customer_info,
             order_no: order_no,
             order_date: new Date(),
@@ -41,6 +54,8 @@ module.exports = (app) => {
             line_item: [
               {
                 product: index,
+                bundle: index,
+                product_type: data.type,
                 quantity: data.initial_quantity,
                 quantity_max: data.quantity,
                 price: data.price_raw,
@@ -81,6 +96,8 @@ module.exports = (app) => {
           if (concat === false) {
             ord.push({
               product: index,
+              bundle: index,
+              product_type: data.type,
               quantity: data.initial_quantity,
               price: data.price_raw,
               quantity_max: data.quantity,
@@ -96,7 +113,7 @@ module.exports = (app) => {
           result.save();
           console.log(ord);
         }
-        res.status(201).send(data);
+        res.status(201).send({ guest_id: guest_id });
       });
   });
   app.post(keys.sub + "/cancel_order", checkAuth, async (req, res) => {
@@ -124,6 +141,7 @@ module.exports = (app) => {
       product_id,
       product_variant_id,
       quantity,
+      product_type,
       item_id,
     } = req.body;
     await orders
@@ -135,10 +153,12 @@ module.exports = (app) => {
           console.log(
             order_id,
             product_id,
+            product_type,
             product_variant_id,
             quantity,
             item_id
           );
+          console.log("quantity", quantity);
           if (quantity == 0) {
             let variants = result.line_item;
             let index = 0;
@@ -156,20 +176,34 @@ module.exports = (app) => {
             let variants = result.line_item;
             for (let x = 0; x < variants.length; x++) {
               if (item_id == variants[x]._id) {
-                const prod = await products.findOne({
-                  _id: variants[x].product[0]._id,
-                });
                 let max = 0;
-                if (prod != null) {
-                  for (let zx = 0; zx < prod.variants.length; zx++) {
-                    console.log(prod.variants[zx]);
-                    if (prod.variants[zx]._id == variants[x].variant_id) {
-                      max = parseFloat(prod.variants[zx].quantity);
-                      break;
+                if (product_type == "Product") {
+                  console.log("product");
+                  const prod = await products.findOne({
+                    _id: variants[x].product[0]._id,
+                  });
+
+                  if (prod != null) {
+                    for (let zx = 0; zx < prod.variants.length; zx++) {
+                      console.log(prod.variants[zx]);
+                      if (prod.variants[zx]._id == variants[x].variant_id) {
+                        max = parseFloat(prod.variants[zx].quantity);
+                        break;
+                      }
                     }
                   }
+                  console.log("max quantity", max);
+                } else {
+                  console.log("bundle", variants[x].variant_id);
+
+                  const bundle = await bundles.findOne({
+                    _id: variants[x].variant_id,
+                  });
+                  if (bundle != null) {
+                    max = parseFloat(bundle.initial_stock);
+                  }
                 }
-                console.log("max quantity", max);
+
                 if (quantity <= max) {
                   variants[x].quantity = quantity;
                   variants[x].quantity_max = max;
@@ -190,7 +224,7 @@ module.exports = (app) => {
   });
   app.post(
     keys.sub + "/update_cart_additional_detail",
-    checkAuth,
+
     async (req, res) => {
       const { order_id, note, deliveryMethod } = req.body;
       await orders
@@ -209,7 +243,7 @@ module.exports = (app) => {
   );
   app.post(
     keys.sub + "/update_cart_contact_info",
-    checkAuth,
+
     async (req, res) => {
       const {
         fname,
@@ -241,7 +275,7 @@ module.exports = (app) => {
         });
     }
   );
-  app.post(keys.sub + "/add_cart_to_order", checkAuth, async (req, res) => {
+  app.post(keys.sub + "/add_cart_to_order", async (req, res) => {
     const { order_id, details, amou } = req.body;
     await orders
       .findOne({ _id: order_id, active: false })
@@ -266,37 +300,99 @@ module.exports = (app) => {
                 " " +
                 result.line_item[c].variant_id
             );
-            let product = products
-              .findOne({ _id: result.line_item[c].product[0]._id })
-              .then(async (prod) => {
-                if (prod.variants.length != 0) {
-                  for (let x = 0; x < prod.variants.length; x++) {
-                    if (
-                      prod.variants[x]._id == result.line_item[c].variant_id
-                    ) {
-                      console.log(
-                        "QUANTITIES " +
-                          prod.variants[x].quantity +
-                          " " +
-                          result.line_item[c].quantity
-                      );
-                      let latest =
-                        parseFloat(prod.variants[x].quantity) -
-                        parseFloat(result.line_item[c].quantity);
-                      prod.variants[x].quantity = latest;
-                      prod.variants[x].logs.push({
-                        log:
-                          "Product is Placed on Order with id# '" +
-                          order_id +
-                          "' in quantity of " +
-                          result.line_item[c].quantity,
-                      });
-                      console.log("found you");
+            if (result.line_item[c].product_type == "Product") {
+              let product = products
+                .findOne({ _id: result.line_item[c].product[0]._id })
+                .then(async (prod) => {
+                  if (prod.variants.length != 0) {
+                    for (let x = 0; x < prod.variants.length; x++) {
+                      if (
+                        prod.variants[x]._id == result.line_item[c].variant_id
+                      ) {
+                        console.log(
+                          "QUANTITIES " +
+                            prod.variants[x].quantity +
+                            " " +
+                            result.line_item[c].quantity
+                        );
+                        let latest =
+                          parseFloat(prod.variants[x].quantity) -
+                          parseFloat(result.line_item[c].quantity);
+                        prod.variants[x].quantity = latest;
+                        prod.variants[x].logs.push({
+                          log:
+                            "Product is Placed on Order with id# '" +
+                            order_id +
+                            "' in quantity of " +
+                            result.line_item[c].quantity,
+                        });
+                        console.log("found you");
+                      }
                     }
+                    await prod.save();
                   }
-                  await prod.save();
-                }
-              });
+                });
+            } else {
+              //add bundle to checkout
+              let bundle_selected = bundles
+                .findOne({ _id: result.line_item[c].variant_id })
+                .then(async (bundle) => {
+                  //reduce quantity
+                  let latest =
+                    parseFloat(bundle.initial_stock) -
+                    parseFloat(result.line_item[c].quantity);
+                  bundle.initial_stock = latest;
+                  await bundle
+                    .save()
+                    .then((updated) => {
+                      //adjust product quantity associated in the bundle.
+                      if (
+                        updated.bundle_items &&
+                        updated.bundle_items.length != 0
+                      ) {
+                        for (
+                          let ppp = 0;
+                          ppp < updated.bundle_items.length;
+                          ppp++
+                        ) {
+                          const element = updated.bundle_items[ppp];
+                          let quantity_in_bundle = element.variant_quantity;
+                          let prodc = products
+                            .findOne({ _id: element.parent_id })
+                            .then(async (prod) => {
+                              if (prod.variants.length != 0) {
+                                for (let x = 0; x < prod.variants.length; x++) {
+                                  if (
+                                    prod.variants[x]._id == element.variant_id
+                                  ) {
+                                    let latest =
+                                      parseFloat(prod.variants[x].quantity) -
+                                      parseFloat(quantity_in_bundle);
+                                    prod.variants[x].quantity = latest;
+                                    prod.variants[x].logs.push({
+                                      log:
+                                        "Product associated in a Bundle(" +
+                                        bundle._id +
+                                        ") is Placed on Order with id# '" +
+                                        order_id +
+                                        " " +
+                                        "' in quantity of " +
+                                        quantity_in_bundle,
+                                    });
+                                    console.log("found you ddd");
+                                  }
+                                }
+                                await prod.save();
+                              }
+                            })
+                            .catch(() => {});
+                        }
+                      }
+                    })
+                    .catch(() => {});
+                })
+                .catch((err) => {});
+            }
           }
 
           res.send({ cart: result, status: "updated" });

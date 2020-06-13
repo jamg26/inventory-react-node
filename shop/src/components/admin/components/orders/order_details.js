@@ -166,7 +166,14 @@ function OrderDetail(props) {
       for (var c = 0; c < response.data[0].line_item.length; c++) {
         var row = response.data[0].line_item[c];
         line_items.push({
-          product: row.product.length != 0 ? row.product[0].product_name : "",
+          product:
+            row.product_type == "Product"
+              ? row.product.length != 0
+                ? row.product[0].product_name
+                : ""
+              : row.bundle.length != 0
+              ? row.bundle[0].name
+              : "",
           order_date: moment(row.order_date).format("MM-DD-YYYY"),
           price: numeral(row.price).format("0,0.00"),
           original_price: numeral(row.original_price).format("0,0.00"),

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../routes/routes";
 import { Button, Layout, Menu, PageHeader } from "antd";
 import { ArrowRightOutlined, UserAddOutlined } from "@ant-design/icons";
-import Side from "../inc/side";
+import Side from "../inc/settingsside";
 import Header from "../inc/header";
 import { checkAuth } from "../../helper/authCheckAdmin";
 import { withRouter } from "react-router-dom";
@@ -23,7 +23,7 @@ function Dashboard(props) {
     return [
       <>
         <Layout>
-          {/* <Side no={props.no} /> */}
+          <Side no={props.no} />
           <Layout style={{ height: "100vh" }}>
             <Header no={props.no} />
             <Content
