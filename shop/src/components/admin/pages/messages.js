@@ -3,7 +3,7 @@ import { UserContext } from "../../../routes/routes";
 import { Modal, Layout, Tabs, PageHeader, Card } from "antd";
 import Side from "../inc/side";
 import Header from "../inc/header";
-import { checkAuth } from "../../helper/authCheck";
+import { checkAuth } from "../../helper/authCheckAdmin";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import LoadingPage from "../../global-components/loading";
@@ -13,7 +13,9 @@ import {
   WechatOutlined,
   ShoppingCartOutlined,
   PercentageOutlined,
+  FacebookOutlined,
 } from "@ant-design/icons";
+import FBMessanger from "../../global-components/fb-page-conversation";
 import { SettingContext } from "../../../routes/routes";
 import Mail from "../components/Mail/Mail";
 const { Content } = Layout;
@@ -52,7 +54,7 @@ function Orders(props) {
           >
             <div className=" dyn-height-no-padding">
               <Tabs
-                defaultActiveKey="1"
+                defaultActiveKey="3"
                 type="card"
                 tabBarStyle={{ paddingLeft: "20px", paddingRight: "20px" }}
               >
@@ -95,6 +97,26 @@ function Orders(props) {
                       room={accountdata ? accountdata._id : ""}
                       id={accountdata ? accountdata._id : ""}
                     />
+                  </Card>
+                </TabPane>
+                <TabPane
+                  tab={
+                    <span>
+                      <FacebookOutlined />
+                      Facebook Messanger
+                    </span>
+                  }
+                  key="3"
+                >
+                  <Card
+                    bodyStyle={{
+                      padding: 0,
+
+                      height: "85vh",
+                      width: "100%",
+                    }}
+                  >
+                    <FBMessanger />
                   </Card>
                 </TabPane>
               </Tabs>

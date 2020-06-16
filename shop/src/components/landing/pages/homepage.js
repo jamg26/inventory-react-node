@@ -17,6 +17,7 @@ import {
   message,
 } from "antd";
 import Side from "../inc/side";
+import CustomerChat from "../../global-components/fbMessanger";
 import Header from "../inc/header";
 import Cart from "../components/Cart";
 import { ArrowRightOutlined } from "@ant-design/icons";
@@ -193,6 +194,8 @@ function Dashboard(props) {
               overflow: "initial",
             }}
           >
+            <CustomerChat />
+
             <Modal
               visible={FirstSetup}
               closable={false}

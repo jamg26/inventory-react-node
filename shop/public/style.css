@@ -395,3 +395,37 @@ body {
 .ant-table-tbody > tr:hover > td {
   background: #d1f5ff !important;
 }
+.my-facebook-button-class {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  cursor: pointer;
+  background-color: #4467b3;
+  border: #4467b3 solid 1px;
+  color: white;
+}
+.FBMessangerTABLE {
+  width: 100%;
+  height: 100%;
+}
+.FBMessangerTABLE td,
+.FBMessangerTABLE tr {
+  border: 1px solid rgb(233, 233, 233);
+  padding: 10px 20px;
+}
+.ConversationItem {
+  padding: 16px;
+  border-bottom: 1px solid rgb(233, 233, 233);
+  cursor: pointer;
+}
+.ConversationItem:hover {
+  background-color: #f5f6f7;
+}
+.dyn-height::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE and Edge */
+.dyn-height {
+  -ms-overflow-style: none;
+}

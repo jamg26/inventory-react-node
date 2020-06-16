@@ -184,7 +184,6 @@ function Mail(props) {
         address.toLowerCase().includes(searchemail.toLowerCase()) ||
         name.toLowerCase().includes(searchemail.toLowerCase())
       ) {
-        console.log("pasok", subject, address, name);
         drawerlist.push({
           index: c,
           subject: subject,

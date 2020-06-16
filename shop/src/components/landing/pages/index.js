@@ -32,6 +32,8 @@ import axios from "axios";
 import { api_base_url } from "../../../keys";
 import { checkAuth } from "../../helper/authCheck";
 import LoadingPage from "../../global-components/loading";
+
+// import FBLOGIN from "../../global-components/fb-login";
 const { Content } = Layout;
 function Dashboard(props) {
   const [collaped, setCollaped] = useState(false);
@@ -43,6 +45,10 @@ function Dashboard(props) {
   const [passwordlogin, setpasswordlogin] = useState("");
   const [showComponent, setShowComponent] = useState(false);
   const [userInfo, setUserInfo] = useState([]);
+
+  const componentClicked = () => {
+    console.log("clicked");
+  };
   const toggle = () => {
     setCollaped(!collaped);
   };
@@ -88,6 +94,7 @@ function Dashboard(props) {
       setsubmitloading(false);
     }
   };
+
   if (showComponent === true) {
     return [
       <div
