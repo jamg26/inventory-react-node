@@ -47,6 +47,10 @@ module.exports = (app) => {
         aws_access_key_id: request.aws_access_key_id,
         aws_secret_key: request.aws_secret_key,
         g_account_password: request.g_account_password,
+        fb_app_id: request.fb_app_id,
+        fb_page_id: request.fb_page_id,
+        paypal_client_id: request.paypal_client_id,
+        google_api_key: request.google_api_key,
       });
       setting
         .save()
@@ -93,6 +97,11 @@ module.exports = (app) => {
             setting.aws_access_key_id = request.aws_access_key_id;
             setting.aws_secret_key = request.aws_secret_key;
             setting.g_account_password = request.g_account_password;
+            setting.fb_app_id = request.fb_app_id;
+            setting.fb_page_id = request.fb_page_id;
+            setting.paypal_client_id = request.paypal_client_id;
+            setting.google_api_key = request.google_api_key;
+
             setting
               .save()
               .then(() => {

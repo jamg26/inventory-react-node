@@ -21,7 +21,7 @@ import LandingInitialComponent from "../components/landing/pages/homepage";
 import AdminInitialComponent from "../components/admin/pages";
 import AdminHome from "../components/admin/pages/home";
 import AdminAnalytics from "../components/admin/pages/analytics";
-import AdminCustomers from "../components/admin/pages/customers";
+import AdminCustomers from "../components/admin/pages/gelocation";
 import AdminOrders from "../components/admin/pages/orders";
 import AdminProducts from "../components/admin/pages/products";
 import AdminUsers from "../components/admin/pages/users";
@@ -33,6 +33,7 @@ import AdminSettingsPrice from "../components/admin/pages/settings_prices";
 import AdminMessages from "../components/admin/pages/messages";
 import AdminEmail from "../components/admin/pages/emailling";
 import AccountReport from "../components/admin/pages/reports";
+import GeolocationComponent from "../components/admin/pages/gelocation";
 
 import axios from "axios";
 import { Button, Result } from "antd";
@@ -149,6 +150,9 @@ const RouteController = ({
                         </Route>
                         <Route key={14} exact path="/web-admin/reports">
                           <AccountReport no={14} />
+                        </Route>
+                        <Route key={15} exact path="/web-admin/geolocation">
+                          <GeolocationComponent no={15} />
                         </Route>
                         <Route key={6}>
                           <Result

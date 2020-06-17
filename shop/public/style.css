@@ -429,3 +429,6 @@ body {
 .dyn-height {
   -ms-overflow-style: none;
 }
+.google_map_container {
+  position: unset !important;
+}

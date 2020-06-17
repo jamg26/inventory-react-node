@@ -64,20 +64,7 @@ function Dashboard(props) {
               <PageHeader
                 className="site-page-header"
                 title="Stock Control"
-                onBack={() => props.history.goBack()}
-                extra={[
-                  <Button
-                    onClick={() => {
-                      props.history.go(+1);
-                    }}
-                    type="link"
-                    className="ant-page-header-back-button"
-                    style={{ fontSize: "16px" }}
-                  >
-                    <ArrowRightOutlined />
-                  </Button>,
-                  ,
-                ]}
+
                 // subTitle="This is a subtitle"
               />
               <div className="pages-container">

@@ -184,26 +184,7 @@ function Dashboard(props) {
             }}
           >
             <div className="dyn-height">
-              <PageHeader
-                className="site-page-header"
-                title="Suppliers"
-                onBack={() => props.history.goBack()}
-                extra={[
-                  <>
-                    <Button
-                      key="0"
-                      onClick={() => {
-                        props.history.go(+1);
-                      }}
-                      type="link"
-                      className="ant-page-header-back-button"
-                      style={{ fontSize: "16px" }}
-                    >
-                      <ArrowRightOutlined />
-                    </Button>
-                  </>,
-                ]}
-              />
+              <PageHeader className="site-page-header" title="Suppliers" />
               <AddSupplierModal
                 show_add_supplier_modal={show_add_supplier_modal}
                 close={() => {

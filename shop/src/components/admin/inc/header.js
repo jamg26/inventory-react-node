@@ -36,6 +36,7 @@ import {
   MessageFilled,
   MessageTwoTone,
   SolutionOutlined,
+  RadarChartOutlined,
 } from "@ant-design/icons";
 
 import axios from "axios";
@@ -57,6 +58,8 @@ function Head(props) {
   const [customer_supports, set_customer_supports] = useState([]);
   const [form_edit_staff] = Form.useForm();
   const [dateBirthday, setBirthday] = useState("");
+  const [lat, setlat] = useState(7.094271999999999);
+  const [lng, setlng] = useState(125.632512);
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -87,6 +90,7 @@ function Head(props) {
       },
     },
   };
+
   function onChangeEditBirthday(date, dateString) {
     setBirthday(dateString);
   }
@@ -146,6 +150,26 @@ function Head(props) {
     );
     set_customer_supports(response.data.messages);
   };
+  const record_location = async (id) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        // alert(position.coords.latitude + " " + position.coords.longitude);
+        console.log(position.coords.latitude, position.coords.longitude);
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await axios.post(
+          api_base_url + "/updated_location",
+          {
+            id: id,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          { headers: headers }
+        );
+      });
+    }
+  };
   useEffect(() => {
     console.log("customer_supports", customer_supports);
     let count = 0;
@@ -181,6 +205,10 @@ function Head(props) {
       setaccountdata(data);
       setUserName(data.username);
       setposition(data.position);
+
+      setInterval(() => {
+        record_location(data._id);
+      }, 10000);
       if (props.no != "12") {
         fetch_customer_supports(data._id);
         setInterval(() => {
@@ -336,6 +364,15 @@ function Head(props) {
           <Space direction="vertical" size="0">
             <MessageOutlined />
             <span className="nav-text">Messages</span>
+          </Space>
+        </Link>
+        <Link
+          to="/web-admin/geolocation"
+          className={`${props.no.toString() == "15" ? "active" : ""}`}
+        >
+          <Space direction="vertical" size="0">
+            <RadarChartOutlined />
+            <span className="nav-text">Location</span>
           </Space>
         </Link>
         {/* <Link

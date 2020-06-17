@@ -64,6 +64,8 @@ function Dashboard(props) {
   const [aws_secret_key, set_aws_secret_key] = useState("");
   const [g_account_password, set_g_account_password] = useState("");
 
+  const [fb_app_id, set_fb_app_id] = useState("");
+  const [fb_page_id, set_fb_page_id] = useState("");
   const [org_street_one, set_org_street_one] = useState("");
   const [org_street_two, set_org_street_two] = useState("");
   const [org_city, set_org_city] = useState("");
@@ -73,6 +75,9 @@ function Dashboard(props) {
   const [org_fax, set_org_fax] = useState("");
   const [org_website, set_org_website] = useState("");
   const [org_sender_email, set_org_sender_email] = useState("");
+  const [paypal_client_id, set_paypal_client_id] = useState("");
+  const [google_api_key, set_google_api_key] = useState("");
+
   const [org_send_through, set_org_send_through] = useState("");
   const [org_base_currency, set_org_base_currency] = useState("PHP");
   const [org_date_format, set_org_date_format] = useState("MM-DD-YYYY");
@@ -80,7 +85,6 @@ function Dashboard(props) {
   const [validemail1, setvalidemail1] = useState(true);
   const [validemail2, setvalidemail2] = useState(true);
   useEffect(() => {
-    console.log("setting_configuration", setting_configuration);
     if (setting_configuration) {
       set_setting_id(setting_configuration._id);
       setimageUrl(setting_configuration.logo);
@@ -105,6 +109,10 @@ function Dashboard(props) {
       set_aws_access_key_id(setting_configuration.aws_access_key_id);
       set_aws_secret_key(setting_configuration.aws_secret_key);
       set_g_account_password(setting_configuration.g_account_password);
+      set_fb_app_id(setting_configuration.fb_app_id);
+      set_fb_page_id(setting_configuration.fb_page_id);
+      set_paypal_client_id(setting_configuration.paypal_client_id);
+      set_google_api_key(setting_configuration.google_api_key);
     }
   }, [setting_configuration]);
   const beforeUpload = (file) => {
@@ -223,6 +231,10 @@ function Dashboard(props) {
                 aws_access_key_id,
                 aws_secret_key,
                 g_account_password,
+                fb_app_id,
+                fb_page_id,
+                paypal_client_id,
+                google_api_key,
               },
               { headers: headers }
             )
@@ -508,6 +520,59 @@ function Dashboard(props) {
                   </Space>
                 </Col>
               </Row>
+              <Row gutter={[16, 16]}>
+                <Col span="4" style={{ textAlign: "right" }}>
+                  <Text strong>Facebook Integration</Text>
+                </Col>
+                <Col span="6">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <Text type="secondary">FB APP ID</Text>
+                    <Input
+                      placeholder="APP ID"
+                      value={fb_app_id}
+                      onChange={(e) => set_fb_app_id(e.target.value)}
+                    />
+                  </Space>
+                </Col>
+                <Col span="6">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <Text type="secondary">FB PAGE ID</Text>
+                    <Input
+                      placeholder="PAGE ID"
+                      value={fb_page_id}
+                      onChange={(e) => set_fb_page_id(e.target.value)}
+                    />
+                  </Space>
+                </Col>
+              </Row>
+              {/* <Row gutter={[16, 16]} align="middle">
+                <Col span="4" style={{ textAlign: "right" }}>
+                  <Text strong>Paypal Integration</Text>
+                </Col>
+                <Col span="6">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <Input
+                      placeholder="Paypal Client Id"
+                      value={paypal_client_id}
+                      onChange={(e) => set_paypal_client_id(e.target.value)}
+                    />
+                  </Space>
+                </Col>
+              </Row> */}
+              {/* <Row gutter={[16, 16]} align="middle">
+                <Col span="4" style={{ textAlign: "right" }}>
+                  <Text strong>Google Map API Key</Text>
+                </Col>
+                <Col span="6">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <Input
+                      placeholder="Google Map API Key"
+                      value={google_api_key}
+                      onChange={(e) => set_google_api_key(e.target.value)}
+                    />
+                  </Space>
+                </Col>
+              </Row> */}
               <Row gutter={[16, 16]} align="middle">
                 <Col span="4" style={{ textAlign: "right" }}>
                   <Text strong>Base Currency</Text>

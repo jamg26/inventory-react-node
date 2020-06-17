@@ -14,6 +14,20 @@ module.exports = (app) => {
         res.send(err);
       });
   });
+  //updated_location
+  app.post(keys.sub + "/updated_location", async (req, res) => {
+    const { id, lat, lng } = req.body;
+    await User.findOne({ _id: id }).then(async (user) => {
+      if (user == null) {
+        res.error(400).send({ status: "ERROR" });
+      } else {
+        user.lat = lat;
+        user.lng = lng;
+        await user.save();
+        res.send({ status: "OK" });
+      }
+    });
+  });
   app.post(keys.sub + "/user/initial_setup_account", async (req, res) => {
     const request = req.body;
     console.log(request);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import Customer from "../../admin/components/orders/customer";
 import {
@@ -20,6 +20,7 @@ import {
 import axios from "axios";
 import scriptLoader from "react-async-script-loader";
 import { api_base_url_orders, sandbox, production } from "../../../keys/index";
+import { SettingContext } from "../../../routes/routes";
 const CLIENT = {
   sandbox: sandbox,
   production: production,
@@ -35,6 +36,7 @@ function CustomerInfo({
   isScriptLoaded,
   isScriptLoadSucceed,
 }) {
+  const setting_configuration = useContext(SettingContext);
   const guest_address = localStorage.getItem("guest_address");
   const [loading, setloading] = useState(true);
   const [showButtons, setshowButtons] = useState(false);

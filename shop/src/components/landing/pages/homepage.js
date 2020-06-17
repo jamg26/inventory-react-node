@@ -27,10 +27,12 @@ import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import LoadingPage from "../../global-components/loading";
 import { api_base_url_orders, api_base_url } from "../../../keys/index";
+import { SettingContext } from "../../../routes/routes";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { Text } = Typography;
 function Dashboard(props) {
+  const setting_configuration = useContext(SettingContext);
   const [collaped, setCollaped] = useState(false);
   const [active, setActive] = useState("0");
   const [category, setCategory] = useState("All Products");
@@ -194,7 +196,14 @@ function Dashboard(props) {
               overflow: "initial",
             }}
           >
-            <CustomerChat />
+            <CustomerChat
+              page_id={
+                setting_configuration ? setting_configuration.fb_page_id : ""
+              }
+              app_id={
+                setting_configuration ? setting_configuration.fb_app_id : ""
+              }
+            />
 
             <Modal
               visible={FirstSetup}

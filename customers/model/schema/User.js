@@ -12,6 +12,8 @@ const UserSchema = new Schema({
   birthday: String,
   address: String,
   action_log: Array,
+  lat: Number,
+  lng: Number,
   //notes
   note: [
     {

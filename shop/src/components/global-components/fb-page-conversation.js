@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import FacebookLogin from "react-facebook-login";
 import LoadingPage from "./loading";
 import { Row, Col, Space, Typography, Input, Avatar, Badge } from "antd";
 import { FacebookOutlined } from "@ant-design/icons";
 import ReactEmoji from "react-emoji";
+import { SettingContext } from "../../routes/routes";
 const { Text } = Typography;
 function MessangerManager() {
+  const setting_configuration = useContext(SettingContext);
   const [loggedin, setloggedin] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [conversation_msg, setConversation_msg] = useState([]);
@@ -46,7 +48,9 @@ function MessangerManager() {
       console.log(result.data ? result.data[0].access_token : "");
       //get conversation
       let conversation = window.FB.api(
-        "/101533494943366/conversations?fields=unread_count,senders{profile_pic},message_count,participants{profile_pic},snippet,messages{message,from}",
+        "/" +
+          (setting_configuration ? setting_configuration.fb_page_id : "") +
+          "/conversations?fields=unread_count,senders{profile_pic},message_count,participants{profile_pic},snippet,messages{message,from}",
         {
           access_token:
             result && result.data ? result.data[0].access_token : "",
@@ -62,7 +66,12 @@ function MessangerManager() {
               if (element.senders && element.senders.data) {
                 for (let x = 0; x < element.senders.data.length; x++) {
                   let sender_data = element.senders.data[x];
-                  if (sender_data.id != "101533494943366") {
+                  if (
+                    sender_data.id !=
+                    (setting_configuration
+                      ? setting_configuration.fb_page_id
+                      : "")
+                  ) {
                     name = sender_data.name;
                     recipient = sender_data.id;
                   }
@@ -119,7 +128,10 @@ function MessangerManager() {
       selected_conversation.recipient != ""
     ) {
       let messages = window.FB.api(
-        "/101533494943366/messages?access_token=" + AccessToken,
+        "/" +
+          (setting_configuration ? setting_configuration.fb_page_id : "") +
+          "/messages?access_token=" +
+          AccessToken,
         "POST",
         {
           messaging_type: "UPDATE",
@@ -140,7 +152,7 @@ function MessangerManager() {
   if (!loggedin) {
     return [
       <FacebookLogin
-        appId="309671157102004"
+        appId={setting_configuration ? setting_configuration.fb_app_id : ""}
         autoLoad={true}
         fields="name,email,picture"
         scope="pages_messaging,pages_manage_engagement,pages_manage_metadata,read_mailbox,read_page_mailboxes,email"
@@ -246,7 +258,12 @@ function MessangerManager() {
                           .scrollIntoView();
                       }, 1000);
                     }
-                    if (message.from.id == "101533494943366") {
+                    if (
+                      message.from.id ==
+                      (setting_configuration
+                        ? setting_configuration.fb_page_id
+                        : "")
+                    ) {
                       return [
                         <Space
                           style={{ float: "right" }}

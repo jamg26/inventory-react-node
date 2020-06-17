@@ -33,25 +33,7 @@ function Dashboard(props) {
               }}
             >
               <div className=" dyn-height">
-                <PageHeader
-                  className="site-page-header"
-                  title="Staff"
-                  onBack={() => props.history.goBack()}
-                  extra={[
-                    <Button
-                      onClick={() => {
-                        props.history.go(+1);
-                      }}
-                      type="link"
-                      className="ant-page-header-back-button"
-                      style={{ fontSize: "16px" }}
-                    >
-                      <ArrowRightOutlined />
-                    </Button>,
-                    ,
-                  ]}
-                  // subTitle="This is a subtitle"
-                />
+                <PageHeader className="site-page-header" title="Staff" />
                 <Table />
               </div>
             </Content>

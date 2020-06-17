@@ -1,9 +1,10 @@
+import { useContext } from "react";
 import loadScript from "load-script";
 
 let initialized = false;
 let queue = [];
 
-export function fb(callback) {
+export function Fb(app_id, callback) {
   if (initialized) {
     callback(window.FB);
   } else {
@@ -11,7 +12,7 @@ export function fb(callback) {
     if (!window.fbAsyncInit) {
       window.fbAsyncInit = () => {
         window.FB.init({
-          appId: "309671157102004",
+          appId: app_id,
           autoLogAppEvents: true,
           status: true,
           cookie: true,
