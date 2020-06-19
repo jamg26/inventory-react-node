@@ -252,6 +252,57 @@ module.exports = (app) => {
       res.send({ token: "", user: [], message: "Username already exist" });
     }
   });
+  app.post(keys.sub + "/signup_from_guest", async (req, res) => {
+    const request = req.body;
+    const user = await customers.find({ username: request.username });
+    if (user.length == 0) {
+      const useremail = await customers.find({ email: request.email });
+      if (useremail.length == 0) {
+        if (
+          request._id != "" &&
+          request._id != undefined &&
+          request._id != null
+        ) {
+          let hash = bcrypt.hashSync(request.password, 9);
+          const customer = new customers({
+            _id: request._id,
+            fname: request.firstname,
+            lname: request.lastname,
+            username: request.username,
+            email: request.email,
+
+            password: hash,
+            customer_timeline: [
+              { timestamp: new Date(), log_text: "Account Registered" },
+            ],
+          });
+          await customer
+            .save()
+            .then(() => {
+              res.send({ token: "", user: [], message: "OK" });
+            })
+            .catch(() => {
+              res.send({
+                token: "",
+                user: [],
+                message:
+                  "User already Registered..Try to Login using that account..",
+              });
+            });
+        } else {
+          res.send({
+            token: "",
+            user: [],
+            message: "something went wrong please try again later..",
+          });
+        }
+      } else {
+        res.send({ token: "", user: [], message: "Email already exist" });
+      }
+    } else {
+      res.send({ token: "", user: [], message: "Username already exist" });
+    }
+  });
   app.post(keys.sub + "/check_auth", async (req, res) => {
     const request = req.body;
     const user = await customers.findOne({ _id: request._id });

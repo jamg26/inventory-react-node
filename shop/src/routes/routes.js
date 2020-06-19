@@ -15,6 +15,8 @@ import AccountOrder from "../components/customers/pages/orders";
 import AccountPoints from "../components/customers/pages/points";
 import AccountMessage from "../components/customers/pages/messages";
 import AccountEmailling from "../components/customers/pages/emailling";
+import PaymentPage from "../components/landing/pages/payment";
+import TYPage from "../components/landing/pages/ty";
 import LandingIndex from "../components/landing/pages/index";
 import LandingSignup from "../components/landing/pages/signup";
 import LandingInitialComponent from "../components/landing/pages/homepage";
@@ -71,7 +73,7 @@ const RouteController = ({
             <SettingContextRefresher.Provider value={get_settings} key={5}>
               <TaxContext.Provider value={tax} key={6}>
                 <TaxRefresher.Provider value={get_taxes} key={7}>
-                  <Router basename="/ecomdemo" key={1}>
+                  <Router basename="/ecomdemo1" key={1}>
                     <div key={1}>
                       <Switch key={1}>
                         {/* storefront ui */}
@@ -83,6 +85,12 @@ const RouteController = ({
                         </Route>
                         <Route key={2} exact path="/">
                           <LandingInitialComponent />
+                        </Route>
+                        <Route key={3} exact path="/payment">
+                          <PaymentPage />
+                        </Route>
+                        <Route key={4} exact path="/ty">
+                          <TYPage />
                         </Route>
                         {/* customer account ui */}
                         <Route key={1} exact path="/account">

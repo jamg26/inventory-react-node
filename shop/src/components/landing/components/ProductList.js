@@ -14,6 +14,7 @@ import {
   Space,
   Collapse,
   Spin,
+  notification,
 } from "antd";
 
 import axios from "axios";
@@ -30,6 +31,8 @@ import {
   CaretRightOutlined,
   EditOutlined,
   EllipsisOutlined,
+  SearchOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import PreviewImage from "../../global-components/previewImageModal";
 import ProductModal from "./modals/product_modal";
@@ -46,13 +49,17 @@ function ProductList({
   show,
   cart,
   bundle,
+  searchFilterProducts,
+  setSearchFilterProducts,
+  setsearchEntered,
+  searchEntered,
 }) {
   const [filteredproducts, setFilteredProducts] = useState([]);
   const [filteredproductsFiltered, setfilteredproductsFiltered] = useState([]);
   const [visible, setVisible] = useState(false);
   const [imgSrc, setImgSrc] = useState("");
   const [productTitle, setProductTitle] = useState("");
-  const [searchFilterProducts, setSearchFilterProducts] = useState("");
+
   const [listStyle, setlistStyle] = useState("list");
   const [spinning_product_list, set_spinning_product_list] = useState(false);
   const [product_modal_visible, setproduct_modal_visible] = useState(false);
@@ -71,15 +78,17 @@ function ProductList({
       for (let x = 0; x < bundle.data.length; x++) {
         const element = bundle.data[x];
         let quantity = element.initial_stock ? element.initial_stock : 0;
-        let init = 0;
+        let init = 1;
         let item_id = "";
         let order_id = "";
+        let alreadyincart = false;
         if (cart != null) {
           order_id = cart._id;
           for (let po = 0; po < cart.line_item.length; po++) {
             if (element._id == cart.line_item[po].variant_id) {
               init = parseFloat(cart.line_item[po].quantity);
               item_id = cart.line_item[po]._id;
+              alreadyincart = true;
               break;
             }
           }
@@ -122,7 +131,6 @@ function ProductList({
           category_image:
             image != null ? (
               <img
-                onClick={() => imageModal(image, element.product_name)}
                 style={{
                   height: "25vh",
                   cursor: "pointer",
@@ -148,7 +156,6 @@ function ProductList({
           category_modal_image:
             image != null ? (
               <img
-                onClick={() => imageModal(image, element.product_name)}
                 style={{
                   width: "100%",
                   cursor: "pointer",
@@ -175,7 +182,6 @@ function ProductList({
           image:
             image != null ? (
               <img
-                onClick={() => imageModal(image, element.product_name)}
                 style={{
                   width: "100%",
                   cursor: "pointer",
@@ -184,7 +190,11 @@ function ProductList({
                 src={image}
               />
             ) : (
-              <Empty description={false} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <Empty
+                description={false}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                style={{ cursor: "pointer" }}
+              />
             ),
           product_type:
             element.product_type && element.product_type.length != 0
@@ -199,6 +209,7 @@ function ProductList({
           size: "(Bundle)",
           color: "",
           weight: "",
+          alreadyincart: alreadyincart,
           stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
           price: numeral(price).format("0,0.00"),
           price_raw: price,
@@ -223,15 +234,17 @@ function ProductList({
                   ? node.variants[x].quantity
                   : 0
                 : 0;
-            let init = 0;
+            let init = 1;
             let item_id = undefined;
             let order_id = undefined;
+            let alreadyincart = false;
             if (cart != null) {
               order_id = cart._id;
               for (let po = 0; po < cart.line_item.length; po++) {
                 if (node.variants[x]._id == cart.line_item[po].variant_id) {
                   init = parseFloat(cart.line_item[po].quantity);
                   item_id = cart.line_item[po]._id;
+                  alreadyincart = true;
                   break;
                 }
               }
@@ -288,7 +301,6 @@ function ProductList({
               category_image:
                 image != null ? (
                   <img
-                    onClick={() => imageModal(image, node.product_name)}
                     style={{
                       height: "25vh",
                       cursor: "pointer",
@@ -301,6 +313,7 @@ function ProductList({
                     style={{
                       marginTop: "0px",
                       marginBottom: "0px",
+                      pointer: "cursor",
                     }}
                     imageStyle={{
                       verticalAlign: "middle",
@@ -314,7 +327,6 @@ function ProductList({
               category_modal_image:
                 image != null ? (
                   <img
-                    onClick={() => imageModal(image, node.product_name)}
                     style={{
                       width: "100%",
                       cursor: "pointer",
@@ -341,7 +353,6 @@ function ProductList({
               image:
                 image != null ? (
                   <img
-                    onClick={() => imageModal(image, node.product_name)}
                     style={{
                       width: "100%",
                       cursor: "pointer",
@@ -351,6 +362,7 @@ function ProductList({
                   />
                 ) : (
                   <Empty
+                    style={{ cursor: "pointer" }}
                     description={false}
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                   />
@@ -380,13 +392,18 @@ function ProductList({
               weight:
                 node.variants[x] != undefined
                   ? node.variants[x].length != 0
-                    ? node.variants[x].weight
+                    ? node.variants[x].weight == undefined ||
+                      node.variants[x].weight == "" ||
+                      node.variants[x].weight == null
+                      ? "No Weight"
+                      : node.variants[x].weight
                     : "No Weight"
                   : "No Weight",
               stock: parseFloat(quantity) < 1 ? "Out of Stock" : "In Stock",
               price: numeral(price).format("0,0.00"),
               price_raw: price,
               quantity: quantity,
+              alreadyincart: alreadyincart,
               initial_quantity: quantity > 0 ? init : 0,
               sub_total: numeral((quantity > 0 ? init : 0) * price).format(
                 "0,0.00"
@@ -400,6 +417,8 @@ function ProductList({
       setFilteredProducts(data);
       if (category == "All Products") {
         const filteredProd = data.filter((product) => {
+          console.log(product.product_name);
+          console.log(product.weight);
           return (
             product.product_name
               .toLowerCase()
@@ -471,7 +490,7 @@ function ProductList({
         set_spinning_product_list(false);
       }
     }
-  }, [bundle, products, searchFilterProducts, category]);
+  }, [bundle, products, searchEntered, category]);
   const setInput = (value, index, column) => {
     let tempdata = [...filteredproducts];
     tempdata[index][column] = value;
@@ -533,7 +552,39 @@ function ProductList({
           { headers: headers }
         );
         console.log("guest id defining");
-        localStorage.setItem("guest_id", response.data.guest_id);
+        if (
+          customer_id == "" ||
+          customer_id == undefined ||
+          customer_id == null
+        ) {
+          localStorage.setItem("guest_cart_id", response.data.guest_id);
+        }
+        console.log(data);
+        notification.open({
+          top: 100,
+          message: "Item Added",
+          description: (
+            <table style={{ width: "100%" }}>
+              <tbody>
+                <tr>
+                  <td width="20%" style={{ verticalAlign: "middle" }}>
+                    {data.image}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {" "}
+                    {data.product_name}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {"X" + data.initial_quantity}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ),
+          onClick: () => {
+            console.log("Notification Clicked!");
+          },
+        });
         refresh();
         // setInput(data.quantity > 0 ? 1 : 0, data.key, "initial_quantity");
       } else {
@@ -565,6 +616,7 @@ function ProductList({
         //add bundle to the cart
         index.variants = data.bundle_items;
         let customer_id = localStorage.getItem("landing_customer_id");
+        let guest_cart_id = localStorage.getItem("guest_cart_id");
         let landing_customer_login_token = localStorage.getItem(
           "landing_customer_login_token"
         );
@@ -583,6 +635,7 @@ function ProductList({
         const response = await axios.post(
           api_base_url_orders + "/add_to_cart",
           {
+            guest_cart_id: guest_cart_id,
             index,
             data,
             customer_id,
@@ -591,8 +644,39 @@ function ProductList({
           },
           { headers: headers }
         );
-        console.log("guest id defining");
-        localStorage.setItem("guest_id", response.data.guest_id);
+        console.log("guest id defining 2");
+        if (
+          customer_id == "" ||
+          customer_id == undefined ||
+          customer_id == null
+        ) {
+          localStorage.setItem("guest_cart_id", response.data.guest_id);
+        }
+        notification.open({
+          message: "Item Added",
+          top: 100,
+          description: (
+            <table style={{ width: "100%" }}>
+              <tbody>
+                <tr>
+                  <td width="20%" style={{ verticalAlign: "middle" }}>
+                    {data.image}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {" "}
+                    {data.product_name}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {"X" + data.initial_quantity}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ),
+          onClick: () => {
+            console.log("Notification Clicked!");
+          },
+        });
         refresh();
       } else {
         //remove bundle to the cart
@@ -615,6 +699,17 @@ function ProductList({
       key: "image",
       width: "7.08%",
       align: "center",
+      render: (value, row, index) => {
+        return [
+          <div
+            onClick={() => {
+              setmodal_data(index);
+            }}
+          >
+            {value}
+          </div>,
+        ];
+      },
     },
     {
       title: "Name",
@@ -636,19 +731,19 @@ function ProductList({
       title: "Category",
       dataIndex: "product_type",
       key: "product_type",
-      width: "11.12%",
+      width: "9.5%",
     },
     {
       title: "Tags",
       dataIndex: "tags",
       key: "tags",
-      width: "10.96%",
+      width: "12.08%",
     },
     {
       title: "Brands",
       dataIndex: "brand",
       key: "brand",
-      width: "8.48%",
+      width: "8.98%",
     },
 
     {
@@ -686,20 +781,76 @@ function ProductList({
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
-
+      align: "center",
       width: "5%",
       render: (value, result, index) => {
         return [
-          <InputNumber
-            key={result.key}
-            disabled={result.quantity > 0 ? false : true}
-            value={result.initial_quantity}
-            min={0}
-            max={parseFloat(value)}
-            onChange={(event) =>
-              setInput(event, result.key, "initial_quantity")
-            }
-          />,
+          <div className="def-number-input number-input" key={result.key}>
+            <button
+              disabled={
+                result.quantity > 0 || !result.alreadyincart ? false : true
+              }
+              onClick={() => {
+                if (parseFloat(result.initial_quantity) - parseFloat(1) >= 0) {
+                  setInput(
+                    parseFloat(result.initial_quantity) - parseFloat(1),
+                    result.key,
+                    "initial_quantity"
+                  );
+                }
+              }}
+              className="minus"
+            ></button>
+            <input
+              disabled={
+                result.quantity > 0 || !result.alreadyincart ? false : true
+              }
+              className="quantity"
+              name="quantity"
+              value={result.initial_quantity}
+              min={0}
+              max={parseFloat(value)}
+              onChange={(event) => {
+                console.log("event", event.target.value);
+                if (parseFloat(event.target.value) < 0) {
+                  setInput(0, result.key, "initial_quantity");
+                } else if (parseFloat(event.target.value) > parseFloat(value)) {
+                  setInput(value, result.key, "initial_quantity");
+                } else {
+                  setInput(event.target.value, result.key, "initial_quantity");
+                }
+              }}
+              type="number"
+            />
+            <button
+              disabled={
+                result.quantity > 0 || !result.alreadyincart ? false : true
+              }
+              onClick={() => {
+                if (
+                  parseFloat(result.initial_quantity) + parseFloat(1) <=
+                  value
+                ) {
+                  setInput(
+                    parseFloat(result.initial_quantity) + parseFloat(1),
+                    result.key,
+                    "initial_quantity"
+                  );
+                }
+              }}
+              className="plus"
+            ></button>
+          </div>,
+          // <InputNumber
+          //   key={result.key}
+          //   disabled={result.quantity > 0 ? false : true}
+          //   value={result.initial_quantity}
+          //   min={0}
+          //   max={parseFloat(value)}
+          //   onChange={(event) =>
+          //     setInput(event, result.key, "initial_quantity")
+          //   }
+          // />,
         ];
       },
     },
@@ -707,30 +858,41 @@ function ProductList({
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "5%",
+      width: "10.51%",
       align: "right",
     },
     {
       title: "Action",
       dataIndex: "actionData",
       key: "actionData",
-      width: "11.51%",
+      width: "6%",
       align: "center",
       render: (value, result) => {
         return [
           <>
             {result.quantity > 0 ? (
-              <Button
-                className="ant-btn-succcess"
-                disabled={result.quantity > 0 ? false : true}
-                onClick={() => {
-                  handleAddToCart(value, result);
-                }}
-              >
-                <ShoppingCartOutlined /> Add to Cart
-              </Button>
+              result.alreadyincart ? (
+                <Button type="primary" block onClick={show}>
+                  Go to Cart
+                </Button>
+              ) : (
+                <Button
+                  className="ant-btn-succcess"
+                  block
+                  disabled={
+                    result.quantity > 0 && result.initial_quantity > 0
+                      ? false
+                      : true
+                  }
+                  onClick={() => {
+                    handleAddToCart(value, result);
+                  }}
+                >
+                  <ShoppingCartOutlined /> Add to Cart
+                </Button>
+              )
             ) : (
-              <Button disabled={result.quantity > 0 ? false : true}>
+              <Button block disabled={result.quantity > 0 ? false : true}>
                 <ShoppingCartOutlined /> Out of Stock
               </Button>
             )}
@@ -744,10 +906,26 @@ function ProductList({
       <Row gutter="16">
         <Col span="24">
           <Search
+            enterButton={
+              <Space>
+                <SearchOutlined />
+                Search
+              </Space>
+            }
             placeholder="search for  products, brands, categories, etc"
             value={searchFilterProducts}
             onChange={(e) => setSearchFilterProducts(e.target.value)}
-            style={{ width: "25%", marginBottom: "3vh" }}
+            onSearch={() => setsearchEntered(!searchEntered)}
+            style={{ width: "35%", marginBottom: "3vh" }}
+            suffix={
+              <CloseCircleOutlined
+                style={{ opacity: "0.5" }}
+                onClick={() => {
+                  setSearchFilterProducts("");
+                  setsearchEntered(!searchEntered);
+                }}
+              />
+            }
           />
           <Radio.Group
             className="borderless-radio"
@@ -761,11 +939,11 @@ function ProductList({
               marginLeft: "5%",
             }}
           >
-            <Radio.Button value="list">
-              <UnorderedListOutlined /> List View
+            <Radio.Button value="list" style={{ fontWeight: "bold" }}>
+              <UnorderedListOutlined style={{ fontSize: "18px" }} /> List View
             </Radio.Button>
-            <Radio.Button value="card">
-              <AppstoreOutlined /> Catalogue View
+            <Radio.Button value="card" style={{ fontWeight: "bold" }}>
+              <AppstoreOutlined style={{ fontSize: "18px" }} /> Catalogue View
             </Radio.Button>
           </Radio.Group>
         </Col>
@@ -788,8 +966,44 @@ function ProductList({
               <Row gutter={[16, 16]}>
                 {filteredproductsFiltered.map((row, index) => {
                   return [
-                    <Col span={4}>
-                      <Card hoverable cover={row.category_image}>
+                    <Col span={4} style={{ height: "inherit" }}>
+                      <Card
+                        hoverable
+                        cover={
+                          <div style={{ margin: "10px" }}>
+                            {row.category_image}
+                          </div>
+                        }
+                        style={{ height: "100%" }}
+                        bodyStyle={{
+                          padding: "10px",
+                          paddingBottom: "0px",
+                          position: "relative",
+                        }}
+                        onMouseEnter={() => {
+                          setInput(true, row.key, "hovered");
+                        }}
+                        onMouseLeave={() => {
+                          setInput(false, row.key, "hovered");
+                        }}
+                      >
+                        {row.hovered ? (
+                          <Button
+                            type="default"
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: "25%",
+                              width: "50%",
+                            }}
+                            onClick={() => {
+                              setmodal_data(index);
+                            }}
+                          >
+                            Click for more info
+                          </Button>
+                        ) : null}
+
                         <Text strong>{row.product_name}</Text>
                         <br />
                         <Text type="secondary">{row.weight}</Text>
@@ -797,7 +1011,6 @@ function ProductList({
                         <Text type="secondary">{row.color}</Text>
                         <br />
                         <Text type="secondary">{row.size}</Text>
-                        <br />
 
                         <Row gutter={[16, 16]}>
                           <Col span="7">
@@ -808,89 +1021,87 @@ function ProductList({
                           </Col>
                           <Col span="10" style={{ textAlign: "center" }}>
                             <div
-                              className={`quantity-input ${
-                                row.quantity > 0
-                                  ? ""
-                                  : "disabled_quantity_component"
-                              }`}
+                              className="def-number-input number-input"
+                              key={row.key}
                             >
                               <button
-                                className="quantity-input__modifier quantity-input__modifier--left"
-                                // onClick={this.decrement}
-                                disabled={row.quantity > 0 ? false : true}
-                                onClick={(event) => {
-                                  if (row.initial_quantity == 0) {
-                                  } else {
-                                    setInputCatalogue(
-                                      row.initial_quantity === "" ||
-                                        isNaN(row.initial_quantity)
-                                        ? 0
-                                        : parseFloat(row.initial_quantity) - 1,
-                                      row.key,
-                                      "initial_quantity",
-                                      row.actionData
-                                    );
-                                  }
-                                }}
-                              >
-                                &mdash;
-                              </button>
-                              <input
-                                className="quantity-input__screen"
-                                type="text"
-                                disabled={row.quantity > 0 ? false : true}
-                                value={row.initial_quantity}
-                                readOnly
-                                // readonly
-                                onBlur={() => {
+                                disabled={
+                                  row.quantity > 0 || !row.alreadyincart
+                                    ? false
+                                    : true
+                                }
+                                onClick={() => {
                                   if (
-                                    row.initial_quantity === "" ||
-                                    isNaN(row.initial_quantity)
+                                    parseFloat(row.initial_quantity) -
+                                      parseFloat(1) >=
+                                    0
                                   ) {
-                                    setInputCatalogue(
-                                      row.initial_quantity === "" ||
-                                        isNaN(row.initial_quantity)
-                                        ? 0
-                                        : row.initial_quantity,
+                                    setInput(
+                                      parseFloat(row.initial_quantity) -
+                                        parseFloat(1),
                                       row.key,
-                                      "initial_quantity",
-                                      row.actionData
+                                      "initial_quantity"
                                     );
                                   }
                                 }}
+                                className="minus"
+                              ></button>
+                              <input
+                                disabled={
+                                  row.quantity > 0 || !row.alreadyincart
+                                    ? false
+                                    : true
+                                }
+                                className="quantity"
+                                name="quantity"
+                                value={row.initial_quantity}
+                                min={0}
+                                max={parseFloat(row.quantity)}
                                 onChange={(event) => {
-                                  setInputCatalogue(
-                                    row.initial_quantity === "" ||
-                                      isNaN(row.initial_quantity)
-                                      ? 0
-                                      : event.target.value,
-                                    row.key,
-                                    "initial_quantity",
-                                    row.actionData
-                                  );
+                                  console.log("event", event.target.value);
+                                  if (parseFloat(event.target.value) < 0) {
+                                    setInput(0, row.key, "initial_quantity");
+                                  } else if (
+                                    parseFloat(event.target.value) >
+                                    parseFloat(row.quantity)
+                                  ) {
+                                    setInput(
+                                      row.quantity,
+                                      row.key,
+                                      "initial_quantity"
+                                    );
+                                  } else {
+                                    setInput(
+                                      event.target.value,
+                                      row.key,
+                                      "initial_quantity"
+                                    );
+                                  }
                                 }}
+                                type="number"
                               />
                               <button
-                                disabled={row.quantity > 0 ? false : true}
-                                className="quantity-input__modifier quantity-input__modifier--right"
-                                onClick={(event) => {
-                                  if (row.initial_quantity >= row.quantity) {
-                                  } else {
-                                    setInputCatalogue(
-                                      row.initial_quantity === "" ||
-                                        isNaN(row.initial_quantity)
-                                        ? 0
-                                        : parseFloat(row.initial_quantity) +
-                                            parseFloat(1),
+                                disabled={
+                                  row.quantity > 0 || !row.alreadyincart
+                                    ? false
+                                    : true
+                                }
+                                onClick={() => {
+                                  if (
+                                    parseFloat(row.initial_quantity) +
+                                      parseFloat(1) <=
+                                    row.quantity
+                                  ) {
+                                    setInput(
+                                      parseFloat(row.initial_quantity) +
+                                        parseFloat(1),
                                       row.key,
-                                      "initial_quantity",
-                                      row.actionData
+                                      "initial_quantity"
                                     );
                                   }
                                 }}
-                              >
-                                &#xff0b;
-                              </button>
+                                className="plus"
+                              ></button>
                             </div>
                           </Col>
                           <Col span="7" style={{ textAlign: "right" }}>
@@ -900,18 +1111,43 @@ function ProductList({
                             </Text>
                           </Col>
                         </Row>
+                        <Row gutter={[16, 16]}>
+                          <Col span="24">
+                            <>
+                              {row.quantity > 0 ? (
+                                row.alreadyincart ? (
+                                  <Button type="primary" block onClick={show}>
+                                    Go to Cart
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    className="ant-btn-succcess"
+                                    block
+                                    disabled={
+                                      row.quantity > 0 &&
+                                      row.initial_quantity > 0
+                                        ? false
+                                        : true
+                                    }
+                                    onClick={() => {
+                                      handleAddToCart(row.actionData, row);
+                                    }}
+                                  >
+                                    <ShoppingCartOutlined /> Add to Cart
+                                  </Button>
+                                )
+                              ) : (
+                                <Button
+                                  block
+                                  disabled={row.quantity > 0 ? false : true}
+                                >
+                                  <ShoppingCartOutlined /> Out of Stock
+                                </Button>
+                              )}
+                            </>
+                          </Col>
+                        </Row>
                       </Card>
-                      <div style={{ textAlign: "center", width: "100%" }}>
-                        <Button
-                          type="primary"
-                          style={{ marginTop: "3%" }}
-                          onClick={() => {
-                            setmodal_data(index);
-                          }}
-                        >
-                          Click for more info
-                        </Button>
-                      </div>
                     </Col>,
                   ];
                 })}
@@ -922,17 +1158,21 @@ function ProductList({
           <Empty />
         )}
       </Spin>
-      <div style={{ textAlign: "right", marginTop: "10px" }}>
-        <Button type="primary" onClick={show}>
-          {showCart ? "Hide your Cart" : "View your Cart"}
-        </Button>
-      </div>
+      <Row>
+        <Col span="23" style={{ textAlign: "right", marginTop: "10px" }}>
+          <Button type="primary" onClick={show}>
+            View your Cart
+          </Button>
+        </Col>
+        <Col span="1"></Col>
+      </Row>
       <ProductModal
         product_modal_visible={product_modal_visible}
         close={() => {
           setproduct_modal_visible(false);
           setmodal_data(undefined);
         }}
+        show={show}
         setInput={setInput}
         handleAddToCart={handleAddToCart}
         modal_data={filteredproducts[modal_data]}

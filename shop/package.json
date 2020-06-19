@@ -2,7 +2,7 @@
   "name": "shop",
   "version": "0.1.0",
   "private": true,
-  "homepage": "ecomdemo/",
+  "homepage": "ecomdemo1/",
   "dependencies": {
     "-": "0.0.1",
     "@ant-design/icons": "^4.0.6",

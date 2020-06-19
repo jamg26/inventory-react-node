@@ -24,6 +24,7 @@ import CustomInput from "./Input/Input";
 import "./Chat.css";
 import axios from "axios";
 import {
+  chat_endpoint,
   api_base_url,
   api_base_url_orders,
   api_base_url_settings,
@@ -43,7 +44,7 @@ const Chat = (props) => {
   const [messages, setMessages] = useState([]);
   const [customer_supports, set_customer_supports] = useState([]);
   const [client, setclient] = useState(undefined);
-  const ENDPOINT = "localhost:5005";
+  const ENDPOINT = chat_endpoint;
   const fetch_customer_supports = async () => {
     const headers = {
       "Content-Type": "application/json",

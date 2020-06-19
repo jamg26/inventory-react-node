@@ -19,6 +19,7 @@ class CustomerChat extends React.PureComponent {
       <div
         className="fb-customerchat"
         attribution="setup_tool"
+        // theme_color="#67b868"
         page_id={this.props.page_id}
         // page_id={"102652921495791"} //test account
         // theme_color="..."

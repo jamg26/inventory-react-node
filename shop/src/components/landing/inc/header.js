@@ -1,15 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { Layout, Button, Dropdown, Menu, Badge, notification } from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Layout,
+  Button,
+  Dropdown,
+  Menu,
+  Badge,
+  notification,
+  Space,
+  Row,
+  Col,
+  Input,
+} from "antd";
 import {
   UserOutlined,
   LogoutOutlined,
   NotificationOutlined,
   BellOutlined,
+  CarryOutTwoTone,
+  ShopOutlined,
+  ShoppingOutlined,
+  ShoppingCartOutlined,
+  SearchOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
+import numeral from "numeral";
 import { Link } from "react-router-dom";
+import { SettingContext } from "../../../routes/routes";
 const { Header } = Layout;
-function Head({ loggedin }) {
+const { Search } = Input;
+function Head({
+  loggedin,
+  itemCount = 0,
+  subtotal = 0,
+  openSideDrawer = () => {},
+  searchFilterProducts = undefined,
+  setSearchFilterProducts = () => {},
+  setsearchEntered = () => {},
+  searchEntered = undefined,
+}) {
+  const setting_configuration = useContext(SettingContext);
   const [username, setUserName] = useState("");
+
   useEffect(() => {
     let account = localStorage.getItem("landing_remembered_account");
     if (account === null || account == "") {
@@ -67,20 +98,98 @@ function Head({ loggedin }) {
       }}
       key="0"
     >
-      {loggedin ? (
-        <Dropdown overlay={menu} trigger={["click"]}>
-          <Button
-            type="link"
-            style={{ float: "right", height: "100%", color: "black" }}
-          >
-            <UserOutlined />
-          </Button>
-        </Dropdown>
-      ) : (
-        <Link to="/login" style={{ float: "right" }}>
-          Signin/Signup
-        </Link>
-      )}
+      <Row align="middle">
+        <Col span="8">
+          <Link to="/" key="0">
+            {setting_configuration &&
+            setting_configuration.logo != "" &&
+            setting_configuration.logo ? (
+              <img
+                src={setting_configuration.logo}
+                style={{ height: "32px" }}
+              />
+            ) : null}
+          </Link>
+        </Col>
+        <Col span="8">
+          {searchFilterProducts != undefined ? (
+            <Search
+              className="searchbar-header"
+              enterButton={
+                <Space>
+                  <SearchOutlined />
+                  Search
+                </Space>
+              }
+              placeholder="search for  products, brands, categories, etc"
+              value={searchFilterProducts}
+              onChange={(e) => setSearchFilterProducts(e.target.value)}
+              onSearch={() => setsearchEntered(!searchEntered)}
+              style={{ width: "100%", float: "right" }}
+              suffix={
+                <CloseCircleOutlined
+                  className="header-search-icon"
+                  style={{ opacity: "0.5" }}
+                  onClick={() => {
+                    setSearchFilterProducts("");
+                    setsearchEntered(!searchEntered);
+                  }}
+                />
+              }
+            />
+          ) : null}
+        </Col>
+        <Col span="8">
+          {loggedin ? (
+            <Space style={{ float: "right", marginRight: "15px" }}>
+              <Dropdown overlay={menu} trigger={["click"]}>
+                <Button
+                  type="link"
+                  style={{ float: "right", height: "100%", color: "black" }}
+                >
+                  <UserOutlined />
+                </Button>
+              </Dropdown>
+              <Button
+                type="link"
+                onClick={() => {
+                  openSideDrawer();
+                }}
+              >
+                <Space>
+                  <Badge count={itemCount}>
+                    <ShoppingCartOutlined style={{ fontSize: "1.7rem" }} />
+                  </Badge>
+                  {"\u20B1" + numeral(subtotal).format("0,0.00")}
+                </Space>
+              </Button>
+            </Space>
+          ) : (
+            <Space style={{ float: "right", marginRight: "35px" }}>
+              <Link style={{ fontWeight: "bold" }} to="/login">
+                Login
+              </Link>
+              |
+              <Link style={{ fontWeight: "bold" }} to="/signup">
+                Signup
+              </Link>
+              <Button
+                type="link"
+                onClick={() => {
+                  openSideDrawer();
+                }}
+              >
+                <Space>
+                  <Badge count={itemCount}>
+                    <ShoppingCartOutlined style={{ fontSize: "1.7rem" }} />
+                  </Badge>
+                  {"\u20B1" + numeral(subtotal).format("0,0.00")}
+                </Space>
+              </Button>
+            </Space>
+          )}
+        </Col>
+      </Row>
     </Header>,
   ];
 }

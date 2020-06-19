@@ -23,9 +23,10 @@ import PreviewImage from "../../global-components/previewImageModal";
 import CustomerInfo from "./CustomerInfo";
 import { api_base_url_orders } from "../../../keys/index";
 const { Search } = Input;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 const { TextArea } = Input;
-const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
+const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
+  console.log("cart loggedin", loggedin);
   const [visible, setVisible] = useState(false);
   const [imgSrc, setImgSrc] = useState("");
   const [productTitle, setProductTitle] = useState("");
@@ -122,8 +123,15 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
               <>
                 {node.product.length != 0 &&
                 node.product[0].product_tags != undefined
-                  ? node.product[0].product_tags.map((d) => {
-                      return [d.tag_label + " "];
+                  ? node.product[0].product_tags.map((d, inss) => {
+                      if (
+                        node.product[0].product_tags.length ==
+                        parseFloat(inss) + parseFloat(1)
+                      ) {
+                        return [d.tag_label];
+                      } else {
+                        return [d.tag_label + ", "];
+                      }
                     })
                   : null}
               </>
@@ -157,9 +165,6 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
             image:
               image != null ? (
                 <img
-                  onClick={() =>
-                    imageModal(image, node.product[0].product_name)
-                  }
                   style={{
                     width: "100%",
                     cursor: "pointer",
@@ -226,10 +231,9 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
             order_id: cart._id,
             product_id: node.bundle.length != 0 ? node.bundle[0]._id : "",
             item_id: node._id,
-            product_name:
-              node.bundle.length != 0 ? node.bundle[0].product_name : "",
+            product_name: node.bundle.length != 0 ? node.bundle[0].name : "",
             product_description:
-              node.bundle.length != 0 ? node.bundle[0].product_description : "",
+              node.bundle.length != 0 ? node.bundle[0].description : "",
             tags: (
               <>
                 {node.bundle.length != 0 &&
@@ -361,6 +365,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       key: "product_name",
       width: "21.01%",
       render: (result, row, index) => {
+        console.log();
         return [
           <>
             <Text strong>{result}</Text>
@@ -375,19 +380,19 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       title: "Category",
       dataIndex: "product_type",
       key: "product_type",
-      width: "11.12%",
+      width: "9.5%",
     },
     {
       title: "Tags",
       dataIndex: "tags",
       key: "tags",
-      width: "10.96%",
+      width: "12.08%",
     },
     {
       title: "Brands",
       dataIndex: "brand",
       key: "brand",
-      width: "8.48%",
+      width: "8.98%",
     },
     {
       title: "Variant",
@@ -427,16 +432,62 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
       width: "5%",
       render: (value, result) => {
         return [
-          <InputNumber
-            key={result.key}
-            value={result.initial_quantity}
-            min={0}
-            max={parseFloat(value)}
-            onChange={(event) => {
-              console.log(event, "event", event);
-              setInput(event, result.key, "initial_quantity");
-            }}
-          />,
+          <div className="def-number-input number-input" key={result.key}>
+            <button
+              onClick={() => {
+                if (parseFloat(result.initial_quantity) - parseFloat(1) >= 0) {
+                  setInput(
+                    parseFloat(result.initial_quantity) - parseFloat(1),
+                    result.key,
+                    "initial_quantity"
+                  );
+                }
+              }}
+              className="minus"
+            ></button>
+            <input
+              className="quantity"
+              name="quantity"
+              value={result.initial_quantity}
+              min={0}
+              max={parseFloat(value)}
+              onChange={(event) => {
+                if (parseFloat(event.target.value) < 0) {
+                  setInput(0, result.key, "initial_quantity");
+                } else if (parseFloat(event.target.value) > parseFloat(value)) {
+                  setInput(value, result.key, "initial_quantity");
+                } else {
+                  setInput(event.target.value, result.key, "initial_quantity");
+                }
+              }}
+              type="number"
+            />
+            <button
+              onClick={() => {
+                if (
+                  parseFloat(result.initial_quantity) + parseFloat(1) <=
+                  value
+                ) {
+                  setInput(
+                    parseFloat(result.initial_quantity) + parseFloat(1),
+                    result.key,
+                    "initial_quantity"
+                  );
+                }
+              }}
+              className="plus"
+            ></button>
+          </div>,
+          // <InputNumber
+          //   key={result.key}
+          //   value={result.initial_quantity}
+          //   min={0}
+          //   max={parseFloat(value)}
+          //   onChange={(event) => {
+          //     console.log(event, "event", event);
+          //     setInput(event, result.key, "initial_quantity");
+          //   }}
+          // />,
         ];
       },
     },
@@ -461,7 +512,11 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
           <>
             <Button
               key="0"
-              type="danger"
+              style={{
+                backgroundColor: "#f0f2f5",
+
+                border: "1px solid #f0f2f5",
+              }}
               onClick={() => {
                 setInput(0, result.key, "initial_quantity");
               }}
@@ -475,147 +530,179 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart }) => {
   ];
   return [
     <>
-      <PageHeader className="site-page-header" title={"Your Cart"} />
-      <Card id="CartSectionView" key="0">
-        <Row gutter={[16, 48]} key="0">
-          <Col span="24" key="0">
-            <Table
-              key="0"
-              //className="custom-table"
-              dataSource={cartrow}
-              columns={columns}
-              pagination={false}
-              size="small"
-            />
-          </Col>
-        </Row>
+      <Row gutter={[16, 16]}>
+        <Col span={24} style={{ paddingLeft: "30px", paddingRight: "30px" }}>
+          <Card id="CartSectionView" key="0">
+            <Row gutter={[16, 48]} key="0">
+              <Col span="24" key="0">
+                <Title level={4} style={{ color: "#2790ff" }}>
+                  Your Cart
+                </Title>
+                <Table
+                  key="0"
+                  //className="custom-table"
+                  dataSource={cartrow}
+                  columns={columns}
+                  pagination={false}
+                  size="small"
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={[16, 16]} key="1">
-          <Col span="10" key="0">
-            <Text strong>Order Note</Text>
-            <TextArea
-              disabled={cart == null ? true : false}
-              rows={4}
-              style={{ width: "100%" }}
-              placeholder="Type here"
-              value={customerNote}
-              onChange={(event) => setCustomerNote(event.target.value)}
-              onBlur={() => saveNote()}
-            />
-          </Col>
-          <Col span="1" key="1"></Col>
-          <Col span="5" key="3">
-            <Text strong>Delivery Type</Text>
-            <br></br>
+            <Row gutter={[16, 16]} key="1">
+              <Col span="10" key="0">
+                <Space direction="vertical" size={6} style={{ width: "100%" }}>
+                  <Text style={{ marginLeft: "12px" }} strong>
+                    Order Note
+                  </Text>
+                  <TextArea
+                    disabled={cart == null ? true : false}
+                    rows={4}
+                    style={{ width: "100%" }}
+                    placeholder="Type here"
+                    value={customerNote}
+                    onChange={(event) => setCustomerNote(event.target.value)}
+                    onBlur={() => saveNote()}
+                  />
+                </Space>
+              </Col>
+              <Col span="1" key="1"></Col>
+              <Col span="5" key="3">
+                <Space direction="vertical" size={6} style={{ width: "100%" }}>
+                  <Text strong>Delivery Type</Text>
 
-            <Radio.Group
-              onChange={(event) => setDeliveryMethod(event.target.value)}
-              value={cart == null ? "" : deliveryMethod}
-              disabled={cart == null ? true : false}
-            >
-              <Space direction="vertical">
-                <Radio
-                  value={"Store Pick Up"}
-                  disabled={excl}
-                  onBlur={() => saveNote()}
+                  <Radio.Group
+                    onChange={(event) => setDeliveryMethod(event.target.value)}
+                    value={cart == null ? "" : deliveryMethod}
+                    disabled={cart == null ? true : false}
+                  >
+                    <Space direction="vertical">
+                      <Radio
+                        value={"Store Pick Up"}
+                        disabled={excl}
+                        onBlur={() => saveNote()}
+                      >
+                        Store Pick Up
+                      </Radio>
+                      <Radio
+                        value={"Exclusive Delivery"}
+                        onBlur={() => saveNote()}
+                      >
+                        <Space direction="vertical" size={1}>
+                          <Text>Exclusive Delivery</Text>
+                          <Text type="secondary">{"\u20B1"} 500.00</Text>
+                          <Text type="secondary">
+                            Required for orders with meat products
+                          </Text>
+                        </Space>
+                      </Radio>
+                      <Radio
+                        value={"Standard Delivery"}
+                        disabled={excl}
+                        onBlur={() => saveNote()}
+                      >
+                        <Space direction="vertical" size={1}>
+                          <Text>Standard Delivery</Text>
+                          <Text type="secondary">{"\u20B1"} 350.00</Text>
+                        </Space>
+                      </Radio>
+                    </Space>
+                  </Radio.Group>
+                </Space>
+              </Col>
+              <Col span="2" key="4"></Col>
+              <Col span="5" key="5">
+                <Descriptions
+                  bordered
+                  column={1}
+                  size="small"
+                  className="CartDescriptions"
                 >
-                  Store Pick Up
-                </Radio>
-                <Radio value={"Exclusive Delivery"} onBlur={() => saveNote()}>
-                  <Space direction="vertical" size={1}>
-                    <Text>Exclusive Delivery</Text>
-                    <Text type="secondary">{"\u20B1"} 500.00</Text>
-                    <Text type="secondary">
-                      Required for orders with meat products
-                    </Text>
-                  </Space>
-                </Radio>
-                <Radio
-                  value={"Standard Delivery"}
-                  disabled={excl}
-                  onBlur={() => saveNote()}
-                >
-                  <Space direction="vertical" size={1}>
-                    <Text>Standard Delivery</Text>
-                    <Text type="secondary">{"\u20B1"} 350.00</Text>
-                  </Space>
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </Col>
-          <Col span="3" key="4"></Col>
-          <Col span="5" key="5">
-            <Descriptions
-              bordered
-              column={1}
-              size="small"
-              className="CartDescriptions"
-            >
-              <Descriptions.Item label="SUBTOTAL">
-                {numeral(subtotal).format("0,0.00")}
-              </Descriptions.Item>
-              <Descriptions.Item label="DELIVERY CHARGE">
-                {cart == null
-                  ? numeral(0).format("0,0.00")
-                  : deliveryMethod == "Standard Delivery"
-                  ? numeral(350).format("0,0.00")
-                  : deliveryMethod == "Exclusive Delivery"
-                  ? numeral(500).format("0,0.00")
-                  : numeral(0).format("0,0.00")}
-              </Descriptions.Item>
-              <Descriptions.Item label="TOTAL">
-                {numeral(
-                  parseFloat(
-                    cart == null
-                      ? 0
+                  <Descriptions.Item label="SUBTOTAL">
+                    {numeral(subtotal).format("0,0.00")}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="DELIVERY CHARGE">
+                    {cart == null
+                      ? numeral(0).format("0,0.00")
                       : deliveryMethod == "Standard Delivery"
-                      ? 350
+                      ? numeral(350).format("0,0.00")
                       : deliveryMethod == "Exclusive Delivery"
-                      ? 500
-                      : 0
-                  ) + parseFloat(subtotal)
-                ).format("0,0.00")}
-              </Descriptions.Item>
-            </Descriptions>
-            {proceedtoDetail ? (
-              <div style={{ textAlign: "right", marginTop: "15px" }}>
-                <Button
-                  block
-                  type="primary"
-                  disabled={!proceed}
-                  onClick={() => {
-                    setProceedtoDetail(false);
-                    document
-                      .getElementById("ResidentialView")
-                      .scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  Proceed to Checkout
-                </Button>
-              </div>
-            ) : null}
-          </Col>
-        </Row>
-      </Card>
-
+                      ? numeral(500).format("0,0.00")
+                      : numeral(0).format("0,0.00")}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="TOTAL">
+                    {numeral(
+                      parseFloat(
+                        cart == null
+                          ? 0
+                          : deliveryMethod == "Standard Delivery"
+                          ? 350
+                          : deliveryMethod == "Exclusive Delivery"
+                          ? 500
+                          : 0
+                      ) + parseFloat(subtotal)
+                    ).format("0,0.00")}
+                  </Descriptions.Item>
+                </Descriptions>
+                {proceedtoDetail ? (
+                  <div
+                    style={{
+                      textAlign: "right",
+                      marginTop: "15px",
+                    }}
+                  >
+                    <Button
+                      block
+                      size="large"
+                      type="primary"
+                      disabled={!proceed}
+                      onClick={() => {
+                        setProceedtoDetail(false);
+                        setTimeout(() => {
+                          if (document.getElementById("ResidentialView")) {
+                            document
+                              .getElementById("ResidentialView")
+                              .scrollIntoView({ behavior: "smooth" });
+                          }
+                        }, 1000);
+                      }}
+                    >
+                      Proceed to Checkout
+                    </Button>
+                  </div>
+                ) : null}
+              </Col>
+              <Col span="1" key="6"></Col>
+            </Row>
+          </Card>
+        </Col>
+      </Row>
       {proceedtoDetail ? (
         <div id="ResidentialView"></div>
       ) : (
         <>
-          {cart ? (
+          {/* {cart ? (
             <PageHeader
               className="site-page-header"
               title={"Contact Details and Delivery Address"}
             />
-          ) : null}
-          <CustomerInfo
-            cart={cart}
-            get_cart={() => {
-              setProceedtoDetail(true);
-              get_cart();
-            }}
-            proceed={proceedtoDetail}
-          />
+          ) : null} */}
+          <Row gutter={[16, 16]}>
+            <Col
+              span={24}
+              style={{ paddingLeft: "30px", paddingRight: "30px" }}
+            >
+              <CustomerInfo
+                cart={cart}
+                loggedin={loggedin}
+                get_cart={() => {
+                  setProceedtoDetail(true);
+                  get_cart();
+                }}
+                proceed={proceedtoDetail}
+              />
+            </Col>
+          </Row>
         </>
       )}
 

@@ -15,6 +15,7 @@ import {
   Space,
   Descriptions,
 } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
 import numeral from "numeral";
@@ -29,6 +30,7 @@ function Product_modal({
   modal_data,
   setInput,
   handleAddToCart,
+  show,
 }) {
   useEffect(() => {
     console.log(modal_data);
@@ -52,7 +54,7 @@ function Product_modal({
             </Col>
             <Col span={2} style={{ textAlign: "center" }}></Col>
             <Col span={10}>
-              <table style={{ height: "90%" }}>
+              <table style={{ height: "90%", width: "90%" }}>
                 <tr>
                   <td style={{ verticalAlign: "top" }}>
                     <Space direction="vertical" size="2">
@@ -167,6 +169,92 @@ function Product_modal({
                       </Col>
                       <Col span="8" style={{ textAlign: "center" }}>
                         <div
+                          className="def-number-input number-input"
+                          key={modal_data.key}
+                        >
+                          <button
+                            disabled={
+                              modal_data.quantity > 0 ||
+                              !modal_data.alreadyincart
+                                ? false
+                                : true
+                            }
+                            onClick={() => {
+                              if (
+                                parseFloat(modal_data.initial_quantity) -
+                                  parseFloat(1) >=
+                                0
+                              ) {
+                                setInput(
+                                  parseFloat(modal_data.initial_quantity) -
+                                    parseFloat(1),
+                                  modal_data.key,
+                                  "initial_quantity"
+                                );
+                              }
+                            }}
+                            className="minus"
+                          ></button>
+                          <input
+                            disabled={
+                              modal_data.quantity > 0 ||
+                              !modal_data.alreadyincart
+                                ? false
+                                : true
+                            }
+                            className="quantity"
+                            name="quantity"
+                            value={modal_data.initial_quantity}
+                            min={0}
+                            max={parseFloat(modal_data.quantity)}
+                            onChange={(event) => {
+                              console.log("event", event.target.value);
+                              if (parseFloat(event.target.value) < 0) {
+                                setInput(0, modal_data.key, "initial_quantity");
+                              } else if (
+                                parseFloat(event.target.value) >
+                                parseFloat(modal_data.quantity)
+                              ) {
+                                setInput(
+                                  modal_data.quantity,
+                                  modal_data.key,
+                                  "initial_quantity"
+                                );
+                              } else {
+                                setInput(
+                                  event.target.value,
+                                  modal_data.key,
+                                  "initial_quantity"
+                                );
+                              }
+                            }}
+                            type="number"
+                          />
+                          <button
+                            disabled={
+                              modal_data.quantity > 0 ||
+                              !modal_data.alreadyincart
+                                ? false
+                                : true
+                            }
+                            onClick={() => {
+                              if (
+                                parseFloat(modal_data.initial_quantity) +
+                                  parseFloat(1) <=
+                                modal_data.quantity
+                              ) {
+                                setInput(
+                                  parseFloat(modal_data.initial_quantity) +
+                                    parseFloat(1),
+                                  modal_data.key,
+                                  "initial_quantity"
+                                );
+                              }
+                            }}
+                            className="plus"
+                          ></button>
+                        </div>
+                        {/* <div
                           className={`quantity-input ${
                             modal_data.quantity > 0
                               ? ""
@@ -250,7 +338,7 @@ function Product_modal({
                           >
                             &#xff0b;
                           </button>
-                        </div>
+                        </div> */}
                       </Col>
                       <Col span="8" style={{ textAlign: "center" }}>
                         <Text strong style={{ fontSize: "18px" }}>
@@ -261,7 +349,42 @@ function Product_modal({
                     </Row>
                     <Row gutter={[16, 16]}>
                       <Col span="24" style={{ textAlign: "center" }}>
-                        <Button
+                        <>
+                          {modal_data.quantity > 0 ? (
+                            modal_data.alreadyincart ? (
+                              <Button type="primary" block onClick={show}>
+                                View Cart
+                              </Button>
+                            ) : (
+                              <Button
+                                className="ant-btn-succcess"
+                                block
+                                disabled={
+                                  modal_data.quantity > 0 &&
+                                  modal_data.initial_quantity > 0
+                                    ? false
+                                    : true
+                                }
+                                onClick={() => {
+                                  handleAddToCart(
+                                    modal_data.actionData,
+                                    modal_data
+                                  );
+                                }}
+                              >
+                                <ShoppingCartOutlined /> Add to Cart
+                              </Button>
+                            )
+                          ) : (
+                            <Button
+                              block
+                              disabled={modal_data.quantity > 0 ? false : true}
+                            >
+                              <ShoppingCartOutlined /> Out of Stock
+                            </Button>
+                          )}
+                        </>
+                        {/* <Button
                           className="ant-btn-succcess"
                           size="large"
                           disabled={modal_data.quantity > 0 ? false : true}
@@ -270,7 +393,7 @@ function Product_modal({
                           }}
                         >
                           Add to Cart
-                        </Button>
+                        </Button> */}
                       </Col>
                     </Row>
                   </td>

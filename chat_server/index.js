@@ -41,7 +41,7 @@ io.on("connect", (socket) => {
         {
           room: user.room,
         },
-        { headers: headers }
+        { headers: headers, rejectUnauthorized: false }
       )
       .then((response) => {
         io.to(user.room).emit("old_messsages", {

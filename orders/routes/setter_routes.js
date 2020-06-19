@@ -28,21 +28,35 @@ module.exports = (app) => {
     //pass product to order detail
     //generate a order no
     //customer_info
-
+    console.log("guest_cart_id", guest_cart_id);
+    console.log("customer_id", customer_id);
     let guest_id =
-      customer_id == "" || customer_id == undefined
-        ? guest_cart_id == "" || guest_cart_id == undefined
+      customer_id == "" || customer_id == undefined || customer_id == null
+        ? guest_cart_id == "" ||
+          guest_cart_id == undefined ||
+          guest_cart_id == null
           ? mongoose.Types.ObjectId()
           : guest_cart_id
         : customer_id;
-    console.log(guest_id, customer_id);
+    console.log(
+      "pick ",
+      customer_id == "" || customer_id == undefined || customer_id == null
+        ? guest_cart_id == "" ||
+          guest_cart_id == undefined ||
+          guest_cart_id == null
+          ? "mongo id"
+          : "guest id"
+        : "customer id"
+    );
     orders
       .findOne({
         active: false,
         customer: guest_id,
       })
       .then(async (result) => {
+        console.log("result ", result);
         if (result == null) {
+          console.log("add new");
           // create new
           const order_no = await orders.find().countDocuments();
           const order = new orders({
@@ -74,8 +88,10 @@ module.exports = (app) => {
             ],
           });
           await order.save();
-          console.log(order);
+          // console.log(order);
+          res.status(201).send({ guest_id: guest_id });
         } else {
+          console.log("update cart");
           //update order
           let order_log = result.order_log;
           order_log.push({
@@ -110,13 +126,13 @@ module.exports = (app) => {
           }
           result.line_item = ord;
           result.order_log = order_log;
-          result.save();
+          await result.save();
           console.log(ord);
+          res.status(201).send({ guest_id: guest_id });
         }
-        res.status(201).send({ guest_id: guest_id });
       });
   });
-  app.post(keys.sub + "/cancel_order", checkAuth, async (req, res) => {
+  app.post(keys.sub + "/cancel_order", async (req, res) => {
     const { id } = req.body;
     await orders.findOne({ _id: id }).then(async (result) => {
       if (result == null) {
@@ -135,7 +151,7 @@ module.exports = (app) => {
       }
     });
   });
-  app.post(keys.sub + "/update_cart", checkAuth, async (req, res) => {
+  app.post(keys.sub + "/update_cart", async (req, res) => {
     const {
       order_id,
       product_id,
@@ -266,6 +282,58 @@ module.exports = (app) => {
             result.customer_info.address = address;
             result.customer_info.email = email;
             result.customer_info.phone = phone;
+            result.order_log.push({
+              log: "Cart Contact Info Updated",
+            });
+            await result.save();
+            res.send({ cart: result, status: "updated" });
+          }
+        });
+    }
+  );
+  app.post(
+    keys.sub + "/update_order_email",
+
+    async (req, res) => {
+      const {
+        email,
+
+        order_id,
+      } = req.body;
+      await orders
+        .findOne({ _id: order_id, active: false })
+        .then(async (result) => {
+          if (result == null) {
+            res.send("No Order Found");
+          } else {
+            result.customer_info.email = email;
+
+            result.order_log.push({
+              log: "Cart Contact Info Updated",
+            });
+            await result.save();
+            res.send({ cart: result, status: "updated" });
+          }
+        });
+    }
+  );
+  app.post(
+    keys.sub + "/update_order_address",
+
+    async (req, res) => {
+      const {
+        address,
+
+        order_id,
+      } = req.body;
+      await orders
+        .findOne({ _id: order_id, active: false })
+        .then(async (result) => {
+          if (result == null) {
+            res.send("No Order Found");
+          } else {
+            result.customer_info.address = address;
+
             result.order_log.push({
               log: "Cart Contact Info Updated",
             });
