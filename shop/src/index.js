@@ -1,11 +1,11 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom";
-import RoutesController from "./routes/routes";
+import LoadingScreen from "./components/global-components/loading";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
 import reducers from "./reducers";
-
+const RoutesController = lazy(() => import("./routes/routes"));
 function saveToLocalStorage(state) {
   try {
     const serializeState = JSON.stringify(state);
@@ -33,7 +33,9 @@ const store = createStore(reducers, persistedState);
 store.subscribe(() => saveToLocalStorage(store.getState()));
 ReactDOM.render(
   <Provider store={store}>
-    <RoutesController />
+    <Suspense fallback={<LoadingScreen />}>
+      <RoutesController />
+    </Suspense>
   </Provider>,
   document.getElementById("root")
 );

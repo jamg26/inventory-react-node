@@ -15,6 +15,7 @@ import {
   Collapse,
   Spin,
   notification,
+  AutoComplete,
 } from "antd";
 
 import axios from "axios";
@@ -33,6 +34,8 @@ import {
   EllipsisOutlined,
   SearchOutlined,
   CloseCircleOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import PreviewImage from "../../global-components/previewImageModal";
 import ProductModal from "./modals/product_modal";
@@ -53,6 +56,10 @@ function ProductList({
   setSearchFilterProducts,
   setsearchEntered,
   searchEntered,
+  autocompletefilter,
+  set_autocompletefilter,
+  clean_autofilter,
+  setclear_autofilter,
 }) {
   const [filteredproducts, setFilteredProducts] = useState([]);
   const [filteredproductsFiltered, setfilteredproductsFiltered] = useState([]);
@@ -64,6 +71,7 @@ function ProductList({
   const [spinning_product_list, set_spinning_product_list] = useState(false);
   const [product_modal_visible, setproduct_modal_visible] = useState(false);
   const [modal_data, setmodal_data] = useState(undefined);
+
   useEffect(() => {
     console.log("modal_data", modal_data);
     if (modal_data != undefined) {
@@ -73,6 +81,7 @@ function ProductList({
   useEffect(() => {
     set_spinning_product_list(true);
     let data = [];
+    let name_filter = [];
     let counter = 0;
     if (bundle.data && bundle.data.length != 0) {
       for (let x = 0; x < bundle.data.length; x++) {
@@ -96,6 +105,7 @@ function ProductList({
 
         let price = element.bundle_price;
         let image = element.image ? element.image : null;
+        name_filter.push(element.name);
         data.push({
           key: counter,
           type: "Bundle",
@@ -115,7 +125,7 @@ function ProductList({
                     ) {
                       return [d.tag_label + " "];
                     } else {
-                      return [d.tag_label + ","];
+                      return [d.tag_label + ", "];
                     }
                   })
                 : null}
@@ -130,28 +140,45 @@ function ProductList({
 
           category_image:
             image != null ? (
-              <img
-                style={{
-                  height: "25vh",
-                  cursor: "pointer",
-                  margin: "0 auto",
-                }}
-                src={image}
-              />
+              <table style={{ width: "100%" }}>
+                <tbody>
+                  <tr>
+                    <td
+                      style={{
+                        verticalAlign: "middle",
+                        textAlign: "center",
+                        padding: "10px",
+                      }}
+                    >
+                      <img
+                        style={{
+                          height: "25vh",
+                          cursor: "pointer",
+                          margin: "0 auto",
+                          maxWidth: "100%",
+                        }}
+                        src={image}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             ) : (
-              <Empty
-                style={{
-                  marginTop: "0px",
-                  marginBottom: "0px",
-                }}
-                imageStyle={{
-                  verticalAlign: "middle",
-                  height: "25vh",
-                  marginBottom: "0px",
-                }}
-                description={false}
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
+              <div style={{ padding: "10px" }}>
+                <Empty
+                  style={{
+                    marginTop: "0px",
+                    marginBottom: "0px",
+                  }}
+                  imageStyle={{
+                    verticalAlign: "middle",
+                    height: "25vh",
+                    marginBottom: "0px",
+                  }}
+                  description={false}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              </div>
             ),
           category_modal_image:
             image != null ? (
@@ -266,6 +293,7 @@ function ProductList({
                     : null
                   : null
                 : null;
+            name_filter.push(node.product_name);
             data.push({
               key: counter,
               type: "Product",
@@ -300,29 +328,46 @@ function ProductList({
 
               category_image:
                 image != null ? (
-                  <img
-                    style={{
-                      height: "25vh",
-                      cursor: "pointer",
-                      margin: "0 auto",
-                    }}
-                    src={image}
-                  />
+                  <table style={{ width: "100%" }}>
+                    <tbody>
+                      <tr>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                            padding: "10px",
+                          }}
+                        >
+                          <img
+                            style={{
+                              height: "25vh",
+                              cursor: "pointer",
+                              margin: "0 auto",
+                              maxWidth: "100%",
+                            }}
+                            src={image}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 ) : (
-                  <Empty
-                    style={{
-                      marginTop: "0px",
-                      marginBottom: "0px",
-                      pointer: "cursor",
-                    }}
-                    imageStyle={{
-                      verticalAlign: "middle",
-                      height: "25vh",
-                      marginBottom: "0px",
-                    }}
-                    description={false}
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  />
+                  <div style={{ padding: "10px" }}>
+                    <Empty
+                      style={{
+                        marginTop: "0px",
+                        marginBottom: "0px",
+                        pointer: "cursor",
+                      }}
+                      imageStyle={{
+                        verticalAlign: "middle",
+                        height: "25vh",
+                        marginBottom: "0px",
+                      }}
+                      description={false}
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
+                  </div>
                 ),
               category_modal_image:
                 image != null ? (
@@ -415,6 +460,7 @@ function ProductList({
         }
       }
       setFilteredProducts(data);
+      set_autocompletefilter(name_filter);
       if (category == "All Products") {
         const filteredProd = data.filter((product) => {
           console.log(product.product_name);
@@ -561,7 +607,7 @@ function ProductList({
         }
         console.log(data);
         notification.open({
-          top: 100,
+          top: 64,
           message: "Item Added",
           description: (
             <table style={{ width: "100%" }}>
@@ -654,7 +700,7 @@ function ProductList({
         }
         notification.open({
           message: "Item Added",
-          top: 100,
+          top: 64,
           description: (
             <table style={{ width: "100%" }}>
               <tbody>
@@ -715,7 +761,7 @@ function ProductList({
       title: "Name",
       dataIndex: "product_name",
       key: "product_name",
-      width: "21.01‬%",
+      width: "18.01‬%",
       render: (result, row, index) => {
         return [
           <>
@@ -737,7 +783,7 @@ function ProductList({
       title: "Tags",
       dataIndex: "tags",
       key: "tags",
-      width: "12.08%",
+      width: "10%",
     },
     {
       title: "Brands",
@@ -750,7 +796,7 @@ function ProductList({
       title: "Variant",
       dataIndex: "weight",
       key: "weight",
-      width: "6.61%",
+      width: "7.61%",
       render: (value, result) => {
         return [
           <Space size="0" direction="vertical">
@@ -766,13 +812,21 @@ function ProductList({
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
-      width: "6%",
+      width: "8%",
+      render: (value, row, index) => {
+        return [
+          <Space direction="vertical" size="0">
+            <Text>{value}</Text>
+            <Text>{value == "In Stock" ? "stock :" + row.quantity : null}</Text>
+          </Space>,
+        ];
+      },
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      width: "7.23%",
+      width: "6.82%",
       render: (value) => {
         return ["\u20B1 " + value];
       },
@@ -858,22 +912,25 @@ function ProductList({
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "10.51%",
+      width: "6.82%",
       align: "right",
+      render: (value) => {
+        return [<div style={{ paddingRight: "10%" }}>{"\u20B1 " + value}</div>];
+      },
     },
     {
       title: "Action",
       dataIndex: "actionData",
       key: "actionData",
-      width: "6%",
+      width: "11.51%",
       align: "center",
       render: (value, result) => {
         return [
-          <>
+          <div>
             {result.quantity > 0 ? (
               result.alreadyincart ? (
-                <Button type="primary" block onClick={show}>
-                  Go to Cart
+                <Button className="ant-btn-primary-bright" block onClick={show}>
+                  View Cart
                 </Button>
               ) : (
                 <Button
@@ -888,7 +945,7 @@ function ProductList({
                     handleAddToCart(value, result);
                   }}
                 >
-                  <ShoppingCartOutlined /> Add to Cart
+                  <ShoppingCartOutlined /> Add To Cart
                 </Button>
               )
             ) : (
@@ -896,37 +953,65 @@ function ProductList({
                 <ShoppingCartOutlined /> Out of Stock
               </Button>
             )}
-          </>,
+          </div>,
         ];
       },
     },
   ];
+  useEffect(() => {
+    setsearchEntered(!searchEntered);
+  }, [searchFilterProducts]);
   return [
     <>
-      <Row gutter="16">
+      <Row gutter="16" id="Product_list_Card">
         <Col span="24">
-          <Search
-            enterButton={
-              <Space>
-                <SearchOutlined />
-                Search
-              </Space>
+          <AutoComplete
+            options={clean_autofilter}
+            style={{
+              width: "35%",
+            }}
+            dropdownMatchSelectWidth={100}
+            filterOption={(inputValue, option) =>
+              option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
             }
             placeholder="search for  products, brands, categories, etc"
             value={searchFilterProducts}
-            onChange={(e) => setSearchFilterProducts(e.target.value)}
-            onSearch={() => setsearchEntered(!searchEntered)}
-            style={{ width: "35%", marginBottom: "3vh" }}
-            suffix={
-              <CloseCircleOutlined
-                style={{ opacity: "0.5" }}
-                onClick={() => {
-                  setSearchFilterProducts("");
-                  setsearchEntered(!searchEntered);
-                }}
-              />
-            }
-          />
+            onChange={(e) => setSearchFilterProducts(e)}
+          >
+            <Search
+              enterButton={
+                <Space
+                  onClick={() => {
+                    if (document.getElementById("Product_list_Card")) {
+                      document
+                        .getElementById("Product_list_Card")
+                        .scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                >
+                  <SearchOutlined />
+                  Search
+                </Space>
+              }
+              onPressEnter={() => {
+                if (document.getElementById("Product_list_Card")) {
+                  document
+                    .getElementById("Product_list_Card")
+                    .scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              suffix={
+                <CloseCircleOutlined
+                  style={{ opacity: "0.5" }}
+                  onClick={() => {
+                    setSearchFilterProducts("");
+                    setsearchEntered(!searchEntered);
+                  }}
+                />
+              }
+            />
+          </AutoComplete>
           <Radio.Group
             className="borderless-radio"
             value={listStyle}
@@ -956,11 +1041,42 @@ function ProductList({
                 key="0"
                 dataSource={filteredproductsFiltered}
                 columns={columns}
+                size="small"
                 pagination={{
                   position: ["bottomCenter"],
                   defaultPageSize: 10,
+                  size: "default",
+                  itemRender: (page, type, original) => {
+                    console.log("type", type);
+                    if (type === "prev") {
+                      return (
+                        <>
+                          <LeftOutlined />
+                        </>
+                      );
+                    }
+                    if (type === "next") {
+                      return (
+                        <>
+                          <RightOutlined />
+                          <Button
+                            style={{
+                              position: "absolute",
+                              right: "8px",
+                              bottom: "2",
+                              width: "10.5%",
+                            }}
+                            type="primary"
+                            onClick={show}
+                          >
+                            View Your Cart
+                          </Button>
+                        </>
+                      );
+                    }
+                    return original;
+                  },
                 }}
-                size="small"
               />
             ) : (
               <Row gutter={[16, 16]}>
@@ -968,12 +1084,11 @@ function ProductList({
                   return [
                     <Col span={4} style={{ height: "inherit" }}>
                       <Card
+                        onClick={() => {
+                          setmodal_data(index);
+                        }}
                         hoverable
-                        cover={
-                          <div style={{ margin: "10px" }}>
-                            {row.category_image}
-                          </div>
-                        }
+                        cover={row.category_image}
                         style={{ height: "100%" }}
                         bodyStyle={{
                           padding: "10px",
@@ -987,22 +1102,23 @@ function ProductList({
                           setInput(false, row.key, "hovered");
                         }}
                       >
-                        {row.hovered ? (
-                          <Button
-                            type="default"
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: "25%",
-                              width: "50%",
-                            }}
-                            onClick={() => {
-                              setmodal_data(index);
-                            }}
+                        <Row>
+                          <Col
+                            span="24"
+                            style={{ minHeight: "32px", height: "32px" }}
                           >
-                            Click for more info
-                          </Button>
-                        ) : null}
+                            {row.hovered ? (
+                              <Button
+                                className="ant-btn-warm-yellow"
+                                style={{
+                                  width: "100%",
+                                }}
+                              >
+                                Click for more info
+                              </Button>
+                            ) : null}
+                          </Col>
+                        </Row>
 
                         <Text strong>{row.product_name}</Text>
                         <br />
@@ -1011,10 +1127,10 @@ function ProductList({
                         <Text type="secondary">{row.color}</Text>
                         <br />
                         <Text type="secondary">{row.size}</Text>
-
+                        <br />
                         <Row gutter={[16, 16]}>
                           <Col span="7">
-                            <Text strong>
+                            <Text strong style={{ fontSize: "16px" }}>
                               {"\u20B1"}
                               {row.price}
                             </Text>
@@ -1030,7 +1146,9 @@ function ProductList({
                                     ? false
                                     : true
                                 }
-                                onClick={() => {
+                                onClick={(e) => {
+                                  console.log("event onclcick button", e);
+                                  e.stopPropagation();
                                   if (
                                     parseFloat(row.initial_quantity) -
                                       parseFloat(1) >=
@@ -1057,6 +1175,9 @@ function ProductList({
                                 value={row.initial_quantity}
                                 min={0}
                                 max={parseFloat(row.quantity)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
                                 onChange={(event) => {
                                   console.log("event", event.target.value);
                                   if (parseFloat(event.target.value) < 0) {
@@ -1086,7 +1207,8 @@ function ProductList({
                                     ? false
                                     : true
                                 }
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   if (
                                     parseFloat(row.initial_quantity) +
                                       parseFloat(1) <=
@@ -1105,7 +1227,7 @@ function ProductList({
                             </div>
                           </Col>
                           <Col span="7" style={{ textAlign: "right" }}>
-                            <Text strong>
+                            <Text strong style={{ fontSize: "16px" }}>
                               {"\u20B1"}
                               {row.sub_total}
                             </Text>
@@ -1116,8 +1238,16 @@ function ProductList({
                             <>
                               {row.quantity > 0 ? (
                                 row.alreadyincart ? (
-                                  <Button type="primary" block onClick={show}>
-                                    Go to Cart
+                                  <Button
+                                    className="ant-btn-primary-bright"
+                                    block
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      console.log("showing");
+                                      show();
+                                    }}
+                                  >
+                                    View Cart
                                   </Button>
                                 ) : (
                                   <Button
@@ -1129,16 +1259,20 @@ function ProductList({
                                         ? false
                                         : true
                                     }
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       handleAddToCart(row.actionData, row);
                                     }}
                                   >
-                                    <ShoppingCartOutlined /> Add to Cart
+                                    <ShoppingCartOutlined /> Add To Cart
                                   </Button>
                                 )
                               ) : (
                                 <Button
                                   block
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
                                   disabled={row.quantity > 0 ? false : true}
                                 >
                                   <ShoppingCartOutlined /> Out of Stock
@@ -1158,14 +1292,17 @@ function ProductList({
           <Empty />
         )}
       </Spin>
-      <Row>
-        <Col span="23" style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button type="primary" onClick={show}>
-            View your Cart
-          </Button>
+      {listStyle === "list" ? null : (
+        <Button style={{ float: "right" }} type="primary" onClick={show}>
+          View your Cart
+        </Button>
+      )}
+
+      {/* <Row>
+        <Col span="24" style={{ textAlign: "right" }}>
+          
         </Col>
-        <Col span="1"></Col>
-      </Row>
+      </Row> */}
       <ProductModal
         product_modal_visible={product_modal_visible}
         close={() => {

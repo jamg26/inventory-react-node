@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef, lazy } from "react";
 import { UserContext } from "../../../routes/routes";
 import {
   Card,
@@ -25,14 +25,14 @@ import Header from "../inc/header";
 import numeral from "numeral";
 import Cart from "../components/Cart";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import ProductList from "../components/ProductList";
+// import ProductList from "../components/ProductList";
 import { checkAuth } from "../../helper/authCheck";
 import { withRouter, Link } from "react-router-dom";
 import axios from "axios";
 import LoadingPage from "../../global-components/loading";
 import { api_base_url_orders, api_base_url } from "../../../keys/index";
 import { SettingContext } from "../../../routes/routes";
-import BasicScrollToBottom from "react-scroll-to-bottom/lib/BasicScrollToBottom";
+const ProductList = lazy(() => import("../components/ProductList")); //for testing only
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { Text, Title } = Typography;
@@ -63,6 +63,19 @@ function Dashboard(props) {
   const [customerNote, setCustomerNote] = useState("");
   const [cartrow, setCartrow] = useState([]);
   const [excl, setExcl] = useState(false);
+  const [autocompletefilter, set_autocompletefilter] = useState([]);
+  const [clean_autofilter, setclear_autofilter] = useState([]);
+  useEffect(() => {
+    const cleanfilter = [...new Set(autocompletefilter)];
+    let cc = [];
+    for (let c = 0; c < cleanfilter.length; c++) {
+      const element = cleanfilter[c];
+      cc.push({
+        value: element,
+      });
+    }
+    setclear_autofilter(cc);
+  }, [autocompletefilter]);
   console.log("home loggedin", loggedin);
   const toggle = () => {
     setCollaped(!collaped);
@@ -170,7 +183,11 @@ function Dashboard(props) {
             }
           }
           let image =
+            node.product &&
+            node.product.length != 0 &&
             node.product[0].length != 0 &&
+            node.product[0].variants &&
+            node.product[0].variants.length != 0 &&
             node.product[0].variants[0].length != 0
               ? node.product[0].variants[0].images != "" &&
                 node.product[0].variants[0].images != undefined &&
@@ -285,7 +302,7 @@ function Dashboard(props) {
             }
           }
           let image =
-            node.bundle[0].length != 0
+            node.bundle && node.bundle[0].length != 0
               ? node.bundle[0].image != "" &&
                 node.bundle[0].image != undefined &&
                 node.bundle[0].image != null
@@ -443,6 +460,11 @@ function Dashboard(props) {
             setSearchFilterProducts={(value) => setSearchFilterProducts(value)}
             setsearchEntered={(value) => setsearchEntered(value)}
             searchEntered={searchEntered}
+            autocompletefilter={autocompletefilter}
+            set_autocompletefilter={set_autocompletefilter}
+            clean_autofilter={clean_autofilter}
+            setclear_autofilter={setclear_autofilter}
+            searchFilterProducts={searchFilterProducts}
           />
           <Content
             style={{
@@ -452,7 +474,7 @@ function Dashboard(props) {
           >
             <Drawer
               width="20%"
-              height="85vh"
+              height="fit-content"
               className="customDrawer"
               title="Quick View Cart"
               placement="right"
@@ -468,9 +490,9 @@ function Dashboard(props) {
                       setShowCart(true);
                       setTimeout(() => {
                         console.log("scrolling");
-                        if (document.getElementById("cart_div")) {
+                        if (document.getElementById("CartSectionView")) {
                           document
-                            .getElementById("cart_div")
+                            .getElementById("CartSectionView")
                             .scrollIntoView({ behavior: "smooth" });
                         }
                         setitemdrawer(false);
@@ -614,17 +636,19 @@ function Dashboard(props) {
             <div className=" dyn-height-no-padding-home">
               <Row gutter={[16, 16]}>
                 <Col span={24}>
-                  <img
-                    id="ecombanner"
-                    src={process.env.PUBLIC_URL + "/images/banner.png"}
-                    width="100%"
-                  />
+                  {setting_configuration ? (
+                    <img
+                      id="ecombanner"
+                      src={setting_configuration.banner}
+                      width="100%"
+                    />
+                  ) : null}
                 </Col>
               </Row>
               <Row gutter={[16, 16]}>
                 <Col
                   span={24}
-                  style={{ paddingLeft: "30px", paddingRight: "30px" }}
+                  style={{ paddingLeft: "5%", paddingRight: "5%" }}
                 >
                   <Card size="small">
                     <Space direction={"vertical"}>
@@ -659,7 +683,7 @@ function Dashboard(props) {
               <Row gutter={[16, 16]}>
                 <Col
                   span={24}
-                  style={{ paddingLeft: "30px", paddingRight: "30px" }}
+                  style={{ paddingLeft: "5%", paddingRight: "5%" }}
                 >
                   <Card size="small">
                     <Title level={4} style={{ color: "#2790ff" }}>
@@ -670,6 +694,10 @@ function Dashboard(props) {
                       products={products}
                       bundle={bundle}
                       cart={cart}
+                      autocompletefilter={autocompletefilter}
+                      set_autocompletefilter={set_autocompletefilter}
+                      clean_autofilter={clean_autofilter}
+                      setclear_autofilter={setclear_autofilter}
                       searchFilterProducts={searchFilterProducts}
                       setSearchFilterProducts={(value) =>
                         setSearchFilterProducts(value)
@@ -685,9 +713,9 @@ function Dashboard(props) {
                         // });
                         setTimeout(() => {
                           console.log("scrolling");
-                          if (document.getElementById("cart_div")) {
+                          if (document.getElementById("CartSectionView")) {
                             document
-                              .getElementById("cart_div")
+                              .getElementById("CartSectionView")
                               .scrollIntoView({ behavior: "smooth" });
                           }
                         }, 1000);

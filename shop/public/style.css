@@ -104,8 +104,31 @@
   -webkit-box-shadow: 2px 2px 3px 0 #555;
   box-shadow: 2px 2px 3px 0 #555;
 }
+.ant-btn-success {
+  color: white !important;
+  background-color: #52c41a !important;
+  border-color: #52c41a !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+}
+.ant-btn-success[disabled] {
+  cursor: not-allowed;
+}
+.borderless-radio
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  color: #4882ff !important;
+}
+.ant-btn-primary-bright {
+  color: white !important;
+  background-color: #2790ff !important;
+  border-color: #2790ff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+}
 .ant-btn-succcess {
-  color: #fff !important;
+  color: white !important;
   background-color: #52c41a !important;
   border-color: #52c41a !important;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
@@ -115,6 +138,15 @@
 .ant-btn-succcess[disabled] {
   cursor: not-allowed;
 }
+.ant-btn-warm-yellow {
+  color: #575757 !important;
+  background-color: #fad482 !important;
+  border-color: #fad482 !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+}
+
 .CartDescriptions .ant-descriptions-item-content {
   text-align: right;
 }
@@ -271,6 +303,19 @@ body {
   padding-bottom: 8px;
   padding-left: 0px;
   vertical-align: middle;
+}
+
+.paymentcustomtable {
+  width: 100%;
+  border-top: 1px solid #ccc;
+}
+.paymentcustomtable td,
+.paymentcustomtable th {
+  padding: 16px;
+  vertical-align: middle;
+}
+.paymentcustomtable th {
+  background-color: #fafafa;
 }
 
 .ant-tabs-top > .ant-tabs-nav,
@@ -540,12 +585,14 @@ body {
   font-size: 0.8rem;
   height: 1.7rem;
   color: white;
-  background-color: #79aa4a;
+  background-color: #358d24;
 }
+.searchbar-header,
 .searchbar-header input,
 .header-search-icon,
 .header-search-icon svg,
-.header-search-icon path {
+.header-search-icon path,
+.ant-input-suffix path {
   color: black !important;
 }
 .ant-input-suffix {
@@ -558,5 +605,6 @@ body {
   
 } */
 .customDrawer .ant-drawer-content-wrapper {
-  height: 85vh !important;
+  height: fit-content !important;
+  max-height: 100% !important;
 }

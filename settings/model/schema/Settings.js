@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 
 const SettingsSchema = new Schema({
   logo: String,
+  banner: String,
   name: String,
   industry: String,
   type: String,

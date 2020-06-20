@@ -180,38 +180,8 @@ function Dashboard(props) {
       for (var c = 0; c < props.location.state.cart.line_item.length; c++) {
         var row = props.location.state.cart.line_item[c];
         let image = "";
-        if (row.product_type == "Product" || row.product_type == undefined) {
-          image =
-            row && row.product && row.product[0].length != 0
-              ? row.product[0].variants &&
-                row.product[0].variants[0].length != 0
-                ? row.product[0].variants[0]
-                  ? row.product[0].variants[0].images != "" &&
-                    row.product[0].variants[0].images != undefined &&
-                    row.product[0].variants[0].images != null
-                    ? row.product[0].variants[0].images
-                    : null
-                  : null
-                : null
-              : null;
-        } else {
-          console.log(row.bundle);
-          image =
-            row && row.bundle && row.bundle[0].length != 0
-              ? row.bundle[0].variants && row.bundle[0].variants[0].length != 0
-                ? row.bundle[0].variants[0]
-                  ? row.bundle[0].variants[0].images != "" &&
-                    row.bundle[0].variants[0].images != undefined &&
-                    row.bundle[0].variants[0].images != null
-                    ? row.bundle[0].variants[0].images
-                    : null
-                  : null
-                : null
-              : null;
-        }
 
         line_items.push({
-          image: image,
           product:
             row.product_type == "Product"
               ? row.product.length != 0
@@ -260,8 +230,46 @@ function Dashboard(props) {
             // value: amou.toFixed(2),
             value: amou.toFixed(2),
           },
+          line1: "Sample",
         },
       ],
+      payer: {
+        name: {
+          given_name: cart_data
+            ? cart_data.customer_info
+              ? cart_data.customer_info.fname
+              : ""
+            : "",
+          surname: cart_data
+            ? cart_data.customer_info
+              ? cart_data.customer_info.lname
+              : ""
+            : "",
+        },
+        phone: {
+          phone_number: {
+            national_number: cart_data
+              ? cart_data.customer_info
+                ? cart_data.customer_info.phone
+                : ""
+              : "",
+          },
+        },
+        email_address: cart_data
+          ? cart_data.customer_info
+            ? cart_data.customer_info.email
+            : ""
+          : "",
+        address: {
+          address_line_1: cart_data
+            ? cart_data.customer_info
+              ? cart_data.customer_info.address
+              : ""
+            : "",
+
+          country_code: "PH",
+        },
+      },
     });
   };
   const handleApproveOrder = async (details) => {
@@ -449,7 +457,7 @@ function Dashboard(props) {
                       </Breadcrumb>
                     </Space>
                     <Card
-                      style={{ marginBottom: "24px" }}
+                      style={{ marginBottom: "24px", width: "90%" }}
                       bodyStyle={{ padding: "0px 10px" }}
                     >
                       <table style={{ width: "100%" }}>
@@ -472,9 +480,7 @@ function Dashboard(props) {
                                 padding: "12px 0px",
                               }}
                             >
-                              <Text strong>
-                                {cart_data.customer_info.email}
-                              </Text>
+                              <Text>{cart_data.customer_info.email}</Text>
                             </td>
                             <td
                               width="10%"
@@ -516,9 +522,7 @@ function Dashboard(props) {
                                 padding: "12px 0px",
                               }}
                             >
-                              <Text strong>
-                                {cart_data.customer_info.address}
-                              </Text>
+                              <Text>{cart_data.customer_info.address}</Text>
                             </td>
                             <td
                               style={{
@@ -556,7 +560,7 @@ function Dashboard(props) {
                                 color: "#979797",
                               }}
                             >
-                              <Text strong>{cart_data.delivery_method}</Text>
+                              <Text>{cart_data.delivery_method}</Text>
                             </td>
                             <td
                               style={{
@@ -595,14 +599,95 @@ function Dashboard(props) {
                     </Row>
                   </Col>
                   <Col
-                    span="10"
-                    style={{ backgroundColor: "#e6f2f5", padding: "10px 16px" }}
+                    span="9"
+                    style={{ backgroundColor: "#f0f2f5", padding: "10px 16px" }}
                   >
-                    <Table
+                    {/* <Table
                       columns={line_item_column}
                       dataSource={lineItem}
                       pagination={false}
-                    />
+                    /> */}
+                    <table
+                      style={{ width: "100%" }}
+                      className="paymentcustomtable"
+                    >
+                      <thead>
+                        <tr>
+                          <th
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "left",
+                            }}
+                          >
+                            Items
+                          </th>
+                          <th
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "right",
+                            }}
+                          >
+                            Price
+                          </th>
+                          <th
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "center",
+                            }}
+                          >
+                            Qty.
+                          </th>
+                          <th
+                            style={{
+                              verticalAlign: "middle",
+                              textAlign: "right",
+                            }}
+                          >
+                            Total
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {lineItem.map((row, index) => {
+                          return [
+                            <tr>
+                              <td
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "left",
+                                }}
+                              >
+                                {row.product}
+                              </td>
+                              <td
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "right",
+                                }}
+                              >
+                                {numeral(row.price).format("0,0.00")}
+                              </td>
+                              <td
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "center",
+                                }}
+                              >
+                                {row.quantity}
+                              </td>
+                              <td
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "right",
+                                }}
+                              >
+                                {numeral(row.total).format("0,0.00")}
+                              </td>
+                            </tr>,
+                          ];
+                        })}
+                      </tbody>
+                    </table>
                     <Descriptions
                       bordered
                       column={2}
@@ -665,6 +750,10 @@ function Dashboard(props) {
                       </Descriptions.Item>
                     </Descriptions>
                   </Col>
+                  <Col
+                    span="1"
+                    style={{ backgroundColor: "#f0f2f5", padding: "10px 16px" }}
+                  ></Col>
                 </Row>
               </div>
             </Card>
@@ -678,6 +767,6 @@ function Dashboard(props) {
 }
 
 export default scriptLoader(
-  `https://www.paypal.com/sdk/js?currency=PHP&client-id=${CLIENT_ID}`
+  `https://www.paypal.com/sdk/js?locale=en_PH&currency=PHP&client-id=${CLIENT_ID}`
   // `https://www.paypal.com/sdk/js?client-id=${CLIENT_ID}`
 )(withRouter(Dashboard));

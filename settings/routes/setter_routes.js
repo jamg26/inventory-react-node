@@ -77,6 +77,7 @@ module.exports = (app) => {
             });
           } else {
             setting.logo = request.imageUrl;
+            setting.banner = request.imageUrl2;
             setting.name = request.org_name;
             setting.industry = request.org_industry;
             setting.type = request.org_business_type;

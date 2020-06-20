@@ -94,7 +94,11 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
             }
           }
           let image =
+            node.product &&
+            node.product.length != 0 &&
             node.product[0].length != 0 &&
+            node.product[0].variants &&
+            node.product[0].variants.length != 0 &&
             node.product[0].variants[0].length != 0
               ? node.product[0].variants[0].images != "" &&
                 node.product[0].variants[0].images != undefined &&
@@ -363,7 +367,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       title: "Name",
       dataIndex: "product_name",
       key: "product_name",
-      width: "21.01%",
+      width: "18.01%",
       render: (result, row, index) => {
         console.log();
         return [
@@ -386,7 +390,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       title: "Tags",
       dataIndex: "tags",
       key: "tags",
-      width: "12.08%",
+      width: "10%",
     },
     {
       title: "Brands",
@@ -398,7 +402,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       title: "Variant",
       dataIndex: "weight",
       key: "weight",
-      width: "6.61%",
+      width: "7.61%",
       render: (value, result) => {
         return [
           <Space direction="vertical" size="0">
@@ -413,13 +417,21 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
-      width: "6%",
+      width: "8%",
+      render: (value, row, index) => {
+        return [
+          <Space direction="vertical" size="0">
+            <Text>{value}</Text>
+            <Text>{value == "In Stock" ? "stock :" + row.quantity : null}</Text>
+          </Space>,
+        ];
+      },
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      width: "7.23%",
+      width: "6.82%",
       render: (value) => {
         return ["\u20B1 " + value];
       },
@@ -495,7 +507,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       title: "Subtotal",
       dataIndex: "sub_total",
       key: "sub_total",
-      width: "5%",
+      width: "6.82%",
       align: "right",
       render: (value) => {
         return [value];
@@ -512,6 +524,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
           <>
             <Button
               key="0"
+              block
               style={{
                 backgroundColor: "#f0f2f5",
 
@@ -531,8 +544,8 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
   return [
     <>
       <Row gutter={[16, 16]}>
-        <Col span={24} style={{ paddingLeft: "30px", paddingRight: "30px" }}>
-          <Card id="CartSectionView" key="0">
+        <Col span={24} style={{ paddingLeft: "5%", paddingRight: "5%" }}>
+          <Card id="CartSectionView" key="0" size="small">
             <Row gutter={[16, 48]} key="0">
               <Col span="24" key="0">
                 <Title level={4} style={{ color: "#2790ff" }}>
@@ -611,7 +624,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
                 </Space>
               </Col>
               <Col span="2" key="4"></Col>
-              <Col span="5" key="5">
+              <Col span="6" key="5">
                 <Descriptions
                   bordered
                   column={1}
@@ -654,7 +667,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
                     <Button
                       block
                       size="large"
-                      type="primary"
+                      className="ant-btn-success"
                       disabled={!proceed}
                       onClick={() => {
                         setProceedtoDetail(false);
@@ -672,7 +685,6 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
                   </div>
                 ) : null}
               </Col>
-              <Col span="1" key="6"></Col>
             </Row>
           </Card>
         </Col>
@@ -688,10 +700,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
             />
           ) : null} */}
           <Row gutter={[16, 16]}>
-            <Col
-              span={24}
-              style={{ paddingLeft: "30px", paddingRight: "30px" }}
-            >
+            <Col span={24} style={{ paddingLeft: "5%", paddingRight: "5%" }}>
               <CustomerInfo
                 cart={cart}
                 loggedin={loggedin}

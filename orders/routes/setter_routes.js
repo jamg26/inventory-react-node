@@ -28,26 +28,28 @@ module.exports = (app) => {
     //pass product to order detail
     //generate a order no
     //customer_info
-    console.log("guest_cart_id", guest_cart_id);
-    console.log("customer_id", customer_id);
-    let guest_id =
+
+    const guest_id =
       customer_id == "" || customer_id == undefined || customer_id == null
-        ? guest_cart_id == "" ||
+        ? guest_cart_id === "" ||
           guest_cart_id == undefined ||
-          guest_cart_id == null
+          guest_cart_id === null
           ? mongoose.Types.ObjectId()
           : guest_cart_id
         : customer_id;
     console.log(
       "pick ",
       customer_id == "" || customer_id == undefined || customer_id == null
-        ? guest_cart_id == "" ||
+        ? guest_cart_id === "" ||
           guest_cart_id == undefined ||
-          guest_cart_id == null
+          guest_cart_id === null
           ? "mongo id"
           : "guest id"
         : "customer id"
     );
+    // guest_id = guest_id ? mongoose.Types.ObjectId() : guest_id;
+    console.log("guest_id", guest_id);
+
     orders
       .findOne({
         active: false,

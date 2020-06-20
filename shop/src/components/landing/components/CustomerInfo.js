@@ -371,7 +371,17 @@ function CustomerInfo({
     }
     // setamount(amou);
   }
-
+  console.log(
+    "falsification",
+    validfname,
+    validlname,
+    validaddress,
+    validemail,
+    validphone,
+    new_password,
+    new_confirmpassword,
+    username_typevalid
+  );
   return [
     cart == null ? null : (
       <Card id="ResidentialView">
@@ -389,9 +399,27 @@ function CustomerInfo({
               new_password &&
               new_confirmpassword &&
               username_typevalid ? null : (
-                <Text type="danger">
-                  (Please Provide data in the required fields.)
-                </Text>
+                <Title
+                  style={{
+                    fontSize: "14px",
+                    color: "red",
+                    fontWeight: "unset",
+                  }}
+                >
+                  (Please provide information in the required{" "}
+                  {parseFloat(validfname ? 0 : 1) +
+                    parseFloat(validlname ? 0 : 1) +
+                    parseFloat(validaddress ? 0 : 1) +
+                    parseFloat(validemail ? 0 : 1) +
+                    parseFloat(validphone ? 0 : 1) +
+                    parseFloat(new_password ? 0 : 1) +
+                    parseFloat(new_confirmpassword ? 0 : 1) +
+                    parseFloat(username_typevalid ? 0 : 1) >
+                  1
+                    ? "boxes"
+                    : "box"}
+                  .)
+                </Title>
               )}
             </Space>
           </Col>
@@ -502,130 +530,125 @@ function CustomerInfo({
               </Col>
             </Row>
             <Row gutter={[16, 16]}>
-              <Col span="18">
-                <Row>
-                  <Col span="6">
-                    {loggedin ? null : (
-                      <Space direction="vertical">
-                        <Checkbox
-                          onChange={(e) => {
-                            setcreate_account(e.target.checked);
-                            if (e.target.checked) {
-                            } else {
-                              setnew_password(false);
-                              setnew_confirmpassword(false);
-                              set_username_type(false);
-                            }
-                          }}
-                          checked={create_account}
-                        >
-                          {"Create an account?"}
-                        </Checkbox>
-                        <div style={{ paddingLeft: "20px" }}>
-                          <Text>
-                            Having an account will help you track your orders
-                            and see your order history
-                          </Text>
-                          <br />
-                          <br />
-                          <Text>
-                            By Clicking "SIGN UP", I agree to Smart
-                            Supermarket's{" "}
-                            <a href="#" target="_blank">
-                              Terms of Use
-                            </a>{" "}
-                            and{" "}
-                            <a href="#" target="_blank">
-                              Privacy Policy
-                            </a>
-                          </Text>
-                        </div>
+              <Col span="5">
+                {loggedin ? null : (
+                  <Space direction="vertical">
+                    <Checkbox
+                      onChange={(e) => {
+                        setcreate_account(e.target.checked);
+                        if (e.target.checked) {
+                        } else {
+                          setnew_password(false);
+                          setnew_confirmpassword(false);
+                          set_username_type(false);
+                        }
+                      }}
+                      checked={create_account}
+                    >
+                      {"Create an account?"}
+                    </Checkbox>
+                    <div style={{ paddingLeft: "20px" }}>
+                      <Space size="0" direction="vertical">
+                        <Text>Having an account will help you track</Text>
+                        <Text>your orders and see your order history</Text>
                       </Space>
-                    )}
-                  </Col>
-                  <Col span="2"></Col>
-                  <Col span="8">
-                    {create_account ? (
-                      <>
-                        <Space direction="vertical" style={{ width: "100%" }}>
-                          <Text strong>
-                            Create Account Using:{" "}
-                            <span style={{ color: "red" }}>*</span>
-                          </Text>
 
-                          <Radio.Group
-                            className={`${
-                              username_typevalid
-                                ? "valid_input"
-                                : "invalid_input"
-                            }`}
-                            onChange={(e) => {
-                              set_username_type(e.target.value);
-                            }}
-                            value={username_type}
-                          >
-                            <Radio style={radioStyle} value={"Mobile"}>
-                              Mobile No.
-                            </Radio>
-                            <Radio style={radioStyle} value={"Email"}>
-                              Email Address
-                            </Radio>
-                          </Radio.Group>
-                        </Space>
-                      </>
-                    ) : null}
-                  </Col>
-                  <Col span="8">
-                    {create_account ? (
-                      <Space direction="vertical" style={{ width: "100%" }}>
-                        <Space
-                          direction="vertical"
-                          size="0"
-                          style={{ width: "100%" }}
-                        >
-                          <Text strong>
-                            Create Account Password{" "}
-                            <span style={{ color: "red" }}>*</span>
-                          </Text>
-                          <Input.Password
-                            className={`${
-                              new_password ? "valid_input" : "invalid_input"
-                            }`}
-                            value={create_account_new_password}
-                            onChange={(e) => {
-                              set_create_account_new_password(e.target.value);
-                            }}
-                          />
-                        </Space>
-                        <Space
-                          direction="vertical"
-                          size="0"
-                          style={{ width: "100%" }}
-                        >
-                          <Text strong>
-                            Confirm Password{" "}
-                            <span style={{ color: "red" }}>*</span>
-                          </Text>
-                          <Input.Password
-                            className={`${
-                              new_confirmpassword
-                                ? "valid_input"
-                                : "invalid_input"
-                            }`}
-                            value={create_account_new_password_confirm}
-                            onChange={(e) => {
-                              set_create_account_new_password_confirm(
-                                e.target.value
-                              );
-                            }}
-                          />
-                        </Space>
+                      <br />
+                      <br />
+                      <Space size="0" direction="vertical">
+                        <Text>By clicking "SIGN UP", I agree to</Text>
+                        <Text>
+                          Smart Supermarket's{" "}
+                          <a href="#" target="_blank">
+                            Terms of Use
+                          </a>{" "}
+                          and
+                        </Text>
+                        <Text>
+                          <a href="#" target="_blank">
+                            Privacy Policy
+                          </a>
+                        </Text>
                       </Space>
-                    ) : null}
-                  </Col>
-                </Row>
+                    </div>
+                  </Space>
+                )}
               </Col>
-              <Col span="5" style={{ verticalAlign: "bottom" }}>
+              <Col span="3">
+                {create_account ? (
+                  <>
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Text>
+                        Create Account Using:{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </Text>
+
+                      <Radio.Group
+                        className={`${
+                          username_typevalid ? "valid_input" : "invalid_input"
+                        }`}
+                        onChange={(e) => {
+                          set_username_type(e.target.value);
+                        }}
+                        value={username_type}
+                      >
+                        <Radio style={radioStyle} value={"Mobile"}>
+                          Mobile No.
+                        </Radio>
+                        <Radio style={radioStyle} value={"Email"}>
+                          Email Address
+                        </Radio>
+                      </Radio.Group>
+                    </Space>
+                  </>
+                ) : null}
+              </Col>
+              <Col span="8">
+                {create_account ? (
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <Space
+                      direction="vertical"
+                      size="0"
+                      style={{ width: "100%" }}
+                    >
+                      <Text>
+                        Create Account Password{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </Text>
+                      <Input.Password
+                        className={`${
+                          new_password ? "valid_input" : "invalid_input"
+                        }`}
+                        value={create_account_new_password}
+                        onChange={(e) => {
+                          set_create_account_new_password(e.target.value);
+                        }}
+                      />
+                    </Space>
+                    <Space
+                      direction="vertical"
+                      size="0"
+                      style={{ width: "100%" }}
+                    >
+                      <Text>
+                        Confirm Password <span style={{ color: "red" }}>*</span>
+                      </Text>
+                      <Input.Password
+                        className={`${
+                          new_confirmpassword ? "valid_input" : "invalid_input"
+                        }`}
+                        value={create_account_new_password_confirm}
+                        onChange={(e) => {
+                          set_create_account_new_password_confirm(
+                            e.target.value
+                          );
+                        }}
+                      />
+                    </Space>
+                  </Space>
+                ) : null}
+              </Col>
+              <Col span="8" style={{ verticalAlign: "bottom" }}>
                 <table style={{ width: "100%", height: "100%" }}>
                   <tbody>
                     <tr>
@@ -633,12 +656,11 @@ function CustomerInfo({
                         style={{
                           verticalAlign: "bottom",
                           textAlign: "right",
-                          paddingLeft: "42px",
                         }}
                       >
                         {!showButtons ? (
                           <Button
-                            type="primary"
+                            className="ant-btn-success"
                             disabled={proceed}
                             onClick={() => {
                               saveContactInfo();
@@ -652,7 +674,6 @@ function CustomerInfo({
                   </tbody>
                 </table>
               </Col>
-              <Col span="1"></Col>
             </Row>
             <Modal
               centered

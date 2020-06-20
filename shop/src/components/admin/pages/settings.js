@@ -53,6 +53,7 @@ function Dashboard(props) {
 
   const [setting_id, set_setting_id] = useState(undefined);
   const [imageUrl, setimageUrl] = useState(undefined);
+  const [imageUrl2, setimageUrl2] = useState(undefined);
   const [org_name, set_org_name] = useState("");
   const [org_industry, set_org_industry] = useState("");
   const [org_business_type, set_org_business_type] = useState("");
@@ -88,6 +89,7 @@ function Dashboard(props) {
     if (setting_configuration) {
       set_setting_id(setting_configuration._id);
       setimageUrl(setting_configuration.logo);
+      setimageUrl2(setting_configuration.banner);
       set_org_name(setting_configuration.name);
       set_org_industry(setting_configuration.industry);
       set_org_business_type(setting_configuration.type);
@@ -142,6 +144,44 @@ function Dashboard(props) {
         // }, 0);
       });
     }
+  };
+  const beforeUpload2 = (file) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error("Image must smaller than 2MB!");
+    }
+    return isJpgOrPng && isLt2M;
+  };
+  const handleChange2 = (info) => {
+    if (info.file.status === "uploading") {
+      setloading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, (imageUrl) => {
+        setloading(false);
+        setimageUrl2(imageUrl);
+        save_image2(imageUrl);
+        // setTimeout(() => {
+        //   onSuccess("ok");
+        // }, 0);
+      });
+    }
+  };
+  const save_image2 = async (imageUrl) => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const response = await axios.post(
+      api_base_url_orders + "/upload",
+      { imageUrl: imageUrl2 },
+      { headers: headers }
+    );
   };
   const save_image = async (imageUrl) => {
     const headers = {
@@ -211,6 +251,7 @@ function Dashboard(props) {
                 login_token: webadmin_login_token,
                 setting_id,
                 imageUrl,
+                imageUrl2,
                 org_name,
                 org_industry,
                 org_business_type,
@@ -309,6 +350,47 @@ function Dashboard(props) {
                       )}
                     </Upload>
                     {imageUrl ? (
+                      <Button
+                        size="small"
+                        onClick={() => setimageUrl(undefined)}
+                        type="link"
+                      >
+                        <CloseCircleOutlined />
+                      </Button>
+                    ) : null}
+                  </Space>
+                </Col>
+              </Row>
+              <Row gutter={[16, 16]} align="middle">
+                <Col span="4" style={{ textAlign: "right" }}>
+                  <Text strong>Shop Banner</Text>
+                </Col>
+                <Col span="8">
+                  <Space>
+                    <Upload
+                      style={{ width: "100%" }}
+                      name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      customRequest={dummyRequest}
+                      beforeUpload={beforeUpload2}
+                      onChange={handleChange2}
+                    >
+                      {imageUrl2 ? (
+                        <img
+                          src={imageUrl2}
+                          alt="avatar"
+                          style={{ width: "100%" }}
+                        />
+                      ) : (
+                        <div>
+                          {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                          <div className="ant-upload-text">Upload</div>
+                        </div>
+                      )}
+                    </Upload>
+                    {imageUrl2 ? (
                       <Button
                         size="small"
                         onClick={() => setimageUrl(undefined)}

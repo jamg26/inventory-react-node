@@ -152,6 +152,16 @@ function Dashboard(props) {
             >
               <Row gutter={[16, 16]}>
                 <Col span="24">
+                  <img
+                    src={
+                      setting_configuration ? setting_configuration.logo : ""
+                    }
+                    style={{ maxHeight: "100px" }}
+                  />
+                </Col>
+              </Row>
+              <Row gutter={[16, 16]}>
+                <Col span="24">
                   <Space>
                     <CheckCircleTwoTone
                       // twoToneColor="#52c41a"
@@ -193,6 +203,9 @@ function Dashboard(props) {
                           >
                             <Text strong>Contact Information</Text>
                             <Text>
+                              {cart_data ? cart_data.customer_info.email : ""}
+                            </Text>
+                            <Text>
                               {cart_data ? cart_data.customer_info.phone : ""}
                             </Text>
                           </Space>
@@ -206,14 +219,7 @@ function Dashboard(props) {
                             >
                               <Text strong>Payment Method</Text>
                               <Space>
-                                <Text>
-                                  {cart_data
-                                    ? cart_data.delivery_method +
-                                      (cart_data.delivery_method != ""
-                                        ? " - "
-                                        : " ")
-                                    : ""}
-                                </Text>
+                                <Text>Paypal -</Text>
                                 <Text strong>
                                   {`\u20B1` +
                                     numeral(cart_data.payment_total).format(
@@ -227,12 +233,12 @@ function Dashboard(props) {
                               style={{ width: "100%" }}
                               size="0"
                             >
-                              <Text strong>Billing address</Text>
+                              <Text strong>Shipping address</Text>
                               <Text>
                                 {cart_data
                                   ? cart_data.customer_info.fname +
                                     " " +
-                                    cart_data.customer_info.fname
+                                    cart_data.customer_info.lname
                                   : ""}
                               </Text>
                               <Text>
@@ -244,12 +250,6 @@ function Dashboard(props) {
                                 {cart_data
                                   ? cart_data.customer_info.address
                                   : ""}
-                              </Text>
-                              <Text>
-                                {cart_data ? cart_data.customer_info.email : ""}
-                              </Text>
-                              <Text>
-                                {cart_data ? cart_data.customer_info.phone : ""}
                               </Text>
                             </Space>
                           </Space>

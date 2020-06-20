@@ -10,6 +10,9 @@ import {
   Row,
   Col,
   Input,
+  Typography,
+  Avatar,
+  AutoComplete,
 } from "antd";
 import {
   UserOutlined,
@@ -28,6 +31,7 @@ import { Link } from "react-router-dom";
 import { SettingContext } from "../../../routes/routes";
 const { Header } = Layout;
 const { Search } = Input;
+const { Text } = Typography;
 function Head({
   loggedin,
   itemCount = 0,
@@ -37,6 +41,10 @@ function Head({
   setSearchFilterProducts = () => {},
   setsearchEntered = () => {},
   searchEntered = undefined,
+  autocompletefilter = [],
+  set_autocompletefilter = () => {},
+  clean_autofilter = [],
+  setclear_autofilter = () => {},
 }) {
   const setting_configuration = useContext(SettingContext);
   const [username, setUserName] = useState("");
@@ -99,7 +107,7 @@ function Head({
       key="0"
     >
       <Row align="middle">
-        <Col span="8">
+        <Col span="8" style={{ textAlign: "right", paddingRight: "20px" }}>
           <Link to="/" key="0">
             {setting_configuration &&
             setting_configuration.logo != "" &&
@@ -113,35 +121,60 @@ function Head({
         </Col>
         <Col span="8">
           {searchFilterProducts != undefined ? (
-            <Search
+            <AutoComplete
               className="searchbar-header"
-              enterButton={
-                <Space>
-                  <SearchOutlined />
-                  Search
-                </Space>
+              options={clean_autofilter}
+              style={{
+                width: "100%",
+              }}
+              dropdownMatchSelectWidth={100}
+              filterOption={(inputValue, option) =>
+                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+                -1
               }
               placeholder="search for  products, brands, categories, etc"
               value={searchFilterProducts}
-              onChange={(e) => setSearchFilterProducts(e.target.value)}
-              onSearch={() => setsearchEntered(!searchEntered)}
-              style={{ width: "100%", float: "right" }}
-              suffix={
-                <CloseCircleOutlined
-                  className="header-search-icon"
-                  style={{ opacity: "0.5" }}
-                  onClick={() => {
-                    setSearchFilterProducts("");
-                    setsearchEntered(!searchEntered);
-                  }}
-                />
-              }
-            />
+              onChange={(e) => setSearchFilterProducts(e)}
+            >
+              <Search
+                className="searchbar-header"
+                enterButton={
+                  <Space
+                    onClick={() => {
+                      if (document.getElementById("Product_list_Card")) {
+                        document
+                          .getElementById("Product_list_Card")
+                          .scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
+                    <SearchOutlined />
+                    Search
+                  </Space>
+                }
+                onPressEnter={() => {
+                  if (document.getElementById("Product_list_Card")) {
+                    document
+                      .getElementById("Product_list_Card")
+                      .scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                suffix={
+                  <CloseCircleOutlined
+                    style={{ opacity: "0.5" }}
+                    onClick={() => {
+                      setSearchFilterProducts("");
+                      setsearchEntered(!searchEntered);
+                    }}
+                  />
+                }
+              />
+            </AutoComplete>
           ) : null}
         </Col>
         <Col span="8">
           {loggedin ? (
-            <Space style={{ float: "right", marginRight: "15px" }}>
+            <Space style={{ float: "right", marginRight: "70px" }}>
               <Dropdown overlay={menu} trigger={["click"]}>
                 <Button
                   type="link"
@@ -150,42 +183,74 @@ function Head({
                   <UserOutlined />
                 </Button>
               </Dropdown>
-              <Button
-                type="link"
-                onClick={() => {
-                  openSideDrawer();
-                }}
-              >
-                <Space>
-                  <Badge count={itemCount}>
-                    <ShoppingCartOutlined style={{ fontSize: "1.7rem" }} />
-                  </Badge>
+              <Space size={15}>
+                <Badge count={itemCount} style={{}}>
+                  <Avatar
+                    onClick={() => {
+                      openSideDrawer();
+                    }}
+                    style={{ backgroundColor: "unset", cursor: "pointer" }}
+                    icon={<ShoppingCartOutlined style={{ fontSize: "2rem" }} />}
+                  />
+                </Badge>
+                <Text
+                  strong
+                  onClick={() => {
+                    openSideDrawer();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
                   {"\u20B1" + numeral(subtotal).format("0,0.00")}
-                </Space>
-              </Button>
+                </Text>
+              </Space>
             </Space>
           ) : (
-            <Space style={{ float: "right", marginRight: "35px" }}>
-              <Link style={{ fontWeight: "bold" }} to="/login">
-                Login
+            <Space
+              style={{ float: "right", marginRight: "70px" }}
+              align="center"
+            >
+              {" "}
+              <Link
+                style={{ fontWeight: "bold" }}
+                to="/login"
+                className="ant-btn ant-btn-link"
+              >
+                <Space align="center">Login</Space>
               </Link>
               |
-              <Link style={{ fontWeight: "bold" }} to="/signup">
-                Signup
-              </Link>
-              <Button
-                type="link"
-                onClick={() => {
-                  openSideDrawer();
-                }}
+              <Link
+                style={{ fontWeight: "bold" }}
+                to="/signup"
+                className="ant-btn ant-btn-link"
               >
-                <Space>
-                  <Badge count={itemCount}>
-                    <ShoppingCartOutlined style={{ fontSize: "1.7rem" }} />
-                  </Badge>
+                <Space align="center">Signup</Space>
+              </Link>
+              {/* <Button
+                type="link"
+               
+              >
+                
+              </Button> */}
+              <Space size={15}>
+                <Badge count={itemCount} style={{}}>
+                  <Avatar
+                    onClick={() => {
+                      openSideDrawer();
+                    }}
+                    style={{ backgroundColor: "unset", cursor: "pointer" }}
+                    icon={<ShoppingCartOutlined style={{ fontSize: "2rem" }} />}
+                  />
+                </Badge>
+                <Text
+                  strong
+                  onClick={() => {
+                    openSideDrawer();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
                   {"\u20B1" + numeral(subtotal).format("0,0.00")}
-                </Space>
-              </Button>
+                </Text>
+              </Space>
             </Space>
           )}
         </Col>
