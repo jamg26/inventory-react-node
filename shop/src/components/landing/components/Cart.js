@@ -420,9 +420,9 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       width: "8%",
       render: (value, row, index) => {
         return [
-          <Space direction="vertical" size="0">
+          <Space direction="vertical" size="0" align="center">
             <Text>{value}</Text>
-            <Text>{value == "In Stock" ? "stock :" + row.quantity : null}</Text>
+            <Text>{value == "In Stock" ? "(" + row.quantity + ")" : null}</Text>
           </Space>,
         ];
       },
@@ -444,52 +444,88 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
       width: "5%",
       render: (value, result) => {
         return [
-          <div className="def-number-input number-input" key={result.key}>
-            <button
-              onClick={() => {
-                if (parseFloat(result.initial_quantity) - parseFloat(1) >= 0) {
-                  setInput(
-                    parseFloat(result.initial_quantity) - parseFloat(1),
-                    result.key,
-                    "initial_quantity"
-                  );
-                }
-              }}
-              className="minus"
-            ></button>
-            <input
-              className="quantity"
-              name="quantity"
-              value={result.initial_quantity}
-              min={0}
-              max={parseFloat(value)}
-              onChange={(event) => {
-                if (parseFloat(event.target.value) < 0) {
-                  setInput(0, result.key, "initial_quantity");
-                } else if (parseFloat(event.target.value) > parseFloat(value)) {
-                  setInput(value, result.key, "initial_quantity");
-                } else {
-                  setInput(event.target.value, result.key, "initial_quantity");
-                }
-              }}
-              type="number"
-            />
-            <button
-              onClick={() => {
-                if (
-                  parseFloat(result.initial_quantity) + parseFloat(1) <=
-                  value
-                ) {
-                  setInput(
-                    parseFloat(result.initial_quantity) + parseFloat(1),
-                    result.key,
-                    "initial_quantity"
-                  );
-                }
-              }}
-              className="plus"
-            ></button>
-          </div>,
+          <table className="def-number-input number-input">
+            <tbody>
+              <tr>
+                <td
+                  className="hoverabletd"
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    if (
+                      parseFloat(result.initial_quantity) - parseFloat(1) >=
+                      0
+                    ) {
+                      setInput(
+                        parseFloat(result.initial_quantity) - parseFloat(1),
+                        result.key,
+                        "initial_quantity"
+                      );
+                    }
+                  }}
+                >
+                  <button className="minus"></button>
+                </td>
+                <td
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                >
+                  <input
+                    className="quantity"
+                    name="quantity"
+                    value={result.initial_quantity}
+                    min={0}
+                    max={parseFloat(value)}
+                    onChange={(event) => {
+                      if (parseFloat(event.target.value) < 0) {
+                        setInput(0, result.key, "initial_quantity");
+                      } else if (
+                        parseFloat(event.target.value) > parseFloat(value)
+                      ) {
+                        setInput(value, result.key, "initial_quantity");
+                      } else {
+                        setInput(
+                          event.target.value,
+                          result.key,
+                          "initial_quantity"
+                        );
+                      }
+                    }}
+                    type="number"
+                  />
+                </td>
+                <td
+                  className="hoverabletd"
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    if (
+                      parseFloat(result.initial_quantity) + parseFloat(1) <=
+                      value
+                    ) {
+                      setInput(
+                        parseFloat(result.initial_quantity) + parseFloat(1),
+                        result.key,
+                        "initial_quantity"
+                      );
+                    }
+                  }}
+                >
+                  <button className="plus"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>,
+
           // <InputNumber
           //   key={result.key}
           //   value={result.initial_quantity}
@@ -545,7 +581,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
     <>
       <Row gutter={[16, 16]}>
         <Col span={24} style={{ paddingLeft: "5%", paddingRight: "5%" }}>
-          <Card id="CartSectionView" key="0" size="small">
+          <Card key="0" size="small">
             <Row gutter={[16, 48]} key="0">
               <Col span="24" key="0">
                 <Title level={4} style={{ color: "#2790ff" }}>
@@ -667,7 +703,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
                     <Button
                       block
                       size="large"
-                      className="ant-btn-success"
+                      className="ant-btn-success-custom"
                       disabled={!proceed}
                       onClick={() => {
                         setProceedtoDetail(false);
@@ -677,7 +713,7 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
                               .getElementById("ResidentialView")
                               .scrollIntoView({ behavior: "smooth" });
                           }
-                        }, 1000);
+                        }, 500);
                       }}
                     >
                       Proceed to Checkout
@@ -689,9 +725,8 @@ const Cart = ({ refreshCart, show, get_cart, setCart, cart, loggedin }) => {
           </Card>
         </Col>
       </Row>
-      {proceedtoDetail ? (
-        <div id="ResidentialView"></div>
-      ) : (
+
+      {proceedtoDetail ? null : (
         <>
           {/* {cart ? (
             <PageHeader

@@ -231,18 +231,7 @@ function CustomerInfo({
           new_confirmpassword = false;
         }
       }
-      console.log(
-        "validations",
-        validfname,
-        validlname,
-        validaddress,
-        validemail,
-        validphone,
-        username_typevalid,
-        new_password,
-        new_confirmpassword,
-        matchpassword
-      );
+
       if (
         validfname &&
         validlname &&
@@ -258,58 +247,87 @@ function CustomerInfo({
         const headers = {
           "Content-Type": "application/json",
         };
-        const response = await axios.post(
-          api_base_url + "/signup_from_guest",
-          {
-            _id: guest_cart_id,
-            email: email,
-            firstname: fname,
-            lastname: lname,
-            username: username_type == "Mobile" ? phone : email,
-            password: create_account_new_password,
-          },
-          { headers: headers }
-        );
-        if (response.data.message == "OK") {
-          localStorage.setItem("guest_cart_id", undefined);
-          message.success("User successfully registered");
-          message.info("Processing Cart...");
-          const headers = {
-            "Content-Type": "application/json",
-          };
-          let landing_customer_login_token = localStorage.getItem(
-            "landing_customer_login_token"
-          );
-          const response = await axios
-            .post(
-              api_base_url_orders + "/update_cart_contact_info",
-              {
-                order_id: cart._id,
-                fname,
-                lname,
-                company_name,
-                address,
-                email,
-                phone,
-                login_token: landing_customer_login_token,
-              },
-              { headers: headers }
-            )
-            .then((response) => {
-              history.push({
-                pathname: "/payment",
-                state: { cart: response.data.cart },
-              });
-              // setshowButtons(true);
-            })
-            .catch((err) => {
-              message.err("something went wrong please try again later..");
-            });
-        } else {
-          set_create_account_new_password("");
-          set_create_account_new_password_confirm("");
-          message.error(response.data.message);
-        }
+        const response = await axios
+          .post(
+            api_base_url + "/signup_from_guest",
+            {
+              _id: guest_cart_id,
+              email: email,
+              firstname: fname,
+              lastname: lname,
+              username: username_type == "Mobile" ? phone : email,
+              password: create_account_new_password,
+            },
+            { headers: headers }
+          )
+          .then(async (result) => {
+            if (result.data.message == "OK") {
+              const user_data = result.data.user;
+              console.log("user_data", user_data, JSON.stringify(user_data));
+              const serializeState = JSON.stringify(user_data);
+              message.success("User successfully registered");
+              message.info("Processing Cart...");
+              try {
+                setTimeout(() => {
+                  localStorage.setItem("landing_remember_account", true);
+                  localStorage.setItem(
+                    "landing_remembered_account",
+                    JSON.stringify(user_data)
+                  );
+                  localStorage.setItem(
+                    "landing_credentials",
+                    JSON.stringify(user_data)
+                  );
+                  localStorage.removeItem("guest_cart_id");
+                }, 1000);
+              } catch (error) {
+              } finally {
+                setTimeout(async () => {
+                  const headers = {
+                    "Content-Type": "application/json",
+                  };
+                  let landing_customer_login_token = localStorage.getItem(
+                    "landing_customer_login_token"
+                  );
+                  const response = await axios
+                    .post(
+                      api_base_url_orders + "/update_cart_contact_info",
+                      {
+                        order_id: cart._id,
+                        fname,
+                        lname,
+                        company_name,
+                        address,
+                        email,
+                        phone,
+                        login_token: landing_customer_login_token,
+                      },
+                      { headers: headers }
+                    )
+                    .then((response) => {
+                      history.push({
+                        pathname: "/payment",
+                        state: { cart: response.data.cart },
+                      });
+                      // setshowButtons(true);
+                    })
+                    .catch((err) => {
+                      message.err(
+                        "something went wrong please try again later.."
+                      );
+                    });
+                }, 1000);
+              }
+            } else {
+              set_create_account_new_password("");
+              set_create_account_new_password_confirm("");
+              message.error(response.data.message);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            message.error("something went wrong..please try again later");
+          });
       } else {
       }
     } else {
@@ -382,6 +400,11 @@ function CustomerInfo({
     new_confirmpassword,
     username_typevalid
   );
+  useEffect(() => {
+    document
+      .getElementById("ResidentialView")
+      .scrollIntoView({ behavior: "smooth" });
+  }, []);
   return [
     cart == null ? null : (
       <Card id="ResidentialView">
@@ -660,7 +683,7 @@ function CustomerInfo({
                       >
                         {!showButtons ? (
                           <Button
-                            className="ant-btn-success"
+                            className="ant-btn-success-custom"
                             disabled={proceed}
                             onClick={() => {
                               saveContactInfo();

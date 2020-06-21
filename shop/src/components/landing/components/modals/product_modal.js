@@ -161,186 +161,116 @@ function Product_modal({
                 <tr>
                   <td style={{ verticalAlign: "bottom" }}>
                     <Row gutter={[16, 16]}>
-                      <Col span="8" style={{ textAlign: "center" }}>
+                      <Col span="9" style={{ textAlign: "center" }}>
                         <Text strong style={{ fontSize: "18px" }}>
                           {"\u20B1"}
                           {modal_data.price}
                         </Text>
                       </Col>
-                      <Col span="8" style={{ textAlign: "center" }}>
-                        <div
-                          className="def-number-input number-input"
-                          key={modal_data.key}
-                        >
-                          <button
-                            disabled={
-                              modal_data.quantity > 0 ||
-                              !modal_data.alreadyincart
-                                ? false
-                                : true
-                            }
-                            onClick={() => {
-                              if (
-                                parseFloat(modal_data.initial_quantity) -
-                                  parseFloat(1) >=
-                                0
-                              ) {
-                                setInput(
-                                  parseFloat(modal_data.initial_quantity) -
-                                    parseFloat(1),
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                            className="minus"
-                          ></button>
-                          <input
-                            disabled={
-                              modal_data.quantity > 0 ||
-                              !modal_data.alreadyincart
-                                ? false
-                                : true
-                            }
-                            className="quantity"
-                            name="quantity"
-                            value={modal_data.initial_quantity}
-                            min={0}
-                            max={parseFloat(modal_data.quantity)}
-                            onChange={(event) => {
-                              console.log("event", event.target.value);
-                              if (parseFloat(event.target.value) < 0) {
-                                setInput(0, modal_data.key, "initial_quantity");
-                              } else if (
-                                parseFloat(event.target.value) >
-                                parseFloat(modal_data.quantity)
-                              ) {
-                                setInput(
-                                  modal_data.quantity,
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              } else {
-                                setInput(
-                                  event.target.value,
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                            type="number"
-                          />
-                          <button
-                            disabled={
-                              modal_data.quantity > 0 ||
-                              !modal_data.alreadyincart
-                                ? false
-                                : true
-                            }
-                            onClick={() => {
-                              if (
-                                parseFloat(modal_data.initial_quantity) +
-                                  parseFloat(1) <=
-                                modal_data.quantity
-                              ) {
-                                setInput(
-                                  parseFloat(modal_data.initial_quantity) +
-                                    parseFloat(1),
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                            className="plus"
-                          ></button>
-                        </div>
-                        {/* <div
-                          className={`quantity-input ${
-                            modal_data.quantity > 0
-                              ? ""
-                              : "disabled_quantity_component"
-                          }`}
-                        >
-                          <button
-                            className="quantity-input__modifier quantity-input__modifier--left"
-                            // onClick={this.decrement}
-                            disabled={modal_data.quantity > 0 ? false : true}
-                            onClick={(event) => {
-                              if (modal_data.initial_quantity == 0) {
-                              } else {
-                                setInput(
-                                  modal_data.initial_quantity === "" ||
-                                    isNaN(modal_data.initial_quantity)
-                                    ? 0
-                                    : parseFloat(modal_data.initial_quantity) -
-                                        1,
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                          >
-                            &mdash;
-                          </button>
-                          <input
-                            className="quantity-input__screen"
-                            type="text"
-                            disabled={modal_data.quantity > 0 ? false : true}
-                            value={modal_data.initial_quantity}
-                            readOnly
-                            // readonly
-                            onBlur={() => {
-                              if (
-                                modal_data.initial_quantity === "" ||
-                                isNaN(modal_data.initial_quantity)
-                              ) {
-                                setInput(
-                                  modal_data.initial_quantity === "" ||
-                                    isNaN(modal_data.initial_quantity)
-                                    ? 0
-                                    : modal_data.initial_quantity,
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                            onChange={(event) => {
-                              setInput(
-                                modal_data.initial_quantity === "" ||
-                                  isNaN(modal_data.initial_quantity)
-                                  ? 0
-                                  : event.target.value,
-                                modal_data.key,
-                                "initial_quantity"
-                              );
-                            }}
-                          />
-                          <button
-                            disabled={modal_data.quantity > 0 ? false : true}
-                            className="quantity-input__modifier quantity-input__modifier--right"
-                            onClick={(event) => {
-                              if (
-                                modal_data.initial_quantity >=
-                                modal_data.quantity
-                              ) {
-                              } else {
-                                setInput(
-                                  modal_data.initial_quantity === "" ||
-                                    isNaN(modal_data.initial_quantity)
-                                    ? 0
-                                    : parseFloat(modal_data.initial_quantity) +
+                      <Col span="6" style={{ textAlign: "center" }}>
+                        <table className="def-number-input number-input">
+                          <tbody>
+                            <tr>
+                              <td
+                                className="hoverabletd"
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "center",
+                                  padding: 0,
+                                }}
+                                onClick={() => {
+                                  if (
+                                    parseFloat(modal_data.initial_quantity) -
+                                      parseFloat(1) >=
+                                    0
+                                  ) {
+                                    setInput(
+                                      parseFloat(modal_data.initial_quantity) -
                                         parseFloat(1),
-                                  modal_data.key,
-                                  "initial_quantity"
-                                );
-                              }
-                            }}
-                          >
-                            &#xff0b;
-                          </button>
-                        </div> */}
+                                      modal_data.key,
+                                      "initial_quantity"
+                                    );
+                                  }
+                                }}
+                              >
+                                <button className="minus"></button>
+                              </td>
+                              <td
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "center",
+                                  padding: 0,
+                                }}
+                              >
+                                <input
+                                  disabled={
+                                    modal_data.quantity > 0 ||
+                                    !modal_data.alreadyincart
+                                      ? false
+                                      : true
+                                  }
+                                  className="quantity"
+                                  name="quantity"
+                                  value={modal_data.initial_quantity}
+                                  min={0}
+                                  max={parseFloat(modal_data.quantity)}
+                                  onChange={(event) => {
+                                    console.log("event", event.target.value);
+                                    if (parseFloat(event.target.value) < 0) {
+                                      setInput(
+                                        0,
+                                        modal_data.key,
+                                        "initial_quantity"
+                                      );
+                                    } else if (
+                                      parseFloat(event.target.value) >
+                                      parseFloat(modal_data.quantity)
+                                    ) {
+                                      setInput(
+                                        modal_data.quantity,
+                                        modal_data.key,
+                                        "initial_quantity"
+                                      );
+                                    } else {
+                                      setInput(
+                                        event.target.value,
+                                        modal_data.key,
+                                        "initial_quantity"
+                                      );
+                                    }
+                                  }}
+                                  type="number"
+                                />
+                              </td>
+                              <td
+                                className="hoverabletd"
+                                style={{
+                                  verticalAlign: "middle",
+                                  textAlign: "center",
+                                  padding: 0,
+                                }}
+                                onClick={() => {
+                                  if (
+                                    parseFloat(modal_data.initial_quantity) +
+                                      parseFloat(1) <=
+                                    modal_data.quantity
+                                  ) {
+                                    setInput(
+                                      parseFloat(modal_data.initial_quantity) +
+                                        parseFloat(1),
+                                      modal_data.key,
+                                      "initial_quantity"
+                                    );
+                                  }
+                                }}
+                              >
+                                <button className="plus"></button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </Col>
-                      <Col span="8" style={{ textAlign: "center" }}>
+                      <Col span="9" style={{ textAlign: "center" }}>
                         <Text strong style={{ fontSize: "18px" }}>
                           {"\u20B1"}
                           {modal_data.sub_total}

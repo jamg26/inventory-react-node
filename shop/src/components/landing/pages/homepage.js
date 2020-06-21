@@ -82,11 +82,12 @@ function Dashboard(props) {
   };
   const checkAuth = async () => {
     const remember_me = localStorage.getItem("landing_remember_account");
-
+    console.log("remember_me", remember_me);
     let account = localStorage.getItem("landing_remembered_account");
     if (account === null || account == "") {
       account = undefined;
     }
+    console.log("account", account);
     if (account === undefined) {
       localStorage.setItem("landing_remember_account", false);
       localStorage.setItem("landing_remembered_account", "");
@@ -488,15 +489,12 @@ function Dashboard(props) {
                     block
                     onClick={() => {
                       setShowCart(true);
-                      setTimeout(() => {
-                        console.log("scrolling");
-                        if (document.getElementById("CartSectionView")) {
-                          document
-                            .getElementById("CartSectionView")
-                            .scrollIntoView({ behavior: "smooth" });
-                        }
-                        setitemdrawer(false);
-                      }, 1000);
+                      if (document.getElementById("CartSectionView")) {
+                        document
+                          .getElementById("CartSectionView")
+                          .scrollIntoView({ behavior: "smooth" });
+                      }
+                      setitemdrawer(false);
                     }}
                     type="primary"
                   >
@@ -711,20 +709,17 @@ function Dashboard(props) {
                         // messagesEndRef.current.scrollIntoView({
                         //   behavior: "smooth",
                         // });
-                        setTimeout(() => {
-                          console.log("scrolling");
-                          if (document.getElementById("CartSectionView")) {
-                            document
-                              .getElementById("CartSectionView")
-                              .scrollIntoView({ behavior: "smooth" });
-                          }
-                        }, 1000);
+                        if (document.getElementById("CartSectionView")) {
+                          document
+                            .getElementById("CartSectionView")
+                            .scrollIntoView({ behavior: "smooth" });
+                        }
                       }}
                     />
                   </Card>
                 </Col>
               </Row>
-
+              <div id="CartSectionView"></div>
               {showCart ? (
                 <Cart
                   setCart={setCart}
@@ -735,6 +730,7 @@ function Dashboard(props) {
                   loggedin={loggedin}
                 />
               ) : null}
+
               <Button
                 block
                 style={{

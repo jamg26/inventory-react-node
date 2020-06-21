@@ -581,7 +581,50 @@ function ProductList({
         } else {
           customer_info = JSON.parse(account);
         }
-
+        notification.open({
+          top: 64,
+          style: { width: "80%", float: "right" },
+          message: "Item Added",
+          description: (
+            <table style={{ width: "100%" }}>
+              <tbody>
+                <tr>
+                  <td
+                    style={{
+                      verticalAlign: "middle",
+                      textAlign: "left",
+                      padding: "10px 0px",
+                    }}
+                  >
+                    {data.product_name}
+                  </td>
+                  <td
+                    style={{
+                      verticalAlign: "middle",
+                      textAlign: "center",
+                      padding: "10px 0px",
+                    }}
+                  >
+                    {"X" + data.initial_quantity}
+                  </td>
+                  <td
+                    style={{
+                      verticalAlign: "middle",
+                      textAlign: "right",
+                      padding: "10px 0px",
+                    }}
+                  >
+                    {"\u20B1 " +
+                      numeral(data.initial_quantity).format("0,0.00")}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ),
+          onClick: () => {
+            console.log("Notification Clicked!");
+          },
+        });
         const headers = {
           "Content-Type": "application/json",
         };
@@ -606,31 +649,7 @@ function ProductList({
           localStorage.setItem("guest_cart_id", response.data.guest_id);
         }
         console.log(data);
-        notification.open({
-          top: 64,
-          message: "Item Added",
-          description: (
-            <table style={{ width: "100%" }}>
-              <tbody>
-                <tr>
-                  <td width="20%" style={{ verticalAlign: "middle" }}>
-                    {data.image}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    {" "}
-                    {data.product_name}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    {"X" + data.initial_quantity}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ),
-          onClick: () => {
-            console.log("Notification Clicked!");
-          },
-        });
+
         refresh();
         // setInput(data.quantity > 0 ? 1 : 0, data.key, "initial_quantity");
       } else {
@@ -675,6 +694,32 @@ function ProductList({
         } else {
           customer_info = JSON.parse(account);
         }
+        notification.open({
+          top: 64,
+          style: { width: "80%", float: "right" },
+          message: "Item Added",
+          description: (
+            <table style={{ width: "100%" }}>
+              <tbody>
+                <tr>
+                  <td width="20%" style={{ verticalAlign: "middle" }}>
+                    {data.product_name}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {"X" + data.initial_quantity}
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    {"\u20B1 " +
+                      numeral(data.initial_quantity).format("0,0.00")}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ),
+          onClick: () => {
+            console.log("Notification Clicked!");
+          },
+        });
         const headers = {
           "Content-Type": "application/json",
         };
@@ -698,31 +743,7 @@ function ProductList({
         ) {
           localStorage.setItem("guest_cart_id", response.data.guest_id);
         }
-        notification.open({
-          message: "Item Added",
-          top: 64,
-          description: (
-            <table style={{ width: "100%" }}>
-              <tbody>
-                <tr>
-                  <td width="20%" style={{ verticalAlign: "middle" }}>
-                    {data.image}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    {" "}
-                    {data.product_name}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    {"X" + data.initial_quantity}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ),
-          onClick: () => {
-            console.log("Notification Clicked!");
-          },
-        });
+
         refresh();
       } else {
         //remove bundle to the cart
@@ -815,9 +836,9 @@ function ProductList({
       width: "8%",
       render: (value, row, index) => {
         return [
-          <Space direction="vertical" size="0">
+          <Space direction="vertical" size="0" align="center">
             <Text>{value}</Text>
-            <Text>{value == "In Stock" ? "stock :" + row.quantity : null}</Text>
+            <Text>{value == "In Stock" ? "(" + row.quantity + ")" : null}</Text>
           </Space>,
         ];
       },
@@ -827,8 +848,19 @@ function ProductList({
       dataIndex: "price",
       key: "price",
       width: "6.82%",
+
       render: (value) => {
-        return ["\u20B1 " + value];
+        return [
+          <div
+            style={{
+              width: "fit-content",
+              float: "right",
+              marginRight: "15px",
+            }}
+          >
+            {"\u20B1 " + value}
+          </div>,
+        ];
       },
     },
     {
@@ -839,72 +871,93 @@ function ProductList({
       width: "5%",
       render: (value, result, index) => {
         return [
-          <div className="def-number-input number-input" key={result.key}>
-            <button
-              disabled={
-                result.quantity > 0 || !result.alreadyincart ? false : true
-              }
-              onClick={() => {
-                if (parseFloat(result.initial_quantity) - parseFloat(1) >= 0) {
-                  setInput(
-                    parseFloat(result.initial_quantity) - parseFloat(1),
-                    result.key,
-                    "initial_quantity"
-                  );
-                }
-              }}
-              className="minus"
-            ></button>
-            <input
-              disabled={
-                result.quantity > 0 || !result.alreadyincart ? false : true
-              }
-              className="quantity"
-              name="quantity"
-              value={result.initial_quantity}
-              min={0}
-              max={parseFloat(value)}
-              onChange={(event) => {
-                console.log("event", event.target.value);
-                if (parseFloat(event.target.value) < 0) {
-                  setInput(0, result.key, "initial_quantity");
-                } else if (parseFloat(event.target.value) > parseFloat(value)) {
-                  setInput(value, result.key, "initial_quantity");
-                } else {
-                  setInput(event.target.value, result.key, "initial_quantity");
-                }
-              }}
-              type="number"
-            />
-            <button
-              disabled={
-                result.quantity > 0 || !result.alreadyincart ? false : true
-              }
-              onClick={() => {
-                if (
-                  parseFloat(result.initial_quantity) + parseFloat(1) <=
-                  value
-                ) {
-                  setInput(
-                    parseFloat(result.initial_quantity) + parseFloat(1),
-                    result.key,
-                    "initial_quantity"
-                  );
-                }
-              }}
-              className="plus"
-            ></button>
-          </div>,
-          // <InputNumber
-          //   key={result.key}
-          //   disabled={result.quantity > 0 ? false : true}
-          //   value={result.initial_quantity}
-          //   min={0}
-          //   max={parseFloat(value)}
-          //   onChange={(event) =>
-          //     setInput(event, result.key, "initial_quantity")
-          //   }
-          // />,
+          <table className="def-number-input number-input">
+            <tbody>
+              <tr>
+                <td
+                  className="hoverabletd"
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    if (
+                      parseFloat(result.initial_quantity) - parseFloat(1) >=
+                      0
+                    ) {
+                      setInput(
+                        parseFloat(result.initial_quantity) - parseFloat(1),
+                        result.key,
+                        "initial_quantity"
+                      );
+                    }
+                  }}
+                >
+                  <button className="minus"></button>
+                </td>
+                <td
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                >
+                  <input
+                    disabled={
+                      result.quantity > 0 || !result.alreadyincart
+                        ? false
+                        : true
+                    }
+                    className="quantity"
+                    name="quantity"
+                    value={result.initial_quantity}
+                    min={0}
+                    max={parseFloat(value)}
+                    onChange={(event) => {
+                      console.log("event", event.target.value);
+                      if (parseFloat(event.target.value) < 0) {
+                        setInput(0, result.key, "initial_quantity");
+                      } else if (
+                        parseFloat(event.target.value) > parseFloat(value)
+                      ) {
+                        setInput(value, result.key, "initial_quantity");
+                      } else {
+                        setInput(
+                          event.target.value,
+                          result.key,
+                          "initial_quantity"
+                        );
+                      }
+                    }}
+                    type="number"
+                  />
+                </td>
+                <td
+                  className="hoverabletd"
+                  style={{
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    if (
+                      parseFloat(result.initial_quantity) + parseFloat(1) <=
+                      value
+                    ) {
+                      setInput(
+                        parseFloat(result.initial_quantity) + parseFloat(1),
+                        result.key,
+                        "initial_quantity"
+                      );
+                    }
+                  }}
+                >
+                  <button className="plus"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>,
         ];
       },
     },
@@ -913,9 +966,19 @@ function ProductList({
       dataIndex: "sub_total",
       key: "sub_total",
       width: "6.82%",
-      align: "right",
+
       render: (value) => {
-        return [<div style={{ paddingRight: "10%" }}>{"\u20B1 " + value}</div>];
+        return [
+          <div
+            style={{
+              width: "fit-content",
+              float: "right",
+              marginRight: "15px",
+            }}
+          >
+            {"\u20B1 " + value}
+          </div>,
+        ];
       },
     },
     {
@@ -1136,95 +1199,117 @@ function ProductList({
                             </Text>
                           </Col>
                           <Col span="10" style={{ textAlign: "center" }}>
-                            <div
-                              className="def-number-input number-input"
-                              key={row.key}
-                            >
-                              <button
-                                disabled={
-                                  row.quantity > 0 || !row.alreadyincart
-                                    ? false
-                                    : true
-                                }
-                                onClick={(e) => {
-                                  console.log("event onclcick button", e);
-                                  e.stopPropagation();
-                                  if (
-                                    parseFloat(row.initial_quantity) -
-                                      parseFloat(1) >=
-                                    0
-                                  ) {
-                                    setInput(
-                                      parseFloat(row.initial_quantity) -
-                                        parseFloat(1),
-                                      row.key,
-                                      "initial_quantity"
-                                    );
-                                  }
-                                }}
-                                className="minus"
-                              ></button>
-                              <input
-                                disabled={
-                                  row.quantity > 0 || !row.alreadyincart
-                                    ? false
-                                    : true
-                                }
-                                className="quantity"
-                                name="quantity"
-                                value={row.initial_quantity}
-                                min={0}
-                                max={parseFloat(row.quantity)}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                                onChange={(event) => {
-                                  console.log("event", event.target.value);
-                                  if (parseFloat(event.target.value) < 0) {
-                                    setInput(0, row.key, "initial_quantity");
-                                  } else if (
-                                    parseFloat(event.target.value) >
-                                    parseFloat(row.quantity)
-                                  ) {
-                                    setInput(
-                                      row.quantity,
-                                      row.key,
-                                      "initial_quantity"
-                                    );
-                                  } else {
-                                    setInput(
-                                      event.target.value,
-                                      row.key,
-                                      "initial_quantity"
-                                    );
-                                  }
-                                }}
-                                type="number"
-                              />
-                              <button
-                                disabled={
-                                  row.quantity > 0 || !row.alreadyincart
-                                    ? false
-                                    : true
-                                }
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (
-                                    parseFloat(row.initial_quantity) +
-                                      parseFloat(1) <=
-                                    row.quantity
-                                  ) {
-                                    setInput(
-                                      parseFloat(row.initial_quantity) +
-                                        parseFloat(1),
-                                      row.key,
-                                      "initial_quantity"
-                                    );
-                                  }
-                                }}
-                                className="plus"
-                              ></button>
-                            </div>
+                            <table className="def-number-input number-input">
+                              <tbody>
+                                <tr>
+                                  <td
+                                    className="hoverabletd"
+                                    style={{
+                                      verticalAlign: "middle",
+                                      textAlign: "center",
+                                      padding: 0,
+                                    }}
+                                    onClick={(e) => {
+                                      console.log("event onclcick button", e);
+                                      e.stopPropagation();
+                                      if (
+                                        parseFloat(row.initial_quantity) -
+                                          parseFloat(1) >=
+                                        0
+                                      ) {
+                                        setInput(
+                                          parseFloat(row.initial_quantity) -
+                                            parseFloat(1),
+                                          row.key,
+                                          "initial_quantity"
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <button className="minus"></button>
+                                  </td>
+                                  <td
+                                    style={{
+                                      verticalAlign: "middle",
+                                      textAlign: "center",
+                                      padding: 0,
+                                    }}
+                                  >
+                                    <input
+                                      disabled={
+                                        row.quantity > 0 || !row.alreadyincart
+                                          ? false
+                                          : true
+                                      }
+                                      className="quantity"
+                                      name="quantity"
+                                      value={row.initial_quantity}
+                                      min={0}
+                                      max={parseFloat(row.quantity)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
+                                      onChange={(event) => {
+                                        console.log(
+                                          "event",
+                                          event.target.value
+                                        );
+                                        if (
+                                          parseFloat(event.target.value) < 0
+                                        ) {
+                                          setInput(
+                                            0,
+                                            row.key,
+                                            "initial_quantity"
+                                          );
+                                        } else if (
+                                          parseFloat(event.target.value) >
+                                          parseFloat(row.quantity)
+                                        ) {
+                                          setInput(
+                                            row.quantity,
+                                            row.key,
+                                            "initial_quantity"
+                                          );
+                                        } else {
+                                          setInput(
+                                            event.target.value,
+                                            row.key,
+                                            "initial_quantity"
+                                          );
+                                        }
+                                      }}
+                                      type="number"
+                                    />
+                                  </td>
+                                  <td
+                                    className="hoverabletd"
+                                    style={{
+                                      verticalAlign: "middle",
+                                      textAlign: "center",
+                                      padding: 0,
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (
+                                        parseFloat(row.initial_quantity) +
+                                          parseFloat(1) <=
+                                        row.quantity
+                                      ) {
+                                        setInput(
+                                          parseFloat(row.initial_quantity) +
+                                            parseFloat(1),
+                                          row.key,
+                                          "initial_quantity"
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <button className="plus"></button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </Col>
                           <Col span="7" style={{ textAlign: "right" }}>
                             <Text strong style={{ fontSize: "16px" }}>

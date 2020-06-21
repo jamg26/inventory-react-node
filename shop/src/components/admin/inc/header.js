@@ -276,13 +276,15 @@ function Head(props) {
         paddingRight: 0,
         paddingLeft: 0,
         border: "10px solid #348dff",
+        borderRight: "24px solid #348dff",
+        borderLeft: "24px solid #348dff",
       }}
       key="0"
     >
       <div class="topnav">
         <Link to="/web-admin/" key="0">
           {settings && settings.logo != "" && settings.logo ? (
-            <img src={settings.logo} style={{ height: "32px" }} />
+            <img src={settings.logo} style={{ height: "40px" }} />
           ) : null}
         </Link>
         <Link
@@ -292,7 +294,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <BarChartOutlined />
-            <span className="nav-text">Analytics</span>
+            <span className="nav-text bold">Analytics</span>
           </Space>
         </Link>
         <Link
@@ -302,7 +304,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <InboxOutlined />
-            <span className="nav-text">Orders</span>
+            <span className="nav-text bold">Orders</span>
           </Space>
         </Link>
         <Link
@@ -312,7 +314,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <TagOutlined />
-            <span className="nav-text">Inventory</span>
+            <span className="nav-text bold">Inventory</span>
           </Space>
         </Link>
         <Link
@@ -322,7 +324,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <InboxOutlined />
-            <span className="nav-text">Stock Control</span>
+            <span className="nav-text bold">Stock Control</span>
           </Space>
         </Link>
         <Link
@@ -332,7 +334,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <TeamOutlined />
-            <span className="nav-text">Suppliers</span>
+            <span className="nav-text bold">Suppliers</span>
           </Space>
         </Link>
 
@@ -343,7 +345,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <UserOutlined />
-            <span className="nav-text">Customers</span>
+            <span className="nav-text bold">Customers</span>
           </Space>
         </Link>
 
@@ -353,7 +355,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <SolutionOutlined />
-            <span className="nav-text">Reports</span>
+            <span className="nav-text bold">Reports</span>
           </Space>
         </Link>
 
@@ -363,7 +365,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <MessageOutlined />
-            <span className="nav-text">Messages</span>
+            <span className="nav-text bold">Messages</span>
           </Space>
         </Link>
         <Link
@@ -372,7 +374,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <RadarChartOutlined />
-            <span className="nav-text">Location</span>
+            <span className="nav-text bold">Location</span>
           </Space>
         </Link>
         {/* <Link
@@ -381,7 +383,7 @@ function Head(props) {
         >
           <Space direction="vertical" size="0">
             <MailOutlined />
-            <span className="nav-text">Email</span>
+            <span className="nav-text bold">Email</span>
           </Space>
         </Link> */}
 
@@ -393,7 +395,7 @@ function Head(props) {
           >
             <Space direction="vertical" size="0">
               <SettingOutlined />
-              <span className="nav-text">Settings</span>
+              <span className="nav-text bold">Settings</span>
             </Space>
           </Link>
           <Dropdown overlay={notif} trigger={["click"]}>
@@ -409,7 +411,9 @@ function Head(props) {
               <Row gutter="20" align="middle">
                 <Col span="6">
                   <Badge count={0}>
-                    <BellFilled style={{ color: "#9d9d9d" }} />
+                    <BellFilled
+                      style={{ color: "#9d9d9d", fontSize: "18px" }}
+                    />
                   </Badge>
                 </Col>
               </Row>
@@ -428,7 +432,13 @@ function Head(props) {
             <Row gutter="20" align="middle">
               <Col span="6">
                 <Badge count={newmessage}>
-                  <MessageFilled style={{ color: "#9d9d9d", height: "100%" }} />
+                  <MessageFilled
+                    style={{
+                      color: "#9d9d9d",
+                      height: "100%",
+                      fontSize: "18px",
+                    }}
+                  />
                 </Badge>
               </Col>
             </Row>

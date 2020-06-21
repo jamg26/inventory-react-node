@@ -29,6 +29,11 @@ const CustomerShema = new Schema({
     type: String,
     default: "Not Specified",
   },
+  verification_code: Number,
+  verification_status: {
+    type: Boolean,
+    default: false,
+  },
   birthdate: Date,
   use_address_as_shipping_address: {
     type: Boolean,

@@ -104,10 +104,27 @@
   -webkit-box-shadow: 2px 2px 3px 0 #555;
   box-shadow: 2px 2px 3px 0 #555;
 }
+
+.ant-btn-success-custom {
+  color: white !important;
+  background-color: #5bc40d !important;
+  border-color: #5bc40d !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+}
 .ant-btn-success {
   color: white !important;
   background-color: #52c41a !important;
   border-color: #52c41a !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
+}
+.ant-btn-verify {
+  color: white !important;
+  background-color: #ee4d2e !important;
+  border-color: #ee4d2e !important;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
   -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045) !important;
@@ -402,7 +419,9 @@ body {
   background-color: white;
   overflow: hidden;
 }
-
+.bold {
+  font-weight: bold;
+}
 /* Style the links inside the navigation bar */
 .topnav a {
   float: left;
@@ -410,7 +429,7 @@ body {
   text-align: center;
   padding: 5px 16px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
 }
 .topnav button {
   float: left;
@@ -418,7 +437,7 @@ body {
   text-align: center;
   /* padding: 5px 32px; */
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
 }
 /* Change the color of links on hover */
 .topnav button:hover {
@@ -560,7 +579,7 @@ body {
 .number-input.number-input {
   text-align: center;
   border: 0px solid #ced4da;
-  width: max-content;
+  width: 100%;
   background-color: #5bc40d;
   margin: 0 auto;
   border-radius: 0.25rem;
@@ -568,6 +587,7 @@ body {
 .number-input.number-input button {
   width: 1.7rem;
   height: 0.7rem;
+  outline: none;
 }
 .number-input.number-input button.minus {
   padding-left: 10px;
@@ -583,7 +603,7 @@ body {
   border: 0px solid #ced4da;
   border-width: 0 0px;
   font-size: 0.8rem;
-  height: 1.7rem;
+  height: 1.6rem;
   color: white;
   background-color: #358d24;
 }
@@ -607,4 +627,17 @@ body {
 .customDrawer .ant-drawer-content-wrapper {
   height: fit-content !important;
   max-height: 100% !important;
+}
+/* .ant-steps-item-icon {
+  background-color: red !important;
+} */
+.header_amount {
+  font-size: 16px !important;
+}
+.hoverabletd {
+  cursor: pointer;
+}
+.hoverabletd:hover {
+  background-color: #4fa70d;
+  border-radius: 0.25rem;
 }

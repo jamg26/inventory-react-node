@@ -18,6 +18,7 @@
     "moment": "^2.25.1",
     "mongoose": "^5.9.11",
     "nodemon": "^2.0.3",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "twilio": "^3.46.0"
   }
 }
