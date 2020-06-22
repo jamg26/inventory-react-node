@@ -139,17 +139,7 @@ function Head(props) {
       }
     });
   };
-  const fetch_customer_supports = async (id) => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.post(
-      api_base_url_messages + "/get_client_messages",
-      { client_id: id },
-      { headers: headers }
-    );
-    set_customer_supports(response.data.messages);
-  };
+  const fetch_customer_supports = async (id) => {};
   const record_location = async (id) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {

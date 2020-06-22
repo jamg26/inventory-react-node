@@ -82,7 +82,7 @@ const RouteController = ({
         <SettingContextRefresher.Provider value={get_settings} key={5}>
           <TaxContext.Provider value={tax} key={6}>
             <TaxRefresher.Provider value={get_taxes} key={7}>
-              <Router basename="/ecomdemo1" key={1}>
+              <Router basename="/task" key={1}>
                 <div key={1}>
                   <Switch key={1}>
                     <Route key={0} exact path="/">
@@ -141,28 +141,8 @@ function App() {
   const [settings, set_settings] = useState(undefined);
   const [tax, set_tax] = useState([]);
 
-  const get_settings = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_settings + "/settings",
-      {},
-      { headers: headers }
-    );
-    set_settings(response.data.data);
-  };
-  const get_taxes = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_settings + "/taxes",
-      {},
-      { headers: headers }
-    );
-    set_tax(response.data.data);
-  };
+  const get_settings = async () => {};
+  const get_taxes = async () => {};
   const get_users = async () => {
     const headers = {
       "Content-Type": "application/json",
