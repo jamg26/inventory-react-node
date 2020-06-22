@@ -12,7 +12,7 @@ import {
   message,
 } from "antd";
 import axios from "axios";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 import { PlusSquareOutlined } from "@ant-design/icons";
 //import Tags from './product_tags';
 
@@ -66,7 +66,7 @@ function AddProduct(props) {
 
   const retrieveAllActiveTags = () => {
     axios
-      .get(api_base_url_orders + "/product_tags/active")
+      .get(api_base_url_products + "/product_tags/active")
       .then((res) => {
         setTags(res.data);
         console.log(res.data);
@@ -77,7 +77,7 @@ function AddProduct(props) {
   };
   const get_product_types = async () => {
     axios
-      .get(api_base_url_orders + "/product_type_list")
+      .get(api_base_url_products + "/product_type_list")
       .then((res) => {
         setproduct_tytpes(res.data);
       })
@@ -94,7 +94,7 @@ function AddProduct(props) {
       };
       const response = await axios
         .post(
-          api_base_url_orders + "/add_new_product_type",
+          api_base_url_products + "/add_new_product_type",
           {
             newProductType: newProductType,
           },

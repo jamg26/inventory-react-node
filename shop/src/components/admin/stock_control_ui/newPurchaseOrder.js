@@ -20,7 +20,7 @@ import {
   CloseCircleOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { api_base_url_orders } from "../../../keys";
+import { api_base_url_products } from "../../../keys";
 import { CSVLink } from "react-csv";
 import ReactFileReader from "react-file-reader";
 import axios from "axios";
@@ -495,7 +495,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
         };
         const response = await axios
           .post(
-            api_base_url_orders + "/add_purchase_order",
+            api_base_url_products + "/add_purchase_order",
             {
               login_token: webadmin_login_token,
               data: temp,

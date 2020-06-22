@@ -21,7 +21,7 @@ import {
 import { CSVLink } from "react-csv";
 import axios from "axios";
 import moment from "moment";
-import { api_base_url_orders } from "../../../keys";
+import { api_base_url_products } from "../../../keys";
 const Search = Input.Search;
 const { TextArea } = Input;
 const success = () => {
@@ -96,7 +96,7 @@ const EditableTable = () => {
   const retrieveAllData = () => {
     setLoading(true);
     axios
-      .get(api_base_url_orders + "/purchase_orders/stock_order")
+      .get(api_base_url_products + "/purchase_orders/stock_order")
 
       .then((res) => {
         setpurchaseOrderData(res.data);
@@ -156,7 +156,7 @@ const EditableTable = () => {
     };
     console.log(id);
     axios
-      .post(api_base_url_orders + "/purchase_orders/update/" + id, newData)
+      .post(api_base_url_products + "/purchase_orders/update/" + id, newData)
       .then((res) => retrieveAllData())
       .catch((err) => console.log(newData));
     setEditingIndex(undefined);
@@ -471,7 +471,7 @@ const EditableTable = () => {
         } else {
           event.preventDefault();
           axios
-            .post(api_base_url_orders + "/purchase_orders/add", {
+            .post(api_base_url_products + "/purchase_orders/add", {
               key: toBeSaveData[c].key,
               po_no: toBeSaveData[c].po_no,
               invoice_no: toBeSaveData[c].invoice_no,
@@ -503,7 +503,7 @@ const EditableTable = () => {
     } //Means if naay data gi select but walay gi add na row
     else if (selectedRowKeys != undefined && toBeSaveData == undefined) {
       axios
-        .post(api_base_url_orders + "/purchase_orders/open", selectedRowKeys)
+        .post(api_base_url_products + "/purchase_orders/open", selectedRowKeys)
         .then((res) => retrieveAllData())
         .catch((err) => console.log(selectedRowKeys));
       window.location.reload(true);
@@ -527,7 +527,7 @@ const EditableTable = () => {
         } else {
           //event.preventDefault();
           axios
-            .post(api_base_url_orders + "/purchase_orders/add", {
+            .post(api_base_url_products + "/purchase_orders/add", {
               _id: c,
               key: toBeSaveData[c].key,
               po_no: toBeSaveData[c].po_no,
@@ -561,7 +561,7 @@ const EditableTable = () => {
     else if (selectedRowKeys != undefined && toBeSaveData == undefined) {
       axios
         .post(
-          api_base_url_orders + "/purchase_orders/updated/draft",
+          api_base_url_products + "/purchase_orders/updated/draft",
           selectedRowKeys
         )
         .then((res) => retrieveAllData())
@@ -581,7 +581,7 @@ const EditableTable = () => {
     } // if walay data gi selct but naa row gi add
     else {
       axios
-        .post(api_base_url_orders + "/purchase_orders/void", selectedRowKeys)
+        .post(api_base_url_products + "/purchase_orders/void", selectedRowKeys)
         .then((res) => retrieveAllData())
         .catch((err) => console.log(selectedRowKeys));
       window.location.reload(true);

@@ -18,7 +18,7 @@ import Header from "../inc/header";
 import { withRouter } from "react-router-dom";
 import Search from "./tab-add-product/search";
 import AddProduct from "./tab-add-product/add_product";
-import { api_base_url, api_base_url_orders } from "../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../keys/index";
 import UploadImage from "./tab-add-product/file_upload";
 import TagList from "./tab-product-tags/tag_list";
 import Variant from "./tab-add-product/variant";
@@ -26,7 +26,6 @@ import ProductList from "./tab-products/product_list";
 import VariantList from "./tab-product-variants/variant_list";
 import LoadingPage from "../../global-components/loading";
 import AddSupplierModal from "../../global-components/add_supplier";
-import LowStock from "./analytics-cards/product_on_low_stock";
 import numeral from "numeral";
 import axios from "axios";
 import AddBundle from "../components/bundles/add_bundle";
@@ -207,7 +206,7 @@ function Dashboard(props) {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/products",
+      api_base_url_products + "/products",
       {},
       { headers: headers }
     );
@@ -218,7 +217,7 @@ function Dashboard(props) {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/supplier_list",
+      api_base_url_products + "/supplier_list",
       {},
       { headers: headers }
     );
@@ -369,7 +368,7 @@ function Dashboard(props) {
       };
       console.log(dataProd);
       axios
-        .post(api_base_url_orders + "/products/add", dataProd)
+        .post(api_base_url_products + "/products/add", dataProd)
         .then((res) => clearAllInputs())
         .catch((err) => console.log(err.message));
     }
@@ -399,7 +398,7 @@ function Dashboard(props) {
                 }}
               />
               <Tabs
-                defaultActiveKey="7"
+                defaultActiveKey="1"
                 tabBarStyle={{ paddingLeft: "20px", paddingRight: "20px" }}
                 type="card"
                 tabBarExtraContent={
@@ -522,9 +521,7 @@ function Dashboard(props) {
                 <TabPane tab="Bundles List" key="7">
                   <BundleList />
                 </TabPane>
-                <TabPane tab="Low Stock" key="5">
-                  <LowStock products={products} />
-                </TabPane>
+                <TabPane tab="Low Stock" key="5"></TabPane>
               </Tabs>
             </div>
           </Content>

@@ -20,10 +20,8 @@ app.use(
 );
 //require Routes
 require("./routes/bundle_routes")(app);
-require("./routes/getter_routes")(app);
 require("./routes/supplier_routes")(app);
 require("./routes/stock_control_routes")(app);
-require("./routes/setter_routes")(app);
 require("./routes/event_routes")(app);
 require("./routes/product_routes")(app);
 
@@ -47,8 +45,8 @@ mongoose.set("debug", async (collectionName, method, query, doc) => {
 
   // console.log(`${collectionName}.${method}`, JSON.stringify(query), doc);
 });
-// look for process.env.PORT for port or else use 5001 as port
-const PORT = process.env.PORT || 5002;
+// look for process.env.PORT for port or else use 7002 as port
+const PORT = process.env.PORT || 7002;
 app.listen(PORT, () => {
   console.log("Listening to Port " + PORT);
 });

@@ -22,7 +22,7 @@ import numeral from "numeral";
 import { CSVLink } from "react-csv";
 import axios from "axios";
 import moment from "moment";
-import { api_base_url_orders } from "../../../../keys/index";
+import { api_base_url_products } from "../../../../keys/index";
 import { UserContext, SettingContext } from "../../../../routes/routes";
 const { Text } = Typography;
 function ViewItem({ viewitemModal, close, data, refresh }) {
@@ -46,7 +46,7 @@ function ViewItem({ viewitemModal, close, data, refresh }) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/receive_po_item",
+        api_base_url_products + "/receive_po_item",
         {
           login_token: webadmin_login_token,
           webadmin_id: webadmin_id,
@@ -73,7 +73,7 @@ function ViewItem({ viewitemModal, close, data, refresh }) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/void_po_item",
+        api_base_url_products + "/void_po_item",
         {
           login_token: webadmin_login_token,
           webadmin_id: webadmin_id,

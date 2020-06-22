@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 
 function ProductList() {
   const [data, setData] = useState([]);
@@ -25,7 +25,7 @@ function ProductList() {
   }, []);
   const retrieveAllProducts = () => {
     axios
-      .get(api_base_url_orders + "/products/all")
+      .get(api_base_url_products + "/products/all")
       .then((res) => {
         let arrtag = [];
         res.data.map((info) =>
@@ -49,7 +49,7 @@ function ProductList() {
       active: newStatus,
     };
     axios
-      .post(api_base_url_orders + "/products/update_status/" + index, newData)
+      .post(api_base_url_products + "/products/update_status/" + index, newData)
       .then((res) => retrieveAllProducts())
       .catch((err) => console.log(err));
   };
@@ -77,7 +77,7 @@ function ProductList() {
       arr.push(newData);
     }
     axios
-      .post(api_base_url_orders + "/products/bulk_action", arr)
+      .post(api_base_url_products + "/products/bulk_action", arr)
       .then((res) => {
         setData([...data, arr]);
         retrieveAllProducts();

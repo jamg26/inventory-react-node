@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Row, Col, Input, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import axios from "axios";
-import { api_base_url_orders } from "../../keys/index";
+import { api_base_url_products } from "../../keys/index";
 function AddSupplier({ show_add_supplier_modal, close, callback }) {
   const [display_name, set_display_name] = useState("");
   const [supplier_code, set_supplier_code] = useState("");
@@ -50,7 +50,7 @@ function AddSupplier({ show_add_supplier_modal, close, callback }) {
 
           await axios
             .post(
-              api_base_url_orders + "/add_supplier",
+              api_base_url_products + "/add_supplier",
               {
                 display_name,
                 supplier_code,

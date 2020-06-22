@@ -29,7 +29,7 @@ import {
   CloseCircleTwoTone,
 } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 var monthNames = [
   "Jan",
   "Feb",

@@ -25,7 +25,7 @@ import {
 import Labels from "../../../../global-components/labels";
 import moment from "moment";
 import numeral from "numeral";
-import { api_base_url, api_base_url_orders } from "../../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../../keys/index";
 import {
   ThunderboltOutlined,
   FileSearchOutlined,
@@ -68,7 +68,7 @@ function BundleList({ bundle_list, selected, refresh }) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/bundles/add_bundle_item",
+        api_base_url_products + "/bundles/add_bundle_item",
         {
           login_token: webadmin_login_token,
           data: add_item_product,
@@ -118,7 +118,7 @@ function BundleList({ bundle_list, selected, refresh }) {
   };
   const retrieveAllActiveTags = () => {
     axios
-      .get(api_base_url_orders + "/product_tags/active")
+      .get(api_base_url_products + "/product_tags/active")
       .then((res) => {
         setTags(res.data);
       })
@@ -128,7 +128,7 @@ function BundleList({ bundle_list, selected, refresh }) {
   };
   const get_product_types = async () => {
     axios
-      .get(api_base_url_orders + "/product_type_list")
+      .get(api_base_url_products + "/product_type_list")
       .then((res) => {
         setproduct_tytpes(res.data);
       })
@@ -138,7 +138,7 @@ function BundleList({ bundle_list, selected, refresh }) {
   };
   const retrieveAllVariants = () => {
     axios
-      .get(api_base_url_orders + "/products")
+      .get(api_base_url_products + "/products")
       .then((res) => {
         let arr = [];
         let po_index = 0;
@@ -283,7 +283,7 @@ function BundleList({ bundle_list, selected, refresh }) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/bundles/toogle_bundle",
+        api_base_url_products + "/bundles/toogle_bundle",
         {
           login_token: webadmin_login_token,
           value: value,
@@ -318,7 +318,7 @@ function BundleList({ bundle_list, selected, refresh }) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/bundles/update_to_bundle",
+        api_base_url_products + "/bundles/update_to_bundle",
         {
           login_token: webadmin_login_token,
           data: tempmain,

@@ -22,7 +22,7 @@ import numeral from "numeral";
 import { CSVLink } from "react-csv";
 import axios from "axios";
 import moment from "moment";
-import { api_base_url_orders } from "../../../keys/index";
+import { api_base_url_products } from "../../../keys/index";
 import ViewItem from "./modal/view_item";
 import { UserContext, SettingContext } from "../../../routes/routes";
 const Search = Input.Search;
@@ -81,7 +81,7 @@ const EditableTable = ({ refresh_trigger, searchword, filterfromprops }) => {
   const retrieveAllData = () => {
     setLoading(true);
     axios
-      .get(api_base_url_orders + "/purchase_orders/")
+      .get(api_base_url_products + "/purchase_orders/")
 
       .then((res) => {
         setpurchaseOrderData(res.data);

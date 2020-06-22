@@ -19,7 +19,7 @@ import {
   List,
   Menu,
 } from "antd";
-import { api_base_url, api_base_url_orders } from "../../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../../keys/index";
 import Labels from "../../../../global-components/labels";
 import moment from "moment";
 import numeral from "numeral";

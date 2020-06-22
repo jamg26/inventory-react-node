@@ -10,7 +10,7 @@ import ActiveTransactions from "../stock_control_ui/activeTransactions";
 import StockTransfer from "../stock_control_ui/stockTransfer";
 import ReturnStock from "../stock_control_ui/returnStock";
 import { withRouter } from "react-router-dom";
-import { api_base_url, api_base_url_orders } from "../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../keys/index";
 import axios from "axios";
 import LoadingPage from "../../global-components/loading";
 const { Content } = Layout;
@@ -26,7 +26,7 @@ function Dashboard(props) {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/products",
+      api_base_url_products + "/products",
       {},
       { headers: headers }
     );
@@ -37,7 +37,7 @@ function Dashboard(props) {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/supplier_list",
+      api_base_url_products + "/supplier_list",
       {},
       { headers: headers }
     );

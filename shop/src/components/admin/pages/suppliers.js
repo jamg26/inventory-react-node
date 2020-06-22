@@ -25,7 +25,7 @@ import Header from "../inc/header";
 import { withRouter } from "react-router-dom";
 import LoadingPage from "../../global-components/loading";
 
-import { api_base_url_orders } from "../../../keys/index";
+import { api_base_url_products } from "../../../keys/index";
 import AddSupplierModal from "../../global-components/add_supplier";
 import EditSupplierModal from "../../global-components/edit_supplier";
 const { Content } = Layout;
@@ -51,7 +51,7 @@ function Dashboard(props) {
       "Content-Type": "application/json",
     };
     const response = await axios.get(
-      api_base_url_orders + "/supplier_list_all",
+      api_base_url_products + "/supplier_list_all",
       {},
       { headers: headers }
     );
@@ -90,7 +90,7 @@ function Dashboard(props) {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/update_supplier_status",
+        api_base_url_products + "/update_supplier_status",
         { value, id },
         { headers: headers }
       )

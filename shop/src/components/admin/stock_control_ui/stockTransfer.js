@@ -21,7 +21,7 @@ import {
   CloseCircleOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { api_base_url_orders } from "../../../keys";
+import { api_base_url_products } from "../../../keys";
 import { CSVLink } from "react-csv";
 import ReactFileReader from "react-file-reader";
 import axios from "axios";
@@ -480,7 +480,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
           };
           const response = await axios
             .post(
-              api_base_url_orders + "/add_purchase_order_stock_transfer",
+              api_base_url_products + "/add_purchase_order_stock_transfer",
               {
                 login_token: webadmin_login_token,
                 data: temp,
@@ -516,7 +516,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
       };
       const response = await axios
         .post(
-          api_base_url_orders + "/check_transfer_name",
+          api_base_url_products + "/check_transfer_name",
           {
             name: TransferName,
           },
@@ -575,7 +575,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
                 };
                 const response = await axios
                   .post(
-                    api_base_url_orders + "/add_purchase_order_drafts",
+                    api_base_url_products + "/add_purchase_order_drafts",
                     {
                       login_token: webadmin_login_token,
                       data: temp,
@@ -657,7 +657,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
           };
           const response = await axios
             .post(
-              api_base_url_orders + "/update_purchase_order_drafts",
+              api_base_url_products + "/update_purchase_order_drafts",
               {
                 login_token: webadmin_login_token,
                 data: temp,
@@ -726,7 +726,7 @@ const EditableTable = ({ SupplierList, products, refresh }) => {
     };
     const response = await axios
       .post(
-        api_base_url_orders + "/fetch_transfer_data",
+        api_base_url_products + "/fetch_transfer_data",
         {
           transfer_name: TransferName,
         },

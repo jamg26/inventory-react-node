@@ -24,8 +24,8 @@ mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
   useCreateIndex: true,
 });
-// look for process.env.PORT for port or else use 5001 as port
-const PORT = process.env.PORT || 5001;
+// look for process.env.PORT for port or else use 7001 as port
+const PORT = process.env.PORT || 7001;
 app.listen(PORT, () => {
   console.log("Listening to Port " + PORT);
 });

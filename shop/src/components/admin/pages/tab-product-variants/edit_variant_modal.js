@@ -25,7 +25,7 @@ import Highlighter from "react-highlight-words";
 import axios from "axios";
 import numeral from "numeral";
 import ImageUpload from "../tab-add-product/file_upload";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 const { Text } = Typography;
 function EditVariant({ edit_product_modal, edit_data, close, refresh }) {
   const [variant_name, set_variant_name] = useState("");
@@ -99,7 +99,7 @@ function EditVariant({ edit_product_modal, edit_data, close, refresh }) {
           "Content-Type": "application/json",
         };
         const response = await axios.post(
-          api_base_url_orders + "/products/update_variant",
+          api_base_url_products + "/products/update_variant",
           {
             product_id: edit_data.parent_id,
             variant_id: edit_data.variant_id,

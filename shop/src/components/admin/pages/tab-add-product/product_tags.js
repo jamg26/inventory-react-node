@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tag, Button, AutoComplete } from "antd";
 import axios from "axios";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 
 const { Option } = AutoComplete;
 function AddTag() {
@@ -15,7 +15,7 @@ function AddTag() {
 
   const retrieveAllActiveTags = () => {
     axios
-      .get(api_base_url_orders + "/product_tags/active")
+      .get(api_base_url_products + "/product_tags/active")
       .then((res) => {
         setTags(res.data);
         console.log(res.data);

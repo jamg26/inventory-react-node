@@ -35,7 +35,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { UserContext, SettingContext } from "../../../../routes/routes";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 import PrivateStaffNote from "../shared/private_staff_note";
 import axios from "axios";
 const { Search } = Input;
@@ -275,7 +275,7 @@ function AddBundle({ SupplierList }) {
   };
   const retrieveAllVariants = () => {
     axios
-      .get(api_base_url_orders + "/products")
+      .get(api_base_url_products + "/products")
       .then((res) => {
         let arr = [];
         let po_index = 0;
@@ -325,7 +325,7 @@ function AddBundle({ SupplierList }) {
   };
   const retrieveAllActiveTags = () => {
     axios
-      .get(api_base_url_orders + "/product_tags/active")
+      .get(api_base_url_products + "/product_tags/active")
       .then((res) => {
         setTags(res.data);
         console.log(res.data);
@@ -336,7 +336,7 @@ function AddBundle({ SupplierList }) {
   };
   const get_product_types = async () => {
     axios
-      .get(api_base_url_orders + "/product_type_list")
+      .get(api_base_url_products + "/product_type_list")
       .then((res) => {
         setproduct_tytpes(res.data);
       })
@@ -353,7 +353,7 @@ function AddBundle({ SupplierList }) {
       };
       const response = await axios
         .post(
-          api_base_url_orders + "/add_new_product_type",
+          api_base_url_products + "/add_new_product_type",
           {
             newProductType: newProductType,
           },
@@ -418,7 +418,7 @@ function AddBundle({ SupplierList }) {
         };
         const response = await axios
           .post(
-            api_base_url_orders + "/bundles/add_to_bundle",
+            api_base_url_products + "/bundles/add_to_bundle",
             {
               login_token: webadmin_login_token,
               name: productName,

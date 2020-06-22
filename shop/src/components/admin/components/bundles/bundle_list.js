@@ -31,7 +31,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 import BundleListSection from "./micro-component/bundle-list";
 import BundleContentSection from "./micro-component/bundle-content";
 const { Search } = Input;
@@ -48,7 +48,7 @@ function BundleList() {
       "Content-Type": "application/json",
     };
     const response = await axios
-      .get(api_base_url_orders + "/bundle_list", {}, { headers: headers })
+      .get(api_base_url_products + "/bundle_list", {}, { headers: headers })
       .then((response) => {
         set_bundle_list(response.data.data);
       })

@@ -7,7 +7,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 
 const EditableTable = () => {
   const initialProductTagState = {
@@ -28,7 +28,7 @@ const EditableTable = () => {
 
   const retrieveAllTags = () => {
     axios
-      .get(api_base_url_orders + "/product_tags/")
+      .get(api_base_url_products + "/product_tags/")
       .then((res) => {
         setData(res.data);
         console.log(res.data);
@@ -49,7 +49,7 @@ const EditableTable = () => {
       product_tag_description: tag.product_tag_name + " tag description",
     };
     axios
-      .post(api_base_url_orders + "/product_tags/add", data)
+      .post(api_base_url_products + "/product_tags/add", data)
       .then((res) => retrieveAllTags())
       .catch((err) => console.log("error why????????"));
     setTag((tag.product_tag_name = ""));
@@ -68,7 +68,7 @@ const EditableTable = () => {
     };
 
     axios
-      .post(api_base_url_orders + "/product_tags/update/" + index, newData)
+      .post(api_base_url_products + "/product_tags/update/" + index, newData)
       .then((res) => retrieveAllTags())
       .catch((err) => console.log(newData));
     setEditingIndex(undefined);

@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { Modal, Select, Space, Typography, Input, Button, message } from "antd";
 import { UsersContext } from "../../../../routes/routes";
 import axios from "axios";
-import { api_base_url_orders } from "../../../../keys";
+import { api_base_url_products } from "../../../../keys";
 const { Option } = Select;
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -25,7 +25,7 @@ const StaffNote = forwardRef((props, ref) => {
       "Content-Type": "application/json",
     };
     const response = await axios.post(
-      api_base_url_orders + "/update_staffs_note",
+      api_base_url_products + "/update_staffs_note",
       {
         order_id: order._id,
         staff_id: staff,

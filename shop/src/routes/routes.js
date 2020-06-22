@@ -41,56 +41,18 @@ import axios from "axios";
 import { Button, Result } from "antd";
 import {
   api_base_url,
-  api_base_url_orders,
+  api_base_url_products,
   api_base_url_settings,
 } from "../keys";
-
-const AccountIndex = lazy(() => import("../components/customers/pages/index"));
-const AccountOrder = lazy(() => import("../components/customers/pages/orders"));
-const AccountPoints = lazy(() =>
-  import("../components/customers/pages/points")
-);
-const AccountMessage = lazy(() =>
-  import("../components/customers/pages/messages")
-);
-const AccountEmailling = lazy(() =>
-  import("../components/customers/pages/emailling")
-);
-const PaymentPage = lazy(() => import("../components/landing/pages/payment"));
-const TYPage = lazy(() => import("../components/landing/pages/ty"));
-const LandingIndex = lazy(() => import("../components/landing/pages/index"));
-const LandingSignup = lazy(() => import("../components/landing/pages/signup"));
-const LandingInitialComponent = lazy(() =>
-  import("../components/landing/pages/homepage")
-);
-
 const AdminInitialComponent = lazy(() => import("../components/admin/pages"));
-const AdminHome = lazy(() => import("../components/admin/pages/home"));
-const AdminAnalytics = lazy(() =>
-  import("../components/admin/pages/analytics")
-);
 const AdminCustomers = lazy(() =>
-  import("../components/admin/pages/gelocation")
+  import("../components/admin/pages/customers")
 );
-const AdminOrders = lazy(() => import("../components/admin/pages/orders"));
 const AdminProducts = lazy(() => import("../components/admin/pages/products"));
 const AdminUsers = lazy(() => import("../components/admin/pages/users"));
 const AdminSupplier = lazy(() => import("../components/admin/pages/suppliers"));
 const AdminStockControl = lazy(() =>
   import("../components/admin/pages/stock_control")
-);
-const AdminSettings = lazy(() => import("../components/admin/pages/settings"));
-const AdminSettingsTax = lazy(() =>
-  import("../components/admin/pages/settings_taxes")
-);
-const AdminSettingsPrice = lazy(() =>
-  import("../components/admin/pages/settings_prices")
-);
-const AdminMessages = lazy(() => import("../components/admin/pages/messages"));
-const AdminEmail = lazy(() => import("../components/admin/pages/emailling"));
-const AccountReport = lazy(() => import("../components/admin/pages/reports"));
-const GeolocationComponent = lazy(() =>
-  import("../components/admin/pages/gelocation")
 );
 
 export const UserContext = React.createContext();
@@ -115,166 +77,70 @@ const RouteController = ({
 }) => (
   // <Router basename="/accounting" forceRefresh={true}>
   <Suspense fallback={<LoadingScreen />}>
-    <AbandonedList.Provider value={ABorders} key={0}>
-      <FetchOrderList.Provider value={get_orders} key={1}>
-        <UsersContext.Provider value={users} key={2}>
-          <UserContext.Provider value={orders} key={3}>
-            <SettingContext.Provider value={settings} key={4}>
-              <SettingContextRefresher.Provider value={get_settings} key={5}>
-                <TaxContext.Provider value={tax} key={6}>
-                  <TaxRefresher.Provider value={get_taxes} key={7}>
-                    <Router basename="/ecomdemo1" key={1}>
-                      <div key={1}>
-                        <Switch key={1}>
-                          {/* storefront ui */}
-                          <Route key={0} exact path="/login">
-                            <LandingIndex />
-                          </Route>
-                          <Route key={1} exact path="/signup">
-                            <LandingSignup />
-                          </Route>
-                          <Route key={2} exact path="/">
-                            <LandingInitialComponent />
-                          </Route>
-                          <Route key={3} exact path="/payment">
-                            <PaymentPage />
-                          </Route>
-                          <Route key={4} exact path="/ty">
-                            <TYPage />
-                          </Route>
-                          {/* customer account ui */}
-                          <Route key={1} exact path="/account">
-                            <AccountIndex no={1} />
-                          </Route>
-                          <Route key={2} exact path="/account/orders">
-                            <AccountOrder no={2} />
-                          </Route>
-                          <Route key={3} exact path="/account/points">
-                            <AccountPoints no={3} />
-                          </Route>
-                          <Route key={4} exact path="/account/discounts">
-                            <AccountIndex no={4} />
-                          </Route>
-                          <Route key={5} exact path="/account/messages">
-                            <AccountMessage no={5} />
-                          </Route>
-                          <Route key={6} exact path="/account/email">
-                            <AccountEmailling no={6} />
-                          </Route>
-                          {/* admin ui */}
-                          <Route key={0} exact path="/web-admin">
-                            <AdminInitialComponent no={0} />
-                          </Route>
-                          <Route key={1} exact path="/web-admin/home">
-                            {/* <AdminHome no={1} /> */}
-                            <AdminAnalytics no={6} />
-                          </Route>
-                          <Route key={2} exact path="/web-admin/stock_control">
-                            <AdminStockControl no={2} />
-                          </Route>
+    <UsersContext.Provider value={users} key={2}>
+      <SettingContext.Provider value={settings} key={4}>
+        <SettingContextRefresher.Provider value={get_settings} key={5}>
+          <TaxContext.Provider value={tax} key={6}>
+            <TaxRefresher.Provider value={get_taxes} key={7}>
+              <Router basename="/ecomdemo1" key={1}>
+                <div key={1}>
+                  <Switch key={1}>
+                    <Route key={0} exact path="/">
+                      <AdminInitialComponent no={0} />
+                    </Route>
+                    <Route key={0} exact path="/web-admin">
+                      <AdminInitialComponent no={0} />
+                    </Route>
+                    <Route key={4} exact path="/web-admin/home">
+                      <AdminProducts no={4} />
+                    </Route>
 
-                          <Route key={3} exact path="/web-admin/orders">
-                            <AdminOrders no={3} />
-                          </Route>
-                          <Route key={4} exact path="/web-admin/products">
-                            <AdminProducts no={4} />
-                          </Route>
-                          <Route key={5} exact path="/web-admin/customers">
-                            <AdminCustomers no={5} />
-                          </Route>
-                          <Route key={6} exact path="/web-admin/analytics">
-                            <AdminAnalytics no={6} />
-                          </Route>
-                          <Route key={7} exact path="/web-admin/users">
-                            <AdminUsers no={7} />
-                          </Route>
-                          <Route key={8} exact path="/web-admin/suppliers">
-                            <AdminSupplier no={8} />
-                          </Route>
-                          <Route key={9} exact path="/web-admin/settings">
-                            <AdminSettings no={9} />
-                          </Route>
-                          <Route
-                            key={10}
-                            exact
-                            path="/web-admin/settings/taxes"
-                          >
-                            <AdminSettingsTax no={10} />
-                          </Route>
-                          <Route
-                            key={11}
-                            exact
-                            path="/web-admin/settings/prices"
-                          >
-                            <AdminSettingsPrice no={11} />
-                          </Route>
-                          <Route key={12} exact path="/web-admin/messages">
-                            <AdminMessages no={12} />
-                          </Route>
-                          <Route key={13} exact path="/web-admin/email">
-                            <AdminEmail no={13} />
-                          </Route>
-                          <Route key={14} exact path="/web-admin/reports">
-                            <AccountReport no={14} />
-                          </Route>
-                          <Route key={15} exact path="/web-admin/geolocation">
-                            <GeolocationComponent no={15} />
-                          </Route>
-                          <Route key={6}>
-                            <Result
-                              status="404"
-                              title="404"
-                              subTitle="Sorry, the page you visited does not exist."
-                              extra={
-                                <Link to="/">
-                                  <Button type="primary">Back Home</Button>
-                                </Link>
-                              }
-                            />
-                          </Route>
-                        </Switch>
-                      </div>
-                    </Router>
-                  </TaxRefresher.Provider>
-                </TaxContext.Provider>
-              </SettingContextRefresher.Provider>
-            </SettingContext.Provider>
-          </UserContext.Provider>
-        </UsersContext.Provider>
-      </FetchOrderList.Provider>
-    </AbandonedList.Provider>
+                    <Route key={2} exact path="/web-admin/stock_control">
+                      <AdminStockControl no={2} />
+                    </Route>
+
+                    <Route key={4} exact path="/web-admin/products">
+                      <AdminProducts no={4} />
+                    </Route>
+                    <Route key={5} exact path="/web-admin/customers">
+                      <AdminCustomers no={5} />
+                    </Route>
+
+                    <Route key={7} exact path="/web-admin/users">
+                      <AdminUsers no={7} />
+                    </Route>
+                    <Route key={8} exact path="/web-admin/suppliers">
+                      <AdminSupplier no={8} />
+                    </Route>
+
+                    <Route key={6}>
+                      <Result
+                        status="404"
+                        title="404"
+                        subTitle="Sorry, the page you visited does not exist."
+                        extra={
+                          <Link to="/">
+                            <Button type="primary">Back Home</Button>
+                          </Link>
+                        }
+                      />
+                    </Route>
+                  </Switch>
+                </div>
+              </Router>
+            </TaxRefresher.Provider>
+          </TaxContext.Provider>
+        </SettingContextRefresher.Provider>
+      </SettingContext.Provider>
+    </UsersContext.Provider>
   </Suspense>
 );
 function App() {
   const [nav, setNav] = useState(1);
-  const [orders, setOrders] = useState([]);
-  const [ABorders, setABOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [settings, set_settings] = useState(undefined);
   const [tax, set_tax] = useState([]);
 
-  const get_abandoned_carts = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_orders + "/abandoned_orders",
-      {},
-      { headers: headers }
-    );
-    setABOrders(response.data);
-  };
-  const get_orders = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    const response = await axios.get(
-      api_base_url_orders + "/orders",
-      {},
-      { headers: headers }
-    );
-    setOrders(response.data);
-  };
   const get_settings = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -309,9 +175,7 @@ function App() {
     setUsers(response.data);
   };
   useEffect(() => {
-    get_orders();
     get_users();
-    get_abandoned_carts();
     get_settings();
     get_taxes();
   }, []);
@@ -321,13 +185,10 @@ function App() {
       setNav={setNav}
       users={users}
       tax={tax}
-      orders={orders}
       get_settings={get_settings}
       get_taxes={get_taxes}
-      ABorders={ABorders}
       settings={settings}
       key={1}
-      get_orders={get_orders}
     />,
   ];
 }

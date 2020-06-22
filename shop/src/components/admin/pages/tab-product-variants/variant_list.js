@@ -23,7 +23,7 @@ import {
 import Highlighter from "react-highlight-words";
 import axios from "axios";
 import numeral from "numeral";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 import EditVariantModal from "./edit_variant_modal";
 const { Text } = Typography;
 function VariantList() {
@@ -42,7 +42,7 @@ function VariantList() {
   }, []);
   const retrieveAllVariants = () => {
     axios
-      .get(api_base_url_orders + "/products/variants")
+      .get(api_base_url_products + "/products/variants")
       .then((res) => {
         let arr = [];
         res.data.map((info) =>
@@ -75,7 +75,9 @@ function VariantList() {
     };
     axios
       .post(
-        api_base_url_orders + "/products/variants/update_status/" + parentIndex,
+        api_base_url_products +
+          "/products/variants/update_status/" +
+          parentIndex,
         newData
       )
       .then((res) => retrieveAllVariants())
@@ -107,7 +109,7 @@ function VariantList() {
       arr.push(newData);
     }
     axios
-      .post(api_base_url_orders + "/products/variants/bulk_action1", arr)
+      .post(api_base_url_products + "/products/variants/bulk_action1", arr)
       .then((res) => {
         setVariantArray([...variantArray, arr]);
         retrieveAllVariants();
@@ -129,7 +131,7 @@ function VariantList() {
       arr.push(newData);
     }
     axios
-      .post(api_base_url_orders + "/products/variants/bulk_action1", arr)
+      .post(api_base_url_products + "/products/variants/bulk_action1", arr)
       .then((res) => {
         setVariantArray([...variantArray, arr]);
         retrieveAllVariants();

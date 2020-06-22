@@ -287,26 +287,7 @@ function Head(props) {
             <img src={settings.logo} style={{ height: "40px" }} />
           ) : null}
         </Link>
-        <Link
-          to="/web-admin/analytics"
-          key="4"
-          className={`${props.no.toString() == "6" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <BarChartOutlined />
-            <span className="nav-text bold">Analytics</span>
-          </Space>
-        </Link>
-        <Link
-          to="/web-admin/orders"
-          key="1"
-          className={`${props.no.toString() == "3" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <InboxOutlined />
-            <span className="nav-text bold">Orders</span>
-          </Space>
-        </Link>
+
         <Link
           to="/web-admin/products"
           key="2"
@@ -349,101 +330,7 @@ function Head(props) {
           </Space>
         </Link>
 
-        <Link
-          to="/web-admin/reports"
-          className={`${props.no.toString() == "14" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <SolutionOutlined />
-            <span className="nav-text bold">Reports</span>
-          </Space>
-        </Link>
-
-        <Link
-          to="/web-admin/messages"
-          className={`${props.no.toString() == "12" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <MessageOutlined />
-            <span className="nav-text bold">Messages</span>
-          </Space>
-        </Link>
-        <Link
-          to="/web-admin/geolocation"
-          className={`${props.no.toString() == "15" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <RadarChartOutlined />
-            <span className="nav-text bold">Location</span>
-          </Space>
-        </Link>
-        {/* <Link
-          to="/web-admin/email"
-          className={`${props.no.toString() == "13" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <MailOutlined />
-            <span className="nav-text bold">Email</span>
-          </Space>
-        </Link> */}
-
         <Space size="0" style={{ height: "100%", float: "right" }}>
-          <Link
-            to="/web-admin/settings"
-            key="9"
-            className={`${props.no.toString() == "9" ? "active" : ""}`}
-          >
-            <Space direction="vertical" size="0">
-              <SettingOutlined />
-              <span className="nav-text bold">Settings</span>
-            </Space>
-          </Link>
-          <Dropdown overlay={notif} trigger={["click"]}>
-            <Button
-              type="link"
-              style={{
-                textAlign: "left",
-                float: "right",
-                height: "100%",
-                color: "black",
-              }}
-            >
-              <Row gutter="20" align="middle">
-                <Col span="6">
-                  <Badge count={0}>
-                    <BellFilled
-                      style={{ color: "#9d9d9d", fontSize: "18px" }}
-                    />
-                  </Badge>
-                </Col>
-              </Row>
-            </Button>
-          </Dropdown>
-
-          <Link
-            to="/web-admin/messages"
-            style={{
-              textAlign: "left",
-              float: "right",
-              height: "100%",
-              color: "black",
-            }}
-          >
-            <Row gutter="20" align="middle">
-              <Col span="6">
-                <Badge count={newmessage}>
-                  <MessageFilled
-                    style={{
-                      color: "#9d9d9d",
-                      height: "100%",
-                      fontSize: "18px",
-                    }}
-                  />
-                </Badge>
-              </Col>
-            </Row>
-          </Link>
-
           <Dropdown overlay={menu} trigger={["click"]}>
             <Button
               type="link"

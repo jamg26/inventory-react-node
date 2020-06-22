@@ -15,7 +15,7 @@ import {
   DownloadOutlined,
 } from "@ant-design/icons";
 import numeral from "numeral";
-import { api_base_url, api_base_url_orders } from "../../../../keys/index";
+import { api_base_url, api_base_url_products } from "../../../../keys/index";
 
 function Pricing(props) {
   const {
