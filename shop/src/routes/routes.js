@@ -45,9 +45,7 @@ import {
   api_base_url_settings,
 } from "../keys";
 const AdminInitialComponent = lazy(() => import("../components/admin/pages"));
-const AdminCustomers = lazy(() =>
-  import("../components/admin/pages/customers")
-);
+
 const AdminProducts = lazy(() => import("../components/admin/pages/products"));
 const AdminUsers = lazy(() => import("../components/admin/pages/users"));
 const AdminSupplier = lazy(() => import("../components/admin/pages/suppliers"));
@@ -101,9 +99,6 @@ const RouteController = ({
 
                     <Route key={4} exact path="/web-admin/products">
                       <AdminProducts no={4} />
-                    </Route>
-                    <Route key={5} exact path="/web-admin/customers">
-                      <AdminCustomers no={5} />
                     </Route>
 
                     <Route key={7} exact path="/web-admin/users">

@@ -309,17 +309,6 @@ function Head(props) {
           </Space>
         </Link>
 
-        <Link
-          to="/web-admin/customers"
-          key="3"
-          className={`${props.no.toString() == "5" ? "active" : ""}`}
-        >
-          <Space direction="vertical" size="0">
-            <UserOutlined />
-            <span className="nav-text bold">Customers</span>
-          </Space>
-        </Link>
-
         <Space size="0" style={{ height: "100%", float: "right" }}>
           <Dropdown overlay={menu} trigger={["click"]}>
             <Button
